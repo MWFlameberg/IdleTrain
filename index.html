@@ -1,11 +1,47 @@
 <!DOCTYPE html>
 <html>
+
+<head>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        let x, y, z;
+        x = 0;
+        y = 0;
+        z = 0;
+
+        function incrementValue() {
+            document.getElementById("tracker").innerHTML = parseInt(document.getElementById("tracker").innerHTML) + 1
+        }
+        function increaseVariable(varToIncrement) {
+            switch(varToIncrement) {
+                case 'x':
+                    x += 1;
+                    break;
+                case 'y':
+                    y += 1;
+                    break;
+                case 'z':
+                    z += 1;
+                    break;
+                default:
+            }
+        }
+        setInterval(() => {
+            document.getElementById("tracker").innerHTML = parseInt(document.getElementById("tracker").innerHTML) + (x * 2) + (y * 4) + (z * 6)
+        }, 1000);
+    </script>
+</head>
 <body>
 
-<h1>My First Heading</h1>
+<h1>My First Header</h1>
 
-<p>My first paragraph.</p>
+<p id="p1">My first paragraph.</p>
+<p id="tracker">0</p>
 
+<button type="button" onclick="incrementValue()">Button</button>
+<button type="x" onclick="increaseVariable('x')">Button</button>
+<button type="y" onclick="increaseVariable('y')">Button</button>
+<button type="z" onclick="increaseVariable('z')">Button</button>
 </body>
 </html>
 
