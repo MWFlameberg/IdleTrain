@@ -3,45 +3,45 @@
 
 <head>
     <link rel="stylesheet" href="style.css">
-    <script>
-        let x, y, z;
-        x = 0;
-        y = 0;
-        z = 0;
+    <script type="json" src="./Data/BaseTrain.json"></script>
+    <script type="text/javascript" src="./Structure/BaseItem.js"></script>
+    <script type="text/javascript" src="./References/code.jquery.com_jquery-3.7.0.js"></script>
+    <script type="text/javascript">
+        let item;
+        let x = 0;
 
-        function incrementValue() {
-            document.getElementById("tracker").innerHTML = parseInt(document.getElementById("tracker").innerHTML) + 1
+        $(document).ready(function () {
+            $.getJSON("./Data/BaseTrain.json", function(data){
+                item = new BaseItem(data.stats.baseCost, data.stats.basePower, data.stats.baseMultiplier)
+            });
+            setInterval(runGame, 1000);
+        });
+
+        function buyItem() {
+            item.quantity += 1;
+            document.getElementById("itemCount").innerHTML = item.quantity;
         }
-        function increaseVariable(varToIncrement) {
-            switch(varToIncrement) {
-                case 'x':
-                    x += 1;
-                    break;
-                case 'y':
-                    y += 1;
-                    break;
-                case 'z':
-                    z += 1;
-                    break;
-                default:
+
+        function clickItem() {
+            x += 1;
+            document.getElementById("total").innerHTML = x;
+        }
+        
+        function runGame() {
+            if(item != null) {
+                x += item.getItemPower();
             }
+            document.getElementById("total").innerHTML = x;
         }
-        setInterval(() => {
-            document.getElementById("tracker").innerHTML = parseInt(document.getElementById("tracker").innerHTML) + (x * 2) + (y * 4) + (z * 6)
-        }, 1000);
     </script>
 </head>
 <body>
-
-<h1>My First Header</h1>
-
-<p id="p1">My first paragraph.</p>
-<p id="tracker">0</p>
-
-<button type="button" onclick="incrementValue()">Button</button>
-<button type="x" onclick="increaseVariable('x')">Button</button>
-<button type="y" onclick="increaseVariable('y')">Button</button>
-<button type="z" onclick="increaseVariable('z')">Button</button>
+    <p id="total">0</p>
+    <div id="itemCountLabel">Item Count:</div>
+    <div id="itemCount">0</div>
+    <p/>
+    <button type="button" id ="clicker" onclick="clickItem()">Click</button>
+    <button type="button" id ="buyItem" onclick="buyItem()">Buy Item</button>
 </body>
 </html>
 
