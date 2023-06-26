@@ -1,0 +1,8 @@
+{
+    "name": "BetterTrain",
+    "stats": {
+        "baseCost": 2,
+        "basePower": 3,
+        "baseMultiplier": 1.5
+    }
+}

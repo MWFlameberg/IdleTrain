@@ -1,4 +1,5 @@
 {
+    "name": "BasicTrain",
     "stats": {
         "baseCost": 1,
         "basePower": 1,

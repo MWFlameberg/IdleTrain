@@ -1,6 +1,7 @@
 class BaseItem {
     quantity = 0;
-    constructor(baseCost, basePower, baseMultiplier) {
+    constructor(name, baseCost, basePower, baseMultiplier) {
+        this.name = name;
         this.baseCost = baseCost;
         this.basePower = basePower;
         this.baseMultiplier = baseMultiplier;
@@ -11,10 +12,10 @@ class BaseItem {
     }
 
     getItemCost() {
-        if(quantity = 0) {
-            return baseCost;
-        } else {
+        if(this.quantity > 0) {
             return this.baseCost * (this.quantity * this.baseMultiplier)
+        } else {
+            return this.baseCost;
         }
     }
 }

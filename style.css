@@ -11,3 +11,12 @@ body {
     font-family: verdana;
     font-size: 20px;
   }
+
+.div-purchasebutton {
+  outline-style: solid;
+  margin: 5px;
+}
+.inline-block-child {
+  padding: 10px;
+  display: inline-block;
+}
