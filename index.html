@@ -29,18 +29,18 @@
             setInterval(runGame, 100);
         });
 
-        function buyItem(index, name) {
-            if(x > items[index].getItemCost()) {
+        function buyItem(index) {
+            if(x >= items[index].getItemCost()) {
                 items[index].quantity += 1;
-                document.getElementById("lbl-" + name + "Count").innerHTML = items[index].quantity;
-                document.getElementById("lbl-" + name + "Cost").innerHTML = items[index].getItemCost();
+                document.getElementById("item" + index + "Owned").innerHTML = items[index].quantity;
+                document.getElementById("item" + index + "Cost").innerHTML = items[index].getItemCost();
                 document.getElementById("tps").innerHTML = totalPower();
             } 
         }
 
         function clickItem() {
             x += 1;
-            document.getElementById("total").innerHTML = x;
+            document.getElementById("total").innerHTML = Math.trunc(x);
         }
 
         function totalPower() {
@@ -61,18 +61,24 @@
     <p id="total">0</p>
     <div id="itemCountLabel">Trains per Second: </div>
     <div id="tps">0</div>
-
-    <div id="button-container"></div>
-    <button type="button" id ="clicker" onclick="clickItem()">Click</button>
-    <div id="basicTrain" class="div-purchasebutton" onclick="buyItem(0, 'basicTrain')">
-        <div id="lbl-basicTrain" class="inline-block-child">Buy Basic Train</div>
-        <div id="lbl-basicTrainCost" class="inline-block-child">1</div>
-        <div id="lbl-basicTrainCount" class="inline-block-child">0</div>
-    </div>
-    <div id="betterTrain" class="div-purchasebutton" onclick="buyItem(1, 'betterTrain')">
-        <div id="lbl-betterTrain" class="inline-block-child">Buy Base Train</div>
-        <div id="lbl-betterTrainCost" class="inline-block-child">2</div>
-        <div id="lbl-betterTrainCount" class="inline-block-child">0</div>
+    <div id="game-container">
+        <div id="sectionLeft" >
+            <div id="trainAnchor">
+                <div id="train" onclick="clickItem()">TRAIN</div>
+            </div>
+        </div>
+        <div id="sectionRight">
+            <div id="item0" class="div-purchase" onclick="buyItem(0)">
+                <div id="item0Name" class="div-itemName">Buy Basic Train</div>
+                <div id="item0Cost" class="div-itemCost">1</div>
+                <div id="item0Owned" class="div-itemOwned">0</div>
+            </div>
+            <div id="item1" class="div-purchase" onclick="buyItem(1)">
+                <div id="item1Name" class="div-itemName">Buy Better Train</div>
+                <div id="item1Cost" class="div-itemCost">2</div>
+                <div id="item1Owned" class="div-itemOwned">0</div>
+            </div>
+        </div>
     </div>
 </body>
 </html>

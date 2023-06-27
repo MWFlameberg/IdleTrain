@@ -13,7 +13,7 @@ class BaseItem {
 
     getItemCost() {
         if(this.quantity > 0) {
-            return this.baseCost * (this.quantity * this.baseMultiplier)
+            return Math.trunc(this.baseCost * (this.quantity * this.baseMultiplier));
         } else {
             return this.baseCost;
         }
