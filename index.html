@@ -3,58 +3,14 @@
 
 <head>
     <link rel="stylesheet" href="style.css">
-    <script type="json" src="./Data/BasicTrain.json"></script>
-    <script type="json" src="./Data/BetterTrain.json"></script>
     <script type="text/javascript" src="./Structure/BaseItem.js"></script>
+    <script type="text/javascript" src="./Structure/Game.js"></script>
     <script type="text/javascript" src="./References/code.jquery.com_jquery-3.7.0.js"></script>
     <script type="text/javascript">
-        let items = [];
-        let x = 0;
-
         $(document).ready(function () {
-            $.getJSON("./Data/BasicTrain.json", function(response){
-                var name = response.name;
-                var baseCost = response.stats.baseCost;
-                var basePower = response.stats.basePower;
-                var baseMultiplier = response.stats.baseMultiplier;
-                items[items.length] = new BaseItem(name, baseCost, basePower, baseMultiplier)
-            });
-            $.getJSON("./Data/BetterTrain.json", function(response){
-                var name = response.name;
-                var baseCost = response.stats.baseCost;
-                var basePower = response.stats.basePower;
-                var baseMultiplier = response.stats.baseMultiplier;
-                items[items.length] = new BaseItem(name, baseCost, basePower, baseMultiplier)
-            });
-            setInterval(runGame, 100);
+            Game.Launch();
+            setInterval(Game.Loop, 100);
         });
-
-        function buyItem(index) {
-            if(x >= items[index].getItemCost()) {
-                items[index].quantity += 1;
-                document.getElementById("item" + index + "Owned").innerHTML = items[index].quantity;
-                document.getElementById("item" + index + "Cost").innerHTML = items[index].getItemCost();
-                document.getElementById("tps").innerHTML = totalPower();
-            } 
-        }
-
-        function clickItem() {
-            x += 1;
-            document.getElementById("total").innerHTML = Math.trunc(x);
-        }
-
-        function totalPower() {
-            var total = 0;
-            if(items.length > 0) {
-                items.forEach(function(item) {total += item.getItemPower()});
-            }
-            return total;
-        }
-        
-        function runGame() {
-            x += totalPower() / 10;
-            document.getElementById("total").innerHTML = Math.trunc(x);
-        }
     </script>
 </head>
 <body>
@@ -64,19 +20,19 @@
     <div id="game-container">
         <div id="sectionLeft" >
             <div id="trainAnchor">
-                <div id="train" onclick="clickItem()">TRAIN</div>
+                <div id="train" onclick="Game.ClickTrain()">TRAIN</div>
             </div>
         </div>
         <div id="sectionRight">
-            <div id="item0" class="div-purchase" onclick="buyItem(0)">
-                <div id="item0Name" class="div-itemName">Buy Basic Train</div>
-                <div id="item0Cost" class="div-itemCost">1</div>
-                <div id="item0Owned" class="div-itemOwned">0</div>
+            <div id="item0" class="div-purchase" onclick="Game.BuyItem(0)">
+                <div id="item0Name" class="div-itemName"></div>
+                <div id="item0Cost" class="div-itemCost"></div>
+                <div id="item0Owned" class="div-itemOwned"></div>
             </div>
-            <div id="item1" class="div-purchase" onclick="buyItem(1)">
-                <div id="item1Name" class="div-itemName">Buy Better Train</div>
-                <div id="item1Cost" class="div-itemCost">2</div>
-                <div id="item1Owned" class="div-itemOwned">0</div>
+            <div id="item1" class="div-purchase" onclick="Game.BuyItem(1)">
+                <div id="item1Name" class="div-itemName"></div>
+                <div id="item1Cost" class="div-itemCost"></div>
+                <div id="item1Owned" class="div-itemOwned"></div>
             </div>
         </div>
     </div>

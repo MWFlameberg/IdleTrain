@@ -1,8 +1,0 @@
-{
-    "name": "BasicTrain",
-    "stats": {
-        "baseCost": 1,
-        "basePower": 1,
-        "baseMultiplier": 1.5
-    }
-}

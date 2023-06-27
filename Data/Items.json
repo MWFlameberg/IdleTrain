@@ -1,0 +1,21 @@
+[
+    {
+    "id": 0,
+        "name": "BasicTrain",
+        "description": "This is a basic train",
+        "stats": {
+            "baseCost": 10,
+            "basePower": 0.1,
+            "baseMultiplier": 1.2
+        }
+    },
+    {
+        "id": 1,
+        "name": "BetterTrain",
+        "stats": {
+            "baseCost": 100,
+            "basePower": 1,
+            "baseMultiplier": 1.2
+        }
+    }
+]

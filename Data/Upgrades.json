@@ -1,0 +1,22 @@
+[ 
+    {
+        "id": 0,
+        "name": "BasicUpgrade",
+        "description": "This is a basic upgrade",
+        "upgradeCost": 10,
+        "upgradedItems": [
+            {
+                "itemID": 0
+            }
+        ],
+        "upgradeStats": {
+            "power": 2.0
+        },
+        "upgradeRequirements": [
+            {
+                "itemID": 0,
+                "amountOwned": 10
+            }
+        ]
+    }
+]
