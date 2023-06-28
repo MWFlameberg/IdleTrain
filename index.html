@@ -4,6 +4,7 @@
 <head>
     <link rel="stylesheet" href="style.css">
     <script type="text/javascript" src="./Structure/BaseItem.js"></script>
+    <script type="text/javascript" src="./Structure/ItemUpgrade.js"></script>
     <script type="text/javascript" src="./Structure/Game.js"></script>
     <script type="text/javascript" src="./References/code.jquery.com_jquery-3.7.0.js"></script>
     <script type="text/javascript">
@@ -15,6 +16,7 @@
 </head>
 <body>
     <p id="total">0</p>
+    <p id="rawtotal" hidden>0</p>
     <div id="itemCountLabel">Trains per Second: </div>
     <div id="tps">0</div>
     <div id="game-container">
@@ -24,16 +26,8 @@
             </div>
         </div>
         <div id="sectionRight">
-            <div id="item0" class="div-purchase" onclick="Game.BuyItem(0)">
-                <div id="item0Name" class="div-itemName"></div>
-                <div id="item0Cost" class="div-itemCost"></div>
-                <div id="item0Owned" class="div-itemOwned"></div>
-            </div>
-            <div id="item1" class="div-purchase" onclick="Game.BuyItem(1)">
-                <div id="item1Name" class="div-itemName"></div>
-                <div id="item1Cost" class="div-itemCost"></div>
-                <div id="item1Owned" class="div-itemOwned"></div>
-            </div>
+            <div id="upgrade-container"></div>
+            <div id="purchase-container"></div>
         </div>
     </div>
 </body>

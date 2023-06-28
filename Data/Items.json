@@ -1,21 +1,52 @@
 [
     {
     "id": 0,
-        "name": "BasicTrain",
-        "description": "This is a basic train",
+        "name": "Crappy Train",
+        "description": "This is a Crappy train",
         "stats": {
             "baseCost": 10,
             "basePower": 0.1,
-            "baseMultiplier": 1.2
+            "baseMultiplier": 0.2
         }
     },
     {
         "id": 1,
-        "name": "BetterTrain",
+        "name": "Bad Train",
+        "description": "This is a Bad train",
         "stats": {
             "baseCost": 100,
+            "basePower": 0.5,
+            "baseMultiplier": 0.2
+        }
+    },
+    {
+        "id": 2,
+        "name": "Average Train",
+        "description": "This is a Average train",
+        "stats": {
+            "baseCost": 200,
             "basePower": 1,
-            "baseMultiplier": 1.2
+            "baseMultiplier": 0.2
+        }
+    },
+    {
+        "id": 3,
+        "name": "OK Train",
+        "description": "This is a OK train",
+        "stats": {
+            "baseCost": 400,
+            "basePower": 2.5,
+            "baseMultiplier": 0.2
+        }
+    },
+    {
+        "id": 4,
+        "name": "Good Train",
+        "description": "This is a Good train",
+        "stats": {
+            "baseCost": 1000,
+            "basePower": 10,
+            "baseMultiplier": 0.2
         }
     }
 ]

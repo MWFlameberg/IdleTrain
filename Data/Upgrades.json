@@ -1,22 +1,18 @@
 [ 
     {
         "id": 0,
-        "name": "BasicUpgrade",
+        "name": "Upg1",
         "description": "This is a basic upgrade",
         "upgradeCost": 10,
-        "upgradedItems": [
-            {
-                "itemID": 0
-            }
-        ],
-        "upgradeStats": {
-            "power": 2.0
-        },
-        "upgradeRequirements": [
-            {
-                "itemID": 0,
-                "amountOwned": 10
-            }
-        ]
+        "upgradeItem": 0,
+        "upgradePower": 2.0
+    },
+    {
+        "id": 1,
+        "name": "Upg2",
+        "description": "This is a basic upgrade",
+        "upgradeCost": 10,
+        "upgradeItem": 0,
+        "upgradePower": 2.0
     }
 ]
