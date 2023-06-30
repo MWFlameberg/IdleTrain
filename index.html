@@ -3,8 +3,8 @@
 
 <head>
     <link rel="stylesheet" href="style.css">
-    <script type="text/javascript" src="./Structure/BaseItem.js"></script>
-    <script type="text/javascript" src="./Structure/ItemUpgrade.js"></script>
+    <script type="text/javascript" src="./Structure/Item.js"></script>
+    <script type="text/javascript" src="./Structure/Upgrade.js"></script>
     <script type="text/javascript" src="./Structure/Game.js"></script>
     <script type="text/javascript" src="./References/code.jquery.com_jquery-3.7.0.js"></script>
     <script type="text/javascript">
@@ -17,6 +17,7 @@
 <body>
     <p id="total">0</p>
     <p id="rawtotal" hidden>0</p>
+    <p id="lifetimetotal" hidden>0</p>
     <div id="itemCountLabel">Trains per Second: </div>
     <div id="tps">0</div>
     <div id="game-container">
@@ -26,8 +27,10 @@
             </div>
         </div>
         <div id="sectionRight">
-            <div id="upgrade-container"></div>
-            <div id="purchase-container"></div>
+            <div id="store">
+                <div id="upgrades"></div>
+                <div id="items"></div>
+            </div>
         </div>
     </div>
 </body>

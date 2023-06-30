@@ -1,92 +1,127 @@
 var Game = {};
+//#region Content Drawing
+Game.DrawUpgrade = function(upgrade) {
+    var container = Object.assign(document.createElement("div",), {id: "upgrade" + upgrade.id, className: "div-upgrade"});
+    container.onclick = function() { Game.BuyUpgrade(this, upgrade.id) };
+    var icon = Object.assign(document.createElement("div"), {id: "upgrade" + upgrade.id + "Icon", className: "div-upgradeIcon"});
+    icon.style.backgroundImage = "url(/Images/upgrade-placeholder.png)";
+    container.appendChild(icon);
+    document.getElementById("upgrades").appendChild(container);
+};
+Game.DrawItem = function(item) {
+    var container = Object.assign(document.createElement("div",), {id: "item" + item.id, className: "div-purchase"});
+    container.onclick = function() { Game.BuyItem(item.id) };
+    var icon = Object.assign(document.createElement("div"), {id: "item" + item.id + "Icon", className: "div-itemIcon"});
+    icon.style.backgroundImage = "url(/Images/placeholder.png)";
+    var content =Object.assign(document.createElement("div"), {id: "item" + item.id + "Content", className: "div-purchaseContent"});
+    var name = Object.assign(document.createElement("div"), {id: "item" + item.id + "Name", className: "div-itemName", innerHTML: item.name});
+    var cost = Object.assign(document.createElement("div"), {id: "item" + item.id + "Cost", className: "div-itemCost", innerHTML: item.getItemCost()});
+    var owned = Object.assign(document.createElement("div"), {id: "item" + item.id + "Owned", className: "div-itemOwned", innerHTML: item.quantity});
+    container.appendChild(icon);
+    container.appendChild(content);
+    content.appendChild(name);
+    content.appendChild(cost);
+    content.appendChild(owned);
+    document.getElementById("items").appendChild(container);
+};
+//#endregion
 //#region Data Initialisation
 Game.LoadItems = async function() {
     Game.Items = [];
     await $.getJSON("/Data/Items.json", function(response) {
         $.each(response, function(i, item) {
-            Game.Items[i] = new BaseItem(item.id, item.name, item.description, 
+            Game.Items[i] = new Item(item.id, item.name, item.description, 
                 item.stats.baseCost, item.stats.basePower, 
                 item.stats.baseMultiplier);
         });
     });
     if(Game.Items.length > 0) {
         Game.Items.forEach(function(item) {
-            var itemContainer = Object.assign(document.createElement("div",), {id: "item" + item.id, className: "div-purchase"});
-            itemContainer.onclick = function() { Game.BuyItem(item.id) };
-            var itemName = Object.assign(document.createElement("div"), {id: "item" + item.id + "Name", className: "div-itemName", innerHTML: item.name});
-            var itemCost = Object.assign(document.createElement("div"), {id: "item" + item.id + "Cost", className: "div-itemCost", innerHTML: item.getItemCost()});
-            var itemOwned = Object.assign(document.createElement("div"), {id: "item" + item.id + "Owned", className: "div-itemOwned", innerHTML: item.quantity});
-            itemContainer.appendChild(itemName);
-            itemContainer.appendChild(itemCost);
-            itemContainer.appendChild(itemOwned);
-            document.getElementById("purchase-container").appendChild(itemContainer);
+            Game.DrawItem(item);
         });
     }
 };
 Game.LoadUpgrades = async function() {
     Game.Upgrades = [];
     await $.getJSON("/Data/Upgrades.json", function(response) {
-        $.each(response, function(i, item) {
-            Game.Upgrades[i] = new ItemUpgrade(item.id, item.name, item.description, 
-                item.upgradeCost, item.upgradeItem, item.upgradePower);
+        $.each(response, function(i, upgrade) {
+            var unlockReq = {}
+            unlockReq.itemReq = upgrade.requirement.itemReq;
+            unlockReq.amtReq = upgrade.requirement.amtReq;
+            Game.Upgrades[i] = new Upgrade(upgrade.id, upgrade.name, upgrade.description, 
+                upgrade.baseCost, upgrade.affectedItem, upgrade.basePower, unlockReq);
         });
     });
     if(Game.Upgrades.length > 0) {
         Game.Upgrades.forEach(function(upgrade) {
-            var upgradeContainer = Object.assign(document.createElement("div",), {id: "upgrade" + upgrade.id, className: "div-upgrade"});
-            upgradeContainer.onclick = function() { Game.BuyUpgrade(this, upgrade.id) };
-            var upgradeName = Object.assign(document.createElement("div"), {id: "upgrade" + upgrade.id + "Name", className: "div-upgradeName", innerHTML: upgrade.name});
-            var upgradeCost = Object.assign(document.createElement("div"), {id: "upgrade" + upgrade.id + "Cost", className: "div-upgradeCost", innerHTML: upgrade.upgradeCost});
-            upgradeContainer.appendChild(upgradeName);
-            upgradeContainer.appendChild(upgradeCost);
-            document.getElementById("upgrade-container").appendChild(upgradeContainer);
+            if(upgrade.available) {
+                Game.DrawUpgrade(upgrade);
+            }
         });
     }
 };
 //#endregion
-Game.SubtractPower = function(power) {
-    Game.TrainPower -= power;
-};
-Game.ClickTrain = function() {
-    Game.TrainPower += 1;
-    document.getElementById("total").innerHTML = Math.floor(Game.TrainPower);
-}
 Game.UpdateTPS = function() {
     var total = 0;
     if(Game.Items.length > 0) {
         Game.Items.forEach(function(item) {total += item.getItemPower()});
     }
     Game.TPS = total;
+    document.getElementById("tps").innerHTML = Math.round(Game.TPS * 100) / 100;
+};
+Game.UpdateTP = function() {
+    document.getElementById("total").innerHTML = Math.floor(Game.TP);
+};
+Game.SubtractPower = function(power) {
+    Game.TP -= power;
+};
+Game.AddPower = function(power) {
+    Game.TP += power;
+    Game.LTTP += 1;
+};
+Game.ClickTrain = function() {
+    Game.AddPower(1);
+    Game.UpdateTP();
+};
+Game.CheckForNewUpgrades = function(itemPurchased) {
+    Game.Upgrades.forEach(function(upgrade) {
+        if(upgrade.canUnlockUpgrade(itemPurchased)) {
+            Game.DrawUpgrade(upgrade);
+            upgrade.available = true;
+        }
+    });
 };
 Game.BuyItem = function(itemID) {
-    if(Game.TrainPower >= Game.Items[itemID].getItemCost()) {
+    if(Game.TP >= Game.Items[itemID].getItemCost()) {
         Game.SubtractPower(Game.Items[itemID].getItemCost());
         Game.Items[itemID].quantity += 1;
         document.getElementById("item" + itemID + "Owned").innerHTML = Game.Items[itemID].quantity;
         document.getElementById("item" + itemID + "Cost").innerHTML = Game.Items[itemID].getItemCost();
         Game.UpdateTPS();
-        document.getElementById("tps").innerHTML = Math.round(Game.TPS * 100) / 100;
+        Game.CheckForNewUpgrades(Game.Items[itemID]);
     } 
 };
 Game.BuyUpgrade = function(element, upgradeID) {
-    if(Game.TrainPower >= Game.Upgrades[upgradeID].upgradeCost && !Game.Upgrades[upgradeID].purchased) {
+    if(Game.TP >= Game.Upgrades[upgradeID].upgradeCost && !Game.Upgrades[upgradeID].purchased) {
         Game.SubtractPower(Game.Upgrades[upgradeID].upgradeCost);
         Game.Upgrades[upgradeID].purchased = true;
         var upgradedItem = Game.Upgrades[upgradeID].upgradeItem;
         Game.Items[upgradedItem].powerMultiplier *= Game.Upgrades[upgradeID].upgradePower;
         element.style.display = "none";
         Game.UpdateTPS();
-        document.getElementById("tps").innerHTML = Math.round(Game.TPS * 100) / 100;
     }
 };
 //#region Start Function and Loop
 Game.Loop = function() {
-    Game.TrainPower = Math.round((Game.TrainPower + (Game.TPS / 10)) * 100) / 100;
-    document.getElementById("total").innerHTML = Math.floor(Game.TrainPower);
-    document.getElementById("rawtotal").innerHTML = Game.TrainPower;
+    Game.TP = Math.round((Game.TP + (Game.TPS / 10)) * 100) / 100;
+    Game.LTTP = Math.round((Game.LTTP + (Game.TPS / 10)) * 100) / 100;
+    document.getElementById("total").innerHTML = Math.floor(Game.TP);
+    document.getElementById("rawtotal").innerHTML = Game.TP;
+    document.getElementById("lifetimetotal").innerHTML = Game.LTTP;
 };
 Game.Launch = async function() {
-    Game.TrainPower = 0;
+    Game.TP = 0;
+    Game.LTTP = 0;
     Game.TPS = 0;
     Game.LoadItems();
     Game.LoadUpgrades();

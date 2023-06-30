@@ -1,4 +1,4 @@
-class BaseItem {
+class Item {
     quantity = 0;
     powerMultiplier = 1;
     constructor(id, name, description, baseCost, basePower, baseMultiplier) {

@@ -3,16 +3,24 @@
         "id": 0,
         "name": "Upg1",
         "description": "This is a basic upgrade",
-        "upgradeCost": 10,
-        "upgradeItem": 0,
-        "upgradePower": 2.0
+        "baseCost": 10,
+        "affectedItem": 0,
+        "basePower": 2.0,
+        "requirement": {
+            "itemReq": 0,
+            "amtReq": 1
+        }
     },
     {
         "id": 1,
         "name": "Upg2",
         "description": "This is a basic upgrade",
-        "upgradeCost": 10,
+        "upgradeCost": 100,
         "upgradeItem": 0,
-        "upgradePower": 2.0
+        "upgradePower": 2.0,
+        "requirement": {
+            "itemReq": 0,
+            "amtReq": 10
+        }
     }
 ]
