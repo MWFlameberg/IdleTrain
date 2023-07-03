@@ -9,12 +9,15 @@ class Item {
         this.basePower = basePower;
         this.baseMultiplier = baseMultiplier;
     }
-    getItemPower() {
+    getItemTotalPower() {
         return (this.basePower * this.powerMultiplier) * this.quantity;
+    }
+    getItemPower() {
+        return (this.basePower * this.powerMultiplier) * 1
     }
     getItemCost() {
         if(this.quantity > 0) {
-            return this.baseCost + Math.trunc(this.baseCost * (this.quantity * this.baseMultiplier));
+            return Math.ceil(this.baseCost * Math.pow(this.baseMultiplier, this.quantity));
         } else {
             return this.baseCost;
         }

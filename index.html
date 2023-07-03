@@ -1,38 +1,46 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-    <link rel="stylesheet" href="style.css">
-    <script type="text/javascript" src="./Structure/Item.js"></script>
-    <script type="text/javascript" src="./Structure/Upgrade.js"></script>
-    <script type="text/javascript" src="./Structure/Game.js"></script>
-    <script type="text/javascript" src="./References/code.jquery.com_jquery-3.7.0.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            Game.Launch();
-            setInterval(Game.Loop, 100);
-        });
-    </script>
-</head>
-<body>
-    <p id="total">0</p>
-    <p id="rawtotal" hidden>0</p>
-    <p id="lifetimetotal" hidden>0</p>
-    <div id="itemCountLabel">Trains per Second: </div>
-    <div id="tps">0</div>
-    <div id="game-container">
-        <div id="sectionLeft" >
-            <div id="trainAnchor">
-                <div id="train" onclick="Game.ClickTrain()">TRAIN</div>
+   <head>
+      <link rel="stylesheet" href="style.css">
+      <script type="text/javascript" src="./Structure/Item.js"></script>
+      <script type="text/javascript" src="./Structure/Upgrade.js"></script>
+      <script type="text/javascript" src="./Structure/Game.js"></script>
+      <script type="text/javascript" src="./References/code.jquery.com_jquery-3.7.0.js"></script>
+      <script type="text/javascript">
+         $(document).ready(function () {
+             Game.Launch();
+             setInterval(Game.Loop, 100);
+         });
+      </script>
+   </head>
+   <body>
+      <div id="wrapper">
+         <div id="game-container">
+            <div id="sectionLeft" >
+               <p id="total">0</p>
+               <p id="rawtotal" hidden>0</p>
+               <p id="lifetimetotal" hidden>0</p>
+               <div id="itemCountLabel">Trains per Second: </div>
+               <div id="tps">0</div>
+               <div id="trainAnchor">
+                  <div id="train" onclick="Game.ClickTrain()">TRAIN</div>
+               </div>
             </div>
-        </div>
-        <div id="sectionRight">
-            <div id="store">
-                <div id="upgrades"></div>
-                <div id="items"></div>
+            <div id="dividerRight" class="dividerRight"></div>
+            <div id="sectionRight">
+               <div id="store">
+                  <div id="upgrades"></div>
+                  <div id="dividerStore"></div>
+                  <div id="items"></div>
+               </div>
             </div>
-        </div>
-    </div>
-</body>
+         </div>
+         <div id="tooltipAnchor" style="display: none;">
+            <div id="tooltip">
+               <div id="tooltipIcon"></div>
+               <div id="tooltipText"></div>
+            </div>
+         </div>
+      </div>
+   </body>
 </html>
-
