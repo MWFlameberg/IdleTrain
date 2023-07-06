@@ -1,3 +1,5 @@
+/* ############################## */
+/* Reset css */ 
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -44,6 +46,8 @@ table {
 div {
   display: block;
 }
+/* ############################## */
+/* Main layout css */
 #wrapper {
   width: 100%;
   height: 100%;
@@ -99,35 +103,74 @@ div {
   top: 0px;
   min-width: 100px;
 }
+/* ############################## */
+/* Tooltip related css */ 
 #tooltipAnchor {
   position: absolute;
   z-index: 100;
 }
-#tooltip {
-  position: absolute;
-  width: 278px;
-  height: 96px;
-  border-style: solid;
-  border-width: 1px;
-  padding: 10px;
+#tooltipItem {
+  position: relative;
+  min-width: 320px;
 }
-#tooltipIcon {
-  width: 64px;
-  height: 64px;
-  top: 8px;
-  left: 8px;
-  position: absolute;
+.tooltipIcon {
+  width: 48px;
+  height: 48px;
+  margin-left: -8px;
+  margin-top: -8px;
+  margin-right: 8px;
+  display: inline-block;
 }
-#tooltipText{
-  position: absolute;
-  left: 80px;
-  right: 8px;
+.tooltipHeader {
+  font-family: Arial;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 3px 3px;
 }
-#tooltipSubText{
-  position: absolute;
-  left: 80px;
-  right: 8px;
+.tooltipDesc {
+  font-family: Arial;
+  font-size: 12px;
+  text-align: right;
+  padding: 3px 3px;
+  margin: 4px 0px;
 }
+.tooltipStats {
+  font-family: Arial;
+  font-size: 10px;
+  padding: 3px 3px;
+  margin: 0px 0px 0px 8px;
+}
+.tooltipLine {
+  background: linear-gradient(to right,
+              rgb(255, 255, 255),
+              rgb(0, 0, 0),
+              rgb(255, 255, 255));
+  height: 1px;
+  width: 100%;
+  margin: 4px auto;
+  position: relative;
+}
+.tooltipShortLine {
+  background: linear-gradient(to right,
+              rgb(255, 255, 255),
+              rgb(0, 0, 0),
+              rgb(255, 255, 255));
+  height: 1px;
+  width: 86%;
+  margin: 4px auto;
+  margin-left: 44px;
+  position: relative;
+}
+.tooltipTag {
+  display: inline-block;
+  font-family: Arial;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 0px 3px;
+  opacity: 0.75;
+}
+/* ############################## */
+/* Store related css */
 #store {
   position: relative;
 }
@@ -137,16 +180,66 @@ div {
 }
 #upgrades {
   width: auto;
-  min-height: 48px;
+  height: 48px;
 }
-.div-purchase {
+/* ############################## */
+/* Item Store related css */ 
+.storeItem {
   height: 64px;
-  width: 400px;
+  width: 398px;
   cursor: pointer;
   position: relative;
+  display: inline-block;
   border-style: solid;
   border-width: 1px;
 }
+.storeIcon {
+  width: 64px;
+  height: 64px;
+  margin-right: 8px;
+  display: inline-block;
+}
+.storeContent {
+  top: 8px;
+  left: 64px;
+  right: 0px;
+  bottom: 8px;
+  position: absolute;
+}
+.storeHeader {
+  font-family: Arial;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 3px 3px;
+}
+.storeDesc {
+  font-family: Arial;
+  font-size: 12px;
+  padding: 3px 3px;
+}
+.storeOwned {
+  font-family: Arial;
+  font-size: 40px;
+  position: absolute;
+  right: 8px;
+  top: 4px;
+}
+/* ############################## */
+/* Item Upgrade related css */ 
+.upgradeItem {
+  height: 48px;
+  width: 48px;
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
+}
+.upgradeIcon {
+  width: 48px;
+  height: 48px;
+  display: inline-block;
+}
+/* ############################## */
+/* Old Design related css */ 
 .div-upgrade {
   width: 48px;
   height: 48px;
@@ -158,9 +251,23 @@ div {
 }
 .div-purchaseContent {
   top: 10px;
-  left: 64px;
+  left: 0px;
   right: 0px;
+  position: relative;
+}
+.div-upgradeIcon {
+  width: 48;
+  height: 48;
+  top: 0;
+  left: 0;
   position: absolute;
+}
+.div-itemCost {
+  position: relative;
+}
+.div-itemOwned {
+  position: absolute;
+  right: 10px;
 }
 .div-itemIcon {
   width: 64px;
@@ -185,4 +292,30 @@ div {
 .div-itemOwned {
   position: absolute;
   right: 10px;
+}
+/* ############################## */
+/* General purpose css */
+.border {
+  padding: 16px;
+  border: 4px solid black;
+  border-radius: 4px;
+  margin: 4px;
+}
+.div-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0px 4px;
+  display: inline-block;
+}
+.div-name {
+  font-weight: bold;
+  font-weight: 110%;
+  margin: 4px 4px;
+}
+.div-desc {
+  margin: 4px 4px;
+}
+.div-addDesc {
+  font-size: 90%;
+  padding: 2px 2px;
 }

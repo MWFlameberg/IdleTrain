@@ -1,52 +1,27 @@
 [
     {
-    "id": 0,
+        "id": 0,
         "name": "Crappy Train",
-        "description": "This is a Crappy train",
+        "desc": "This is a Crappy train",
+        "extDesc": "This train was made out of old wood.",
+        "iFile": "/Images/placeholder.png",
+        "iCoords": {
+            "x": 0,
+            "y": 0
+        },
+        "ttiFile": "/Images/tooltip-placeholder.png",
+        "ttiCoords": {
+            "x": 0,
+            "y": 0
+        },
         "stats": {
-            "baseCost": 10,
-            "basePower": 0.1,
-            "baseMultiplier": 1.15
-        }
-    },
-    {
-        "id": 1,
-        "name": "Bad Train",
-        "description": "This is a Bad train",
-        "stats": {
-            "baseCost": 100,
-            "basePower": 0.5,
-            "baseMultiplier": 1.15
-        }
-    },
-    {
-        "id": 2,
-        "name": "Average Train",
-        "description": "This is a Average train",
-        "stats": {
-            "baseCost": 200,
-            "basePower": 1,
-            "baseMultiplier": 1.15
-        }
-    },
-    {
-        "id": 3,
-        "name": "OK Train",
-        "description": "This is a OK train",
-        "stats": {
-            "baseCost": 400,
-            "basePower": 2.5,
-            "baseMultiplier": 1.15
-        }
-    },
-    {
-        "id": 4,
-        "name": "Good Train",
-        "description": "This is a Good train",
-        "stats": {
-            "baseCost": 1000,
-            "basePower": 10,
-            "baseMultiplier": 1.15
-        }
+            "bCost": 10,
+            "bPower": 0.1,
+            "bCostMult": 1.15
+        },
+        "reqs": [{
+            "item": -1,
+            "qty": 10
+        }]
     }
 ]

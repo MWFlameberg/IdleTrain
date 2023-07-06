@@ -1,26 +1,27 @@
 [ 
     {
         "id": 0,
-        "name": "Upg1",
-        "description": "This is a basic upgrade",
-        "baseCost": 10,
-        "affectedItem": 0,
-        "basePower": 2.0,
-        "requirement": {
-            "itemReq": 0,
-            "amtReq": 1
-        }
-    },
-    {
-        "id": 1,
-        "name": "Upg2",
-        "description": "This is a basic upgrade",
-        "upgradeCost": 100,
-        "upgradeItem": 0,
-        "upgradePower": 2.0,
-        "requirement": {
-            "itemReq": 0,
-            "amtReq": 10
-        }
+        "name": "Crappy Engine",
+        "desc": "Give your crappy train a crappy engine.",
+        "extDesc": "Does it actually improve your train? Not a clue!",
+        "iFile": "/Images/upgrade-placeholder.png",
+        "iCoords": {
+            "x": 0,
+            "y": 0
+        },
+        "ttiFile": "/Images/upgrade-placeholder.png",
+        "ttiCoords": {
+           "x": 0,
+           "y": 0
+        },
+        "bCost": 10,
+        "upgrades": [{
+            "item": 0,
+            "mult": 2
+        }],
+        "reqs": [{
+            "item": 0,
+            "qty": 1
+        }]
     }
 ]
