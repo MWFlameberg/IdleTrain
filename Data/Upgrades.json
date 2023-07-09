@@ -1,9 +1,9 @@
 [ 
     {
         "id": 0,
-        "name": "Crappy Engine",
-        "desc": "Give your crappy train a crappy engine.",
-        "extDesc": "Does it actually improve your train? Not a clue!",
+        "name": "Slightly Less Crappy Engine",
+        "desc": "Doubles the power of Crappy Trains.",
+        "extDesc": "It's slightly better than the current engine I guess.",
         "iFile": "/Images/upgrade-placeholder.png",
         "iCoords": {
             "x": 0,
@@ -14,7 +14,7 @@
            "x": 0,
            "y": 0
         },
-        "bCost": 10,
+        "bCost": 100,
         "upgrades": [{
             "item": 0,
             "mult": 2
@@ -22,6 +22,81 @@
         "reqs": [{
             "item": 0,
             "qty": 1
+        }]
+    },
+    {
+        "id": 1,
+        "name": "Coal Shoveler",
+        "desc": "Doubles the power of Crappy Trains.",
+        "extDesc": "He's not paid so it's ok. It's pure profit.",
+        "iFile": "/Images/upgrade-placeholder.png",
+        "iCoords": {
+            "x": 0,
+            "y": 0
+        },
+        "ttiFile": "/Images/upgrade-placeholder.png",
+        "ttiCoords": {
+           "x": 0,
+           "y": 0
+        },
+        "bCost": 500,
+        "upgrades": [{
+            "item": 0,
+            "mult": 2
+        }],
+        "reqs": [{
+            "item": 0,
+            "qty": 10
+        }]
+    },
+    {
+        "id": 2,
+        "name": "Subpar Service",
+        "desc": "Doubles the power of Train Carriages.",
+        "extDesc": "What's a good train without a below average host serving drinks?",
+        "iFile": "/Images/upgrade-placeholder.png",
+        "iCoords": {
+            "x": 0,
+            "y": 0
+        },
+        "ttiFile": "/Images/upgrade-placeholder.png",
+        "ttiCoords": {
+           "x": 0,
+           "y": 0
+        },
+        "bCost": 500,
+        "upgrades": [{
+            "item": 1,
+            "mult": 2
+        }],
+        "reqs": [{
+            "item": 1,
+            "qty": 1
+        }]
+    },
+    {
+        "id": 3,
+        "name": "Tinted Windows",
+        "desc": "Doubles the power of Train Carriages.",
+        "extDesc": "Guests don't need to see outside? Right?",
+        "iFile": "/Images/upgrade-placeholder.png",
+        "iCoords": {
+            "x": 0,
+            "y": 0
+        },
+        "ttiFile": "/Images/upgrade-placeholder.png",
+        "ttiCoords": {
+           "x": 0,
+           "y": 0
+        },
+        "bCost": 1000,
+        "upgrades": [{
+            "item": 1,
+            "mult": 2
+        }],
+        "reqs": [{
+            "item": 1,
+            "qty": 10
         }]
     }
 ]

@@ -2,18 +2,8 @@ function el(id) { return document.getElementById(id); };
 
 var Game = {};
 //#region Content Drawing
-Game.DrawUpgrade = function(upgrade) {
-    var container = upgrade.drawStoreItem();
-    container.onclick = function() { Game.BuyUpgrade(upgrade.id) };
-    container.onmouseover = function() { Game.tooltip.draw(function() {return upgrade.getTooltip() }, 'store') };
-    container.onmouseout = function() { Game.tooltip.shouldHide = 1 }
-};
-Game.DrawItem = function(item) {
-    var container = item.drawStoreItem();
-    container.onclick = function() { Game.BuyItem(item.id) };
-    container.onmouseover = function() { Game.tooltip.draw(function() {return item.getTooltip() }, 'store') };
-    container.onmouseout = function() { Game.tooltip.shouldHide = 1 }
-};
+Game.EnableElement = function(element) { element.classList.add('enabled'); };
+Game.DisableElement = function(element) { element.classList.remove('enabled'); };
 //#endregion
 //#region Data Initialisation
 Game.LoadItems = async function() {
@@ -29,6 +19,9 @@ Game.LoadItems = async function() {
                                 item.iFile, {x: item.iCoords.x, y: item.iCoords.y},
                                 item.ttiFile, {x: item.ttiCoords.x, y: item.ttiCoords.y},
                                 reqsTemp);
+            if (Game.ItemThings[item.id].unlock() == 1) {
+                Game.ItemThings[item.id].drawStoreItem();
+            }
         });
     });
 };
@@ -61,37 +54,62 @@ Game.SubtractPower = function(power) {
 };
 Game.AddPower = function(power) {
     Game.TP += power;
-    Game.LTTP += 1;
+    Game.LTTP += power;
 };
 Game.ClickTrain = function() {
     Game.AddPower(1);
     Game.UpdateTP();
 };
-Game.CheckForNewUpgrades = function() {
+Game.CheckForPurchasable = function() {
+    Game.ItemUpgrades.forEach(function(upgrade) {
+        if(upgrade.visible == 1) {
+            if (upgrade.canBuy() == 1 && upgrade.enabled == 1) {
+                Game.EnableElement(el('upgrade' + upgrade.id));
+                upgrade.enabled = 0
+            }
+            else if (upgrade.canBuy() == 0 && upgrade.enabled == 0) {
+                Game.DisableElement(el('upgrade' + upgrade.id));
+                upgrade.enabled = 1
+            }
+        }
+    });
+
+    Game.ItemThings.forEach(function(item) {
+        if (item.canBuy(Game.bulkQty) == 1 && item.enabled == 1) {
+            Game.EnableElement(el('item' + item.id));
+            item.enabled = 0
+        }
+        else if (item.canBuy(Game.bulkQty) == 0 && item.enabled == 0) {
+            Game.DisableElement(el('item' + item.id));
+            item.enabled = 1
+        }
+    });
+}
+Game.CheckForNewUnlocks = function() {
     Game.ItemUpgrades.forEach(function(upgrade) {
         if (upgrade.unlock() == 1) {
-            Game.DrawUpgrade(upgrade);
+            upgrade.drawStoreItem();
         }
     });
     Game.ItemThings.forEach(function(item) {
         if (item.unlock() == 1) {
-            Game.DrawItem(item);
+            item.drawStoreItem();
         }
     });
 };
-Game.BuyItem = function(itemID) {
-    if (Game.ItemThings[itemID].buy(1) == 1) {
-        el('item' + itemID + 'qty').innerHTML = Game.ItemThings[itemID].qty;
-        el('item' + itemID + 'cost').innerHTML = Game.ItemThings[itemID].getCost();
-        Game.CheckForNewUpgrades();
-        Game.RecalcTPS();
+Game.Buy = function(id, type) {
+    if (type == 'Item') {
+        if (Game.ItemThings[id].buy(Game.bulkQty) == 1) {
+            Game.refresh = 1;
+        }
     }
-};
-Game.BuyUpgrade = function(upgradeID) {
-    if (Game.ItemUpgrades[upgradeID].buy() == 1) {
-        Game.CheckForNewUpgrades();
-        Game.RecalcTPS();
+    else if (type == 'Upgrade') {
+        if (Game.ItemUpgrades[id].buy() == 1) {
+            Game.refresh = 1;
+        }
     }
+    Game.CheckForNewUnlocks();
+    Game.RecalcTPS();
 };
 //#region Tooltips
 Game.tooltip = {};
@@ -104,23 +122,20 @@ Game.tooltip.initialise = function() {
     this.tt = el('tooltip');
     this.tta = el('tooltipAnchor');
 };
-Game.tooltip.draw = function(text, origin) {
+Game.tooltip.drawTooltip = function(text, origin) {
     this.shouldHide = 0;
     this.text = text;
     this.origin = origin;
-    if (typeof this.text === 'function') {
-        this.tt.innerHTML = this.text();
-    } else this.tt.innerHTML = this.text;
+    this.updateTooltip();
     this.tta.style.display = 'block';
     this.dynamic = 1;
     this.visible = 1;
-    Game.tooltip.update();
 };
-Game.tooltip.update = function() {
+Game.tooltip.updateTooltip = function() {
     var x = 0;
     var y = 0;
     if (this.origin == 'store') {
-        x = Game.windowW - 420 - this.tt.offsetWidth;
+        x = Game.windowW - 404 - this.tt.offsetWidth;
         y = Game.mouseY - 16;
     }
     if (this.dynamic == 1) {
@@ -130,14 +145,14 @@ Game.tooltip.update = function() {
         this.tta.style.bottom = 'auto';
     }
     if (this.shouldHide == 1) {
-        this.hide();
+        this.hideTooltip();
     } else {
         if (typeof this.text === 'function') {
             this.tt.innerHTML = this.text();
         } else this.tt.innerHTML = this.text;
     }
 };
-Game.tooltip.hide = function() {
+Game.tooltip.hideTooltip = function() {
     this.tta.style.display = 'none';
     this.tt.innerHTML = '';
     this.dynamic = 0;
@@ -179,6 +194,17 @@ Game.Resize = function(e) {
         Game.wrapper.style.height = Game.windowH + 'px';
     }
 }
+Game.StoreBulkQty = function(id) {
+    if(id == 1) Game.bulkQty = 1;
+    else if (id == 2) Game.bulkQty = 10;
+    else if (id == 3) Game.bulkQty = 100;
+
+    if(Game.bulkQty == 1) el('storeBulk1').className = 'storeBulkAmount selected'; else el('storeBulk1').className = 'storeBulkAmount';
+    if(Game.bulkQty == 10) el('storeBulk10').className = 'storeBulkAmount selected'; else el('storeBulk10').className = 'storeBulkAmount';
+    if(Game.bulkQty == 100) el('storeBulk100').className = 'storeBulkAmount selected'; else el('storeBulk100').className = 'storeBulkAmount';  
+
+    Game.refresh = 1;
+};
 //#region Start Function and Loop
 Game.RecalcTPS = function() {
     var totalTPS = 0.0;
@@ -194,8 +220,14 @@ Game.Loop = function() {
     el('total').innerHTML = Math.floor(Game.TP);
     el('rawtotal').innerHTML = Game.TP;
     el('lifetimetotal').innerHTML = Game.LTTP;
-    Game.tooltip.update();
-    Game.CheckForNewUpgrades();
+    Game.tooltip.updateTooltip();
+    Game.CheckForPurchasable();
+    if(Game.refresh == 1) {
+        Game.ItemThings.forEach(function(item) {
+            item.refresh();
+        });
+        Game.refresh = 0;
+    }
 };
 Game.Init = function() {
     Game.TP = 0;
@@ -211,6 +243,10 @@ Game.Init = function() {
     Game.windowW = window.innerWidth;
     Game.windowH = window.innerHeight;
     Game.scale = 1;
+
+    Game.refresh = 0;
+
+    Game.bulkQty = 1;
 
     Game.wrapper = el('wrapper');
     document.addEventListener('mousemove', Game.GetMouseCoords);

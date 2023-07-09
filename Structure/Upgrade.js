@@ -20,7 +20,17 @@ Game.ItemUpgrade = function(id, name, desc, extDesc, bCost,
     //Flag properties.
     this.unlocked = 0;
     this.visible = 0;
+    this.enabled = 0;
+    //HTML properties;
+    this.element;
 
+    this.canBuy = function() {
+        var success = 0;
+        if (Game.TP >= this.cost) {
+            success = 1;
+        }
+        return success;
+    }
     this.buy = function() {
         var success = 0;
         if (Game.TP >= this.cost) {
@@ -29,7 +39,7 @@ Game.ItemUpgrade = function(id, name, desc, extDesc, bCost,
             this.unlocked = 1;
             this.visible = 0;
             el('upgrade' + this.id).remove();
-            Game.tooltip.hide();
+            Game.tooltip.hideTooltip();
             success = 1;
         }
         return success;
@@ -45,8 +55,15 @@ Game.ItemUpgrade = function(id, name, desc, extDesc, bCost,
         }
         var unlockable = 1;
         for(let i = 0; i < this.reqs.length; i++) {
-            if (Game.ItemThings[this.reqs[i].item].qty < this.reqs[i].qty) {
-                unlockable = 0;
+            if (this.reqs[i].item == -1) {
+                if (Game.LTTP < this.reqs[i].qty) {
+                    unlockable = 0;
+                }
+            }
+            else {
+                if (Game.ItemThings[this.reqs[i].item].qty < this.reqs[i].qty) {
+                    unlockable = 0;
+                }
             }
         }
         if (unlockable == 1) {
@@ -64,12 +81,15 @@ Game.ItemUpgrade = function(id, name, desc, extDesc, bCost,
             '</div>'
     };
     this.drawStoreItem = function() {
-        var container = el('upgrades').appendChild(document.createElement('div'));
-        container.id = 'upgrade' + this.id;
-        container.className = 'upgradeItem';
-        container.innerHTML = '<div class="upgradeIcon" style="float:left; background-position:' + this.iCoords.x + 'px ' + this.iCoords.y + 'px;background-image:url(' + this.iFile + ')"></div>'
+        this.element = el('upgrades').appendChild(document.createElement('div'));
+        this.element.id = 'upgrade' + this.id;
+        this.element.className = 'upgradeItem';
+        this.element.innerHTML = '<div class="upgradeIcon" style="float:left; background-position:' + this.iCoords.x + 'px ' + this.iCoords.y + 'px;background-image:url(' + this.iFile + ')"></div>'
         this.visible = 1;
-        return container;
+
+        this.element.onclick = function() { Game.Buy(id, 'Upgrade') };
+        this.element.onmousemove = function() { Game.tooltip.drawTooltip(function() {return Game.ItemUpgrades[id].getTooltip() }, 'store') };
+        this.element.onmouseout =  function() { Game.tooltip.hideTooltip() };
     }
     Game.ItemUpgrades.push(this);
 }

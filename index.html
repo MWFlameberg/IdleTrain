@@ -29,14 +29,20 @@
             <div id="dividerRight" class="dividerRight"></div>
             <div id="sectionRight">
                <div id="store">
-                  <div id="upgrades"></div>
                   <div id="dividerStore"></div>
-                  <div id="items"></div>
+                  <div id="upgrades" class="storeSection"></div>
+                  <div id="dividerStore"></div>
+                  <div id="storeBulk">
+                     <div id="storeBulk1" class="storeBulkAmount selected" onclick="Game.StoreBulkQty(1)">1</div>
+                     <div id="storeBulk10" class="storeBulkAmount" onclick="Game.StoreBulkQty(2)">10</div>
+                     <div id="storeBulk100" class="storeBulkAmount" onclick="Game.StoreBulkQty(3)">100</div>
+                  </div>
+                  <div id="items" class="storeSection"></div>
                </div>
             </div>
          </div>
          <div id="tooltipAnchor" style="display: none;">
-            <div id="tooltip" class="border" onMouseOut="Game.tooltip.hide();">
+            <div id="tooltip" class="border" onMouseOut="Game.tooltip.hideTooltip();">
             </div>
          </div>
       </div>

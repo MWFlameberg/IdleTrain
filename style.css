@@ -27,6 +27,11 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
 	line-height: 1;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
 }
 ol, ul {
 	list-style: none;
@@ -73,7 +78,7 @@ div {
   position: absolute;
 }
 .dividerRight {
-  right: 400px;
+  right: 384px;
 }
 #dividerStore {
   width: 100%;
@@ -174,24 +179,49 @@ div {
 #store {
   position: relative;
 }
-#items {
-  position: relative;
-  width: 400px;
-}
 #upgrades {
+  position: relative;
   width: auto;
   height: 48px;
+  overflow: hidden;
+}
+#upgrades:hover {
+  position: relative;
+  width: auto;
+  height: 96px;
+  overflow: hidden;
+}
+#storeBulk {
+  width: auto;
+  height: 32px;
+  padding: 0px;
+  overflow: hidden;
+}
+.storeSection {
+  width: 384px;
+  position: relative;
+  overflow-y: hidden;
+}
+.storeBulkAmount {
+  float: left;
+  text-align: center;
+  width: 32px;
+  padding: 9px 0px;
+  cursor: pointer;
+}
+.storeBulkAmount.selected {
+  font-weight: bold;
 }
 /* ############################## */
 /* Item Store related css */ 
 .storeItem {
   height: 64px;
-  width: 398px;
+  width: auto;
   cursor: pointer;
   position: relative;
-  display: inline-block;
   border-style: solid;
   border-width: 1px;
+  opacity: 0.5;
 }
 .storeIcon {
   width: 64px;
@@ -224,6 +254,9 @@ div {
   right: 8px;
   top: 4px;
 }
+.storeItem.enabled {
+  opacity: 1;
+}
 /* ############################## */
 /* Item Upgrade related css */ 
 .upgradeItem {
@@ -231,67 +264,15 @@ div {
   width: 48px;
   cursor: pointer;
   position: relative;
-  display: inline-block;
+  display: inline;
+  opacity: 0.5;
 }
 .upgradeIcon {
   width: 48px;
   height: 48px;
-  display: inline-block;
 }
-/* ############################## */
-/* Old Design related css */ 
-.div-upgrade {
-  width: 48px;
-  height: 48px;
-  cursor: pointer;
-  position: relative;
-  border-style: solid;
-  border-width: 1px;
-  float: left;
-}
-.div-purchaseContent {
-  top: 10px;
-  left: 0px;
-  right: 0px;
-  position: relative;
-}
-.div-upgradeIcon {
-  width: 48;
-  height: 48;
-  top: 0;
-  left: 0;
-  position: absolute;
-}
-.div-itemCost {
-  position: relative;
-}
-.div-itemOwned {
-  position: absolute;
-  right: 10px;
-}
-.div-itemIcon {
-  width: 64px;
-  height: 64px;
-  top: 0;
-  left: 0;
-  position: absolute;
-}
-.div-upgradeIcon {
-  width: 48;
-  height: 48;
-  top: 0;
-  left: 0;
-  position: absolute;
-}
-.div-itemName {
-  position: relative;
-}
-.div-itemCost {
-  position: relative;
-}
-.div-itemOwned {
-  position: absolute;
-  right: 10px;
+.upgradeItem.enabled {
+  opacity: 1;
 }
 /* ############################## */
 /* General purpose css */

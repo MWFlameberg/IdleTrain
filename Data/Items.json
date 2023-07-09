@@ -17,11 +17,36 @@
         "stats": {
             "bCost": 10,
             "bPower": 0.1,
-            "bCostMult": 1.15
+            "bCostMult": 1.1
         },
         "reqs": [{
             "item": -1,
-            "qty": 10
+            "qty": 0
+        }]
+    },
+    {
+        "id": 1,
+        "name": "Train Carriage",
+        "desc": "A Carriage for your train to pull along",
+        "extDesc": "Not especially big, but enough to carry a couple guests to earn some income.",
+        "iFile": "/Images/placeholder.png",
+        "iCoords": {
+            "x": 0,
+            "y": 0
+        },
+        "ttiFile": "/Images/tooltip-placeholder.png",
+        "ttiCoords": {
+            "x": 0,
+            "y": 0
+        },
+        "stats": {
+            "bCost": 100,
+            "bPower": 1,
+            "bCostMult": 1.1
+        },
+        "reqs": [{
+            "item": -1,
+            "qty": 0
         }]
     }
 ]
