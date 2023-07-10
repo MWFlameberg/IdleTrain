@@ -74,16 +74,31 @@ Game.CheckForPurchasable = function() {
         }
     });
 
-    Game.ItemThings.forEach(function(item) {
-        if (item.canBuy(Game.bulkQty) == 1 && item.enabled == 1) {
-            Game.EnableElement(el('item' + item.id));
-            item.enabled = 0
-        }
-        else if (item.canBuy(Game.bulkQty) == 0 && item.enabled == 0) {
-            Game.DisableElement(el('item' + item.id));
-            item.enabled = 1
-        }
-    });
+    if (Game.bulkMode == 1) {
+        Game.ItemThings.forEach(function(item) {
+            if (item.canBuy(Game.bulkQty) == 1 && item.enabled == 1) {
+                Game.EnableElement(el('item' + item.id));
+                item.enabled = 0
+            }
+            else if (item.canBuy(Game.bulkQty) == 0 && item.enabled == 0) {
+                Game.DisableElement(el('item' + item.id));
+                item.enabled = 1
+            }
+        });
+    }
+    else if (Game.bulkMode == 2) {
+        Game.ItemThings.forEach(function(item) {
+            if (item.qty > 0) {
+                Game.EnableElement(el('item' + item.id));
+                item.enabled = 0
+            }
+            else {
+                Game.DisableElement(el('item' + item.id));
+                item.enabled = 1
+            }
+        });
+    }
+    
 }
 Game.CheckForNewUnlocks = function() {
     Game.ItemUpgrades.forEach(function(upgrade) {
@@ -99,15 +114,20 @@ Game.CheckForNewUnlocks = function() {
 };
 Game.Buy = function(id, type) {
     if (type == 'Item') {
-        if (Game.ItemThings[id].buy(Game.bulkQty) == 1) {
+        if (Game.bulkMode == 1) {
+            Game.ItemThings[id].buy(Game.bulkQty)
             Game.refresh = 1;
+        }
+        else if (Game.bulkMode == 2) {
+            Game.ItemThings[id].sell(Game.bulkQty)
+                Game.refresh = 1;
         }
     }
     else if (type == 'Upgrade') {
-        if (Game.ItemUpgrades[id].buy() == 1) {
-            Game.refresh = 1;
-        }
+        Game.ItemUpgrades[id].buy()
+        Game.refresh = 1;
     }
+
     Game.CheckForNewUnlocks();
     Game.RecalcTPS();
 };
@@ -194,14 +214,18 @@ Game.Resize = function(e) {
         Game.wrapper.style.height = Game.windowH + 'px';
     }
 }
-Game.StoreBulkQty = function(id) {
+Game.StoreBulkMode = function(id) {
     if(id == 1) Game.bulkQty = 1;
     else if (id == 2) Game.bulkQty = 10;
     else if (id == 3) Game.bulkQty = 100;
+    else if (id == 4) Game.bulkMode = 1;
+    else if (id == 5) Game.bulkMode = 2;
 
     if(Game.bulkQty == 1) el('storeBulk1').className = 'storeBulkAmount selected'; else el('storeBulk1').className = 'storeBulkAmount';
     if(Game.bulkQty == 10) el('storeBulk10').className = 'storeBulkAmount selected'; else el('storeBulk10').className = 'storeBulkAmount';
     if(Game.bulkQty == 100) el('storeBulk100').className = 'storeBulkAmount selected'; else el('storeBulk100').className = 'storeBulkAmount';  
+    if(Game.bulkMode == 1) el('storeBulkBuy').className = 'storeBulkMode selected'; else el('storeBulkBuy').className = 'storeBulkMode';
+    if(Game.bulkMode == 2) el('storeBulkSell').className = 'storeBulkMode selected'; else el('storeBulkSell').className = 'storeBulkMode';
 
     Game.refresh = 1;
 };
@@ -246,6 +270,7 @@ Game.Init = function() {
 
     Game.refresh = 0;
 
+    Game.bulkMode = 1;
     Game.bulkQty = 1;
 
     Game.wrapper = el('wrapper');

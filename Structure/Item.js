@@ -37,7 +37,7 @@ Game.ItemThing = function(id, name, desc, extDesc, bCost, bPower, bCostMult,
             success = 1;
         }
         return success;
-    }
+    };
     this.buy = function(qty) {
         var success = 0;
         var cost = this.getSumCost(qty);
@@ -50,20 +50,39 @@ Game.ItemThing = function(id, name, desc, extDesc, bCost, bPower, bCostMult,
         }
         return success;
     };
+    this.sell = function(qty) {
+        if (qty > this.qty) {
+            qty = this.qty;
+        };
+        var cost = this.getSumSell(qty);
+        this.qty -= qty;
+        Game.TP += cost;
+    };
     this.upgrade = function(mult) {
         this.powerMult *= mult;
         this.update();
     };
     this.getCost = function() {
-        var cost = this.bCost * Math.pow(this.bCostMult, this.qty);
-        return Math.ceil(cost);
+        var cost = Math.ceil(this.bCost * Math.pow(this.bCostMult, this.qty));
+        return cost;
     };
     this.getSumCost = function(qty) {
         var cost = 0;
         for (var i = this.qty; i < this.qty + qty; i++) {
-            cost += this.bCost * Math.pow(this.bCostMult, i)
+            cost += Math.ceil(this.bCost * Math.pow(this.bCostMult, i));
         }
-        return Math.ceil(cost);
+        return cost;
+    };
+    this.getSumSell = function(qty) {
+        if (this.qty == 0) { return 0; };
+        if (qty > this.qty) { qty = this.qty; };
+        var cost = 0;
+        var i = qty;
+        do {
+            cost += Math.ceil(this.bCost * Math.pow(this.bCostMult, this.qty - 1) * 0.6);
+            i--;
+        } while (i > this.qty - qty)
+        return cost;
     };
     this.unlock = function() {
         if (this.unlocked == 1) {
@@ -87,11 +106,15 @@ Game.ItemThing = function(id, name, desc, extDesc, bCost, bPower, bCostMult,
             this.unlocked = 1;
         }
         return unlockable;
-    }
+    };
     this.getTooltip = function() {
+        var cost = 0;
+        if (Game.bulkMode == 1) cost =this.getSumCost(Game.bulkQty);
+        else if (Game.bulkMode == 2) cost = this.getSumSell(Game.bulkQty);
+
         return '<div id="tooltipItem">' +
                 '<div class="tooltipIcon" style="float:left; background-position:' + this.ttiCoords.x + 'px ' + this.ttiCoords.y + 'px;background-image:url(' + this.ttiFile + ')"></div>' +
-                '<div style="float:right; text-align:right;">' + this.getSumCost(Game.bulkQty) + '</div>' +
+                '<div style="float:right; text-align:right;">' + cost + '</div>' +
                 '<div class="tooltipHeader">' + this.name + '</div>' +
                 '<div class="tooltipTag">' + 'owned: ' + this.qty + '</div>' +
                 '<div class="tooltipLine"></div>' +
@@ -103,13 +126,17 @@ Game.ItemThing = function(id, name, desc, extDesc, bCost, bPower, bCostMult,
             '</div>'
     };
     this.drawStoreItem = function() {
+        var cost = 0;
+        if (Game.bulkMode == 1) cost =this.getSumCost(Game.bulkQty);
+        else if (Game.bulkMode == 2) cost = this.getSumSell(Game.bulkQty);
+
         this.element = el('items').appendChild(document.createElement('div'));
         this.element.id = 'item' + this.id;
         this.element.className = 'storeItem';
         this.element.innerHTML = '<div class="storeIcon" style="float:left; background-position:' + this.iCoords.x + 'px ' + this.iCoords.y + 'px;background-image:url(' + this.iFile + ')"></div>' +
             '<div class="storeContent">' +
                 '<div class="storeHeader">' + this.name + '</div>' +
-                '<div id="item' + this.id + 'cost" class="storeDesc">' + this.getSumCost(Game.bulkQty) + '</div>' +
+                '<div id="item' + this.id + 'cost" class="storeDesc">' + cost + '</div>' +
                 '<div id="item' + this.id + 'qty" class="storeOwned">' + this.qty + '</div>' +
             '</div>'
         this.visible = 1;
@@ -119,14 +146,17 @@ Game.ItemThing = function(id, name, desc, extDesc, bCost, bPower, bCostMult,
         this.element.onmouseout =  function() { Game.tooltip.hideTooltip() };
     };
     this.refresh = function () {
+        var cost = 0;
+        if (Game.bulkMode == 1) cost =this.getSumCost(Game.bulkQty);
+        else if (Game.bulkMode == 2) cost = this.getSumSell(Game.bulkQty);
         this.cost = this.getSumCost(Game.bulkQty);
         this.element.innerHTML = '<div class="storeIcon" style="float:left; background-position:' + this.iCoords.x + 'px ' + this.iCoords.y + 'px;background-image:url(' + this.iFile + ')"></div>' +
             '<div class="storeContent">' +
                 '<div class="storeHeader">' + this.name + '</div>' +
-                '<div id="item' + this.id + 'cost" class="storeDesc">' + this.getSumCost(Game.bulkQty) + '</div>' +
+                '<div id="item' + this.id + 'cost" class="storeDesc">' + cost + '</div>' +
                 '<div id="item' + this.id + 'qty" class="storeOwned">' + this.qty + '</div>' +
             '</div>'
-    }
+    };
     this.update = function() {
         this.power = Math.round(((this.bPower * this.powerMult)) * 100) / 100;
         this.tps = Math.round(((this.power * this.qty)) * 100) / 100;

@@ -181,26 +181,45 @@ div {
 }
 #upgrades {
   position: relative;
-  width: auto;
+  width: 384px;
   height: 48px;
   overflow: hidden;
 }
 #upgrades:hover {
-  position: relative;
-  width: auto;
-  height: 96px;
-  overflow: hidden;
+  height: auto;
+  min-height: 48px;
 }
 #storeBulk {
-  width: auto;
+  width: 336px;
   height: 32px;
   padding: 0px;
-  overflow: hidden;
+  padding-left: 48px;
+  position: relative;
 }
 .storeSection {
   width: 384px;
   position: relative;
   overflow-y: hidden;
+}
+#storeBulkBuy {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  text-align: center;
+}
+#storeBulkSell {
+  position: absolute;
+  left: 0px;
+  bottom: 0px;
+  text-align: center;
+}
+.storeBulkButton {
+  cursor: pointer;
+}
+.storeBulkMode {
+  float: left;
+  height: 16px;
+  width: 48px;
 }
 .storeBulkAmount {
   float: left;
@@ -209,7 +228,10 @@ div {
   padding: 9px 0px;
   cursor: pointer;
 }
-.storeBulkAmount.selected {
+.storeBulkButton.selected {
+  font-weight: bold;
+}
+.storeBulkButton.selected {
   font-weight: bold;
 }
 /* ############################## */
