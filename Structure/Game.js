@@ -1,4 +1,12 @@
 function el(id) { return document.getElementById(id); };
+function formatNum(num, floats) {
+    var negative = (num < 0);
+    var decimal = '';
+    var fixed = num.toFixed(floats);
+    if (floats > 0) decimal = '.' + fixed.toString().split('.')[1];
+    num = Math.floor(Math.abs(num));
+    return negative ? '-' + num : num + decimal;
+};
 
 var Game = {};
 //#region Content Drawing
@@ -47,18 +55,19 @@ Game.LoadUpgrades = async function() {
 };
 //#endregion
 Game.UpdateTP = function() {
-    document.getElementById('total').innerHTML = Math.floor(Game.TP);
+    document.getElementById('tpTotal').innerHTML = Math.floor(Game.TP);
 };
-Game.SubtractPower = function(power) {
-    Game.TP -= power;
+Game.Spend = function(amt) {
+    Game.trains -= amt;
 };
-Game.AddPower = function(power) {
-    Game.TP += power;
-    Game.LTTP += power;
+Game.Earn = function(amt) {
+    Game.trains += amt;
+    Game.trainsEarned += amt;
 };
 Game.ClickTrain = function() {
-    Game.AddPower(1);
-    Game.UpdateTP();
+    Game.Earn(1);
+    Game.trainClicks += 1;
+    Game.trainsClicked += 1;
 };
 Game.CheckForPurchasable = function() {
     Game.ItemUpgrades.forEach(function(upgrade) {
@@ -73,7 +82,6 @@ Game.CheckForPurchasable = function() {
             }
         }
     });
-
     if (Game.bulkMode == 1) {
         Game.ItemThings.forEach(function(item) {
             if (item.canBuy(Game.bulkQty) == 1 && item.enabled == 1) {
@@ -129,7 +137,7 @@ Game.Buy = function(id, type) {
     }
 
     Game.CheckForNewUnlocks();
-    Game.RecalcTPS();
+    Game.recalcTps = 1;
 };
 //#region Tooltips
 Game.tooltip = {};
@@ -221,59 +229,82 @@ Game.StoreBulkMode = function(id) {
     else if (id == 4) Game.bulkMode = 1;
     else if (id == 5) Game.bulkMode = 2;
 
-    if(Game.bulkQty == 1) el('storeBulk1').className = 'storeBulkAmount selected'; else el('storeBulk1').className = 'storeBulkAmount';
-    if(Game.bulkQty == 10) el('storeBulk10').className = 'storeBulkAmount selected'; else el('storeBulk10').className = 'storeBulkAmount';
-    if(Game.bulkQty == 100) el('storeBulk100').className = 'storeBulkAmount selected'; else el('storeBulk100').className = 'storeBulkAmount';  
-    if(Game.bulkMode == 1) el('storeBulkBuy').className = 'storeBulkMode selected'; else el('storeBulkBuy').className = 'storeBulkMode';
-    if(Game.bulkMode == 2) el('storeBulkSell').className = 'storeBulkMode selected'; else el('storeBulkSell').className = 'storeBulkMode';
+    if(Game.bulkQty == 1) el('storeBulk1').classList.add("selected"); else el('storeBulk1').classList.remove("selected");
+    if(Game.bulkQty == 10) el('storeBulk10').classList.add("selected"); else el('storeBulk10').classList.remove("selected");
+    if(Game.bulkQty == 100) el('storeBulk100').classList.add("selected"); else el('storeBulk100').classList.remove("selected");
+    if(Game.bulkMode == 1) el('storeBulkBuy').classList.add("selected"); else el('storeBulkBuy').classList.remove("selected");
+    if(Game.bulkMode == 2) el('storeBulkSell').classList.add("selected"); else el('storeBulkSell').classList.remove("selected");
 
     Game.refresh = 1;
 };
 //#region Start Function and Loop
-Game.RecalcTPS = function() {
-    var totalTPS = 0.0;
-    Game.ItemThings.forEach(function(item) {
-        totalTPS += item.tps;
+Game.CalculateGains = function() {
+    Game.trainsPs = 0;
+    Game.ItemThings.forEach(function(i) {
+        Game.trainsPs += i.tps;
+        Game.itemTps += i.tps;
     });
-    el('tps').innerHTML = totalTPS;
-}
+    Game.recalcTps = 0;
+};
+Game.Draw = function() {
+
+};
 Game.Loop = function() {
-    Game.ItemThings.forEach(function(item) {
-        item.tick()
-    });
-    el('total').innerHTML = Math.floor(Game.TP);
-    el('rawtotal').innerHTML = Game.TP;
-    el('lifetimetotal').innerHTML = Game.LTTP;
-    Game.tooltip.updateTooltip();
+    if(Game.mouseMoved || Game.tooltip.dynamic) 
+        Game.tooltip.updateTooltip();
+    if(Game.recalcTps) {
+        Game.CalculateGains();
+        el('tps').innerHTML = 'per second: ' + Game.trainsPs ;
+    }
+        
+    Game.Earn(Game.trainsPs / Game.fps);
+    Game.ItemThings.forEach(function(item) { item.totalTP += item.tps / Game.fps; });
+
     Game.CheckForPurchasable();
     if(Game.refresh == 1) {
-        Game.ItemThings.forEach(function(item) {
-            item.refresh();
-        });
+        Game.ItemThings.forEach(function(item) { item.refresh(); });
         Game.refresh = 0;
     }
+
+    el('tpTotal').innerHTML = formatNum(Game.trains,2);
+    
+
+    Game.loopT++;
+    setTimeout(Game.Loop, 1000/Game.fps);
 };
 Game.Init = function() {
-    Game.TP = 0;
-    Game.LTTP = 0;
-    Game.TPS = 0;
-
+    // Train based variables.
+    Game.trainsEarned = 0;
+    Game.trains = 0;
+    Game.trainsPs = 0;
+    Game.trainClicks = 0;
+    Game.trainsClicked = 0;
+    Game.itemTps = 0;
+    // Date and Time based variables.
+    Game.startDate = Date.now();
+    Game.fullStartDate = Date.now();
+    Game.currentDate = Date.now();
+    Game.lastAction = Date.now();
+    // UI and Mouse based variables.
     Game.mouseX = 0;
     Game.mouseY = 0;
     Game.mouseX2 = 0;
     Game.mouseY2 = 0;
-
-    Game.time = Date.now();
+    Game.mouseMoved = 0;
     Game.windowW = window.innerWidth;
     Game.windowH = window.innerHeight;
     Game.scale = 1;
-
+    // Gamestate Flag based variables.
     Game.refresh = 0;
-
     Game.bulkMode = 1;
     Game.bulkQty = 1;
+    Game.recalcTps = 0;
 
+    Game.loopT = 0;
+    Game.fps = 30;
+    // Document Element based variables.
     Game.wrapper = el('wrapper');
+    // Event Listeners.
     document.addEventListener('mousemove', Game.GetMouseCoords);
     window.addEventListener('resize', Game.Resize);
 }
@@ -282,5 +313,6 @@ Game.Launch = async function() {
     Game.LoadItems();
     Game.LoadUpgrades();
     Game.tooltip.initialise();
+    Game.Loop();
 };
 //#endregion

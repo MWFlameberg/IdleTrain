@@ -33,7 +33,7 @@ Game.ItemThing = function(id, name, desc, extDesc, bCost, bPower, bCostMult,
     this.canBuy = function(qty) {
         var success = 0;
         var cost = this.getSumCost(qty);
-        if (Game.TP >= cost) {
+        if (Game.trains >= cost) {
             success = 1;
         }
         return success;
@@ -41,8 +41,8 @@ Game.ItemThing = function(id, name, desc, extDesc, bCost, bPower, bCostMult,
     this.buy = function(qty) {
         var success = 0;
         var cost = this.getSumCost(qty);
-        if (Game.TP >= cost) {
-            Game.TP -= cost;
+        if (Game.trains >= cost) {
+            Game.Spend(cost);
             this.qty += qty;
             this.cost = this.getCost(1);
             this.update();
@@ -56,7 +56,7 @@ Game.ItemThing = function(id, name, desc, extDesc, bCost, bPower, bCostMult,
         };
         var cost = this.getSumSell(qty);
         this.qty -= qty;
-        Game.TP += cost;
+        Game.Earn(cost);
     };
     this.upgrade = function(mult) {
         this.powerMult *= mult;
@@ -91,7 +91,7 @@ Game.ItemThing = function(id, name, desc, extDesc, bCost, bPower, bCostMult,
         var unlockable = 1;
         for(let i = 0; i < this.reqs.length; i++) {
             if (this.reqs[i].item == -1) {
-                if (Game.LTTP < this.reqs[i].qty) {
+                if (Game.trainsEarned < this.reqs[i].qty) {
                     unlockable = 0;
                 }
             }
@@ -122,7 +122,7 @@ Game.ItemThing = function(id, name, desc, extDesc, bCost, bPower, bCostMult,
                 '<div class="tooltipLine"></div>' +
                 '<div class="tooltipStats">' + 'Each ' + this.name + ' generates ' + this.power + ' per second.' + '</div>' +
                 '<div class="tooltipStats">' + this.qty + ' ' + this.name + ' generating ' + this.tps + ' per second.' + '</div>' +
-                '<div class="tooltipStats">' + Math.floor(this.totalTP) + ' generated so far' + '</div>' +
+                '<div class="tooltipStats">' + formatNum(this.totalTP,2) + ' generated so far' + '</div>' +
             '</div>'
     };
     this.drawStoreItem = function() {
@@ -160,11 +160,6 @@ Game.ItemThing = function(id, name, desc, extDesc, bCost, bPower, bCostMult,
     this.update = function() {
         this.power = Math.round(((this.bPower * this.powerMult)) * 100) / 100;
         this.tps = Math.round(((this.power * this.qty)) * 100) / 100;
-    };
-    this.tick = function() {
-        this.totalTP += Math.round(((this.tps / 10)) * 100) / 100;
-        Game.TP += Math.round(((this.tps / 10)) * 100) / 100;
-        Game.LTTP += Math.round(((this.tps / 10)) * 100) / 100;
     };
     Game.ItemThings.push(this);
 }

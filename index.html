@@ -9,7 +9,6 @@
       <script type="text/javascript">
          $(document).ready(function () {
              Game.Launch();
-             setInterval(Game.Loop, 100);
          });
       </script>
    </head>
@@ -17,21 +16,31 @@
       <div id="wrapper">
          <div id="game-container">
             <div id="sectionLeft" >
-               <p id="total">0</p>
-               <p id="rawtotal" hidden>0</p>
-               <p id="lifetimetotal" hidden>0</p>
-               <div id="itemCountLabel">Trains per Second: </div>
-               <div id="tps">0</div>
+               <div class="sectionHeader"></div>
+               <div class="dividerHorizontal"></div>
+               <div id="trainPower">
+                  <div id="tpTotal" class="header">0</div>
+                  <div id="tps" class="miniHeader">per second: 0</div>
+               </div>
                <div id="trainAnchor">
                   <div id="train" onclick="Game.ClickTrain()">TRAIN</div>
                </div>
             </div>
-            <div id="dividerRight" class="dividerRight"></div>
+            <div id="dividerRight"></div>
             <div id="sectionRight">
                <div id="store">
-                  <div id="dividerStore"></div>
+                  <div class="sectionHeader">
+                     <div class="header" style="text-align:center;">Store</div>
+                  </div>
+                  <div class="dividerHorizontal"></div>
+                  <div class="sectionMiniheader">
+                     <div class="miniHeader">Upgrades</div>
+                  </div>
                   <div id="upgrades" class="storeSection"></div>
-                  <div id="dividerStore"></div>
+                  <div class="dividerHorizontal"></div>
+                  <div class="sectionMiniheader">
+                     <div class="miniHeader">Items</div>
+                  </div>
                   <div id="storeBulk">
                      <div id="storeBulkBuy" class="storeBulkButton storeBulkMode selected" onclick="Game.StoreBulkMode(4)">Buy</div>
                      <div id="storeBulkSell" class="storeBulkButton storeBulkMode" onclick="Game.StoreBulkMode(5)">Sell</div>

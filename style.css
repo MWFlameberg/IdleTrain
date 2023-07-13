@@ -67,23 +67,47 @@ div {
   position: absolute;
   left: 0px;
   top: 0px;
-  width: 70%;
+  right: 400px;
   min-width: 100px;
   height: 100%;
+}
+#sectionRight {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  min-width: 100px;
 }
 #dividerRight {
   width: 16px;
   height: 100%;
   background-color: black;
   position: absolute;
-}
-.dividerRight {
   right: 384px;
 }
-#dividerStore {
+.dividerHorizontal {
   width: 100%;
   height: 16px;
   background-color: black;
+}
+.sectionHeader {
+  width: auto;
+  height: 36px;
+  padding: 8px;
+}
+.sectionMiniheader {
+  width: auto;
+  height: 16px;
+  padding: 4px 4px;
+}
+/* ############################## */
+/* Train related css */
+#trainPower {
+  position: absolute;
+  top: 10%;
+  width: 100%;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 8px 0px;
 }
 #trainAnchor {
   position: absolute;
@@ -101,78 +125,6 @@ div {
   margin: -50px 0 0 -100px;
   border-style: solid;
   border-width: 1px;
-}
-#sectionRight {
-  position: absolute;
-  right: 0px;
-  top: 0px;
-  min-width: 100px;
-}
-/* ############################## */
-/* Tooltip related css */ 
-#tooltipAnchor {
-  position: absolute;
-  z-index: 100;
-}
-#tooltipItem {
-  position: relative;
-  min-width: 320px;
-}
-.tooltipIcon {
-  width: 48px;
-  height: 48px;
-  margin-left: -8px;
-  margin-top: -8px;
-  margin-right: 8px;
-  display: inline-block;
-}
-.tooltipHeader {
-  font-family: Arial;
-  font-size: 18px;
-  font-weight: bold;
-  padding: 3px 3px;
-}
-.tooltipDesc {
-  font-family: Arial;
-  font-size: 12px;
-  text-align: right;
-  padding: 3px 3px;
-  margin: 4px 0px;
-}
-.tooltipStats {
-  font-family: Arial;
-  font-size: 10px;
-  padding: 3px 3px;
-  margin: 0px 0px 0px 8px;
-}
-.tooltipLine {
-  background: linear-gradient(to right,
-              rgb(255, 255, 255),
-              rgb(0, 0, 0),
-              rgb(255, 255, 255));
-  height: 1px;
-  width: 100%;
-  margin: 4px auto;
-  position: relative;
-}
-.tooltipShortLine {
-  background: linear-gradient(to right,
-              rgb(255, 255, 255),
-              rgb(0, 0, 0),
-              rgb(255, 255, 255));
-  height: 1px;
-  width: 86%;
-  margin: 4px auto;
-  margin-left: 44px;
-  position: relative;
-}
-.tooltipTag {
-  display: inline-block;
-  font-family: Arial;
-  font-size: 10px;
-  font-weight: bold;
-  padding: 0px 3px;
-  opacity: 0.75;
 }
 /* ############################## */
 /* Store related css */
@@ -226,7 +178,6 @@ div {
   text-align: center;
   width: 32px;
   padding: 9px 0px;
-  cursor: pointer;
 }
 .storeBulkButton.selected {
   font-weight: bold;
@@ -304,21 +255,79 @@ div {
   border-radius: 4px;
   margin: 4px;
 }
-.div-icon {
-  width: 64px;
-  height: 64px;
-  margin: 0px 4px;
+.header {
+  font-family: Arial;
+  font-size: 36px;
+  font-weight: bold;
+}
+.miniHeader {
+  font-family: Arial;
+  font-size: 16px;
+  font-weight: bold;
+}
+/* ############################## */
+/* Tooltip related css */ 
+#tooltipAnchor {
+  position: absolute;
+  z-index: 100;
+}
+#tooltipItem {
+  position: relative;
+  min-width: 320px;
+}
+.tooltipIcon {
+  width: 48px;
+  height: 48px;
+  margin-left: -8px;
+  margin-top: -8px;
+  margin-right: 8px;
   display: inline-block;
 }
-.div-name {
+.tooltipHeader {
+  font-family: Arial;
+  font-size: 18px;
   font-weight: bold;
-  font-weight: 110%;
-  margin: 4px 4px;
+  padding: 3px 3px;
 }
-.div-desc {
-  margin: 4px 4px;
+.tooltipDesc {
+  font-family: Arial;
+  font-size: 12px;
+  text-align: right;
+  padding: 3px 3px;
+  margin: 4px 0px;
 }
-.div-addDesc {
-  font-size: 90%;
-  padding: 2px 2px;
+.tooltipStats {
+  font-family: Arial;
+  font-size: 10px;
+  padding: 3px 3px;
+  margin: 0px 0px 0px 8px;
+}
+.tooltipLine {
+  background: linear-gradient(to right,
+              rgb(255, 255, 255),
+              rgb(0, 0, 0),
+              rgb(255, 255, 255));
+  height: 1px;
+  width: 100%;
+  margin: 4px auto;
+  position: relative;
+}
+.tooltipShortLine {
+  background: linear-gradient(to right,
+              rgb(255, 255, 255),
+              rgb(0, 0, 0),
+              rgb(255, 255, 255));
+  height: 1px;
+  width: 86%;
+  margin: 4px auto;
+  margin-left: 44px;
+  position: relative;
+}
+.tooltipTag {
+  display: inline-block;
+  font-family: Arial;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 0px 3px;
+  opacity: 0.75;
 }

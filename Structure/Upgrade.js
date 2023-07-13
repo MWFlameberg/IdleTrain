@@ -26,15 +26,15 @@ Game.ItemUpgrade = function(id, name, desc, extDesc, bCost,
 
     this.canBuy = function() {
         var success = 0;
-        if (Game.TP >= this.cost) {
+        if (Game.trains >= this.cost) {
             success = 1;
         }
         return success;
     }
     this.buy = function() {
         var success = 0;
-        if (Game.TP >= this.cost) {
-            Game.TP -= this.cost;
+        if (Game.trains >= this.cost) {
+            Game.Spend(this.cost);
             this.applyUpgrade();
             this.unlocked = 1;
             this.visible = 0;
@@ -56,7 +56,7 @@ Game.ItemUpgrade = function(id, name, desc, extDesc, bCost,
         var unlockable = 1;
         for(let i = 0; i < this.reqs.length; i++) {
             if (this.reqs[i].item == -1) {
-                if (Game.LTTP < this.reqs[i].qty) {
+                if (Game.trainsEarned < this.reqs[i].qty) {
                     unlockable = 0;
                 }
             }
