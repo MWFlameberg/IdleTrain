@@ -1,109 +1,103 @@
 Game.ItemThings = [];
-Game.ItemThing = function(id, name, desc, extDesc, bCost, bPower, bCostMult, 
-                        iFile, iCoords, ttiFile, ttiCoords, reqs) {
-    //General purpose properties.
-    this.id = id;
-    this.name = name;
-    this.desc = desc;
-    this.extDesc = extDesc;
-    this.iFile = iFile;
-    this.iCoords = iCoords;
-    this.ttiFile = ttiFile;
-    this.ttiCoords = ttiCoords;
-    //Stat properties.
-    this.bCost = bCost;
-    this.bPower = bPower;
-    this.bCostMult = bCostMult;
-    this.cost = this.bCost;
-    this.power = this.bPower;
-    this.qty = 0;
-    this.powerMult = 1;
+Game.ItemThing = function(itemId, itemName, itemDesc, itemExtraDesc, itemIcon, tooltipIcon,
+                            itemBaseCost, itemBasePower, itemCostMultiplier, itemReqs) {
+    //Item Appearance properties.
+    this.itemId = itemId;
+    this.itemName = itemName;
+    this.itemDesc = itemDesc;
+    this.itemExtraDesc = itemExtraDesc;
+    this.itemIcon = itemIcon;
+    this.tooltipIcon = tooltipIcon;
+    //Base Stat properties.
+    this.itemBaseCost = itemBaseCost;
+    this.itemBasePower = itemBasePower;
+    this.itemCostMultiplier = itemCostMultiplier;
+    //Up to Date Stat properties.
+    this.itemCost = this.itemBaseCost;
+    this.itemPower = this.itemBasePower;
+    this.itemAmt = 0;
+    this.itemTrainsPs = 0;
+    this.itemTotalTrains = 0;
     //Unlock properties.
-    this.reqs = reqs;
+    this.itemReqs = itemReqs;
+    this.itemUpgrades = [];
     //Flag properties.
-    this.unlocked = 0;
-    this.visible = 0;
-    this.enabled = 0;
+    this.isUnlocked = 0;
+    this.isEnabled = 0;
+    this.isVisible = 0;
     //HTML properties.
     this.element;
-    //Historical properties.
-    this.tps = 0;
-    this.totalTP = 0;
 
-    this.canBuy = function(qty) {
+    this.updateItem = function() {
+        var multiplier = 1;
+        this.itemUpgrades.forEach(function(upgrade) {
+            multiplier = multiplier * upgrade.multiplier;
+        });
+        this.itemPower = this.itemBasePower * multiplier;
+        this.itemTrainsPs = this.itemPower * this.itemAmt;
+    };
+    this.canBuyItem = function(amt) {
         var success = 0;
-        var cost = this.getSumCost(qty);
-        if (Game.trains >= cost) {
+        var cost = this.getSumCost(amt);
+        if(Game.trains >= cost) {
             success = 1;
         }
         return success;
     };
-    this.buy = function(qty) {
+    this.buyItem = function(amt) {
         var success = 0;
-        var cost = this.getSumCost(qty);
-        if (Game.trains >= cost) {
+        var cost = this.getSumCost(amt);
+        if(Game.trains >= cost) {
             Game.Spend(cost);
-            this.qty += qty;
-            this.cost = this.getCost(1);
-            this.update();
+            this.itemAmt += amt;
+            this.itemCost = this.getSumCost(1);
+            this.updateItem();
             success = 1;
         }
         return success;
     };
-    this.sell = function(qty) {
-        if (qty > this.qty) {
-            qty = this.qty;
+    this.sellItem = function(amt) {
+        var success = 0;
+        if (amt > this.itemAmt) {
+            amt = this.itemAmt;
         };
-        var cost = this.getSumSell(qty);
-        this.qty -= qty;
+        var cost = this.getSumSell(amt);
         Game.Earn(cost);
+        this.itemAmt -= amt;
+        this.itemCost = this.getSumCost(1);
+        this.updateItem();
+        success = 1;
+        return success;
     };
-    this.upgrade = function(mult) {
-        this.powerMult *= mult;
-        this.update();
-    };
-    this.getCost = function() {
-        var cost = Math.ceil(this.bCost * Math.pow(this.bCostMult, this.qty));
-        return cost;
-    };
-    this.getSumCost = function(qty) {
+    this.getSumCost = function(amt) {
         var cost = 0;
-        for (var i = this.qty; i < this.qty + qty; i++) {
-            cost += Math.ceil(this.bCost * Math.pow(this.bCostMult, i));
+        for (var i = this.itemAmt; i < this.itemAmt + amt; i++) {
+            cost += Math.ceil(this.itemBaseCost * Math.pow(this.itemCostMultiplier, i));
         }
         return cost;
     };
-    this.getSumSell = function(qty) {
-        if (this.qty == 0) { return 0; };
-        if (qty > this.qty) { qty = this.qty; };
+    this.getSumSell = function(amt) {
+        if (this.itemAmt == 0) { return 0; };
+        if (amt > this.itemAmt) { amt = this.itemAmt; };
         var cost = 0;
-        var i = qty;
+        var i = amt;
         do {
-            cost += Math.ceil(this.bCost * Math.pow(this.bCostMult, this.qty - 1) * 0.6);
+            cost += Math.ceil(this.itemBaseCost * Math.pow(this.itemCostMultiplier, this.itemAmt - 1) * 0.6);
             i--;
-        } while (i > this.qty - qty)
+        } while (i > this.itemAmt - amt)
         return cost;
     };
     this.unlock = function() {
-        if (this.unlocked == 1) {
-            return 0;
-        }
+        if (this.isUnlocked == 1 && this.isVisible == 1) { return 0; }
         var unlockable = 1;
-        for(let i = 0; i < this.reqs.length; i++) {
-            if (this.reqs[i].item == -1) {
-                if (Game.trainsEarned < this.reqs[i].qty) {
-                    unlockable = 0;
-                }
+        this.itemReqs.forEach(function(req) {
+            if (!req.unlock()) {
+                unlockable = 0;
             }
-            else
-            {
-                if (Game.ItemThings[this.reqs[i].item].qty < this.reqs[i].qty) {
-                    unlockable = 0;
-                }
-            }
-        }
-        if (unlockable == 1) {
-            this.unlocked = 1;
+        });
+        if (unlockable == 1) { 
+            this.isUnlocked = 1; 
+            this.isVisible = 1;
         }
         return unlockable;
     };
@@ -113,16 +107,16 @@ Game.ItemThing = function(id, name, desc, extDesc, bCost, bPower, bCostMult,
         else if (Game.bulkMode == 2) cost = this.getSumSell(Game.bulkQty);
 
         return '<div id="tooltipItem">' +
-                '<div class="tooltipIcon" style="float:left; background-position:' + this.ttiCoords.x + 'px ' + this.ttiCoords.y + 'px;background-image:url(' + this.ttiFile + ')"></div>' +
+                '<div class="tooltipIcon" style="float:left; background-position:' + this.tooltipIcon.x + 'px ' + this.tooltipIcon.y + 'px;background-image:url(' + this.tooltipIcon.file + ')"></div>' +
                 '<div style="float:right; text-align:right;">' + cost + '</div>' +
-                '<div class="tooltipHeader">' + this.name + '</div>' +
-                '<div class="tooltipTag">' + 'owned: ' + this.qty + '</div>' +
+                '<div class="tooltipHeader">' + this.itemName + '</div>' +
+                '<div class="tooltipTag">' + 'owned: ' + this.itemAmt + '</div>' +
                 '<div class="tooltipLine"></div>' +
-                '<div class="tooltipDesc">' + this.desc + '</div>' +
+                '<div class="tooltipDesc">' + this.itemDesc + '</div>' +
                 '<div class="tooltipLine"></div>' +
-                '<div class="tooltipStats">' + 'Each ' + this.name + ' generates ' + this.power + ' per second.' + '</div>' +
-                '<div class="tooltipStats">' + this.qty + ' ' + this.name + ' generating ' + this.tps + ' per second.' + '</div>' +
-                '<div class="tooltipStats">' + formatNum(this.totalTP,2) + ' generated so far' + '</div>' +
+                '<div class="tooltipStats">' + 'Each ' + this.itemName + ' generates ' + this.itemPower + ' per second.' + '</div>' +
+                '<div class="tooltipStats">' + this.itemAmt + ' ' + this.itemName + ' generating ' + this.itemTrainsPs + ' per second.' + '</div>' +
+                '<div class="tooltipStats">' + this.itemTotalTrains + ' generated so far' + '</div>' +
             '</div>'
     };
     this.drawStoreItem = function() {
@@ -131,18 +125,18 @@ Game.ItemThing = function(id, name, desc, extDesc, bCost, bPower, bCostMult,
         else if (Game.bulkMode == 2) cost = this.getSumSell(Game.bulkQty);
 
         this.element = el('items').appendChild(document.createElement('div'));
-        this.element.id = 'item' + this.id;
+        this.element.id = 'item' + this.itemId;
         this.element.className = 'storeItem';
-        this.element.innerHTML = '<div class="storeIcon" style="float:left; background-position:' + this.iCoords.x + 'px ' + this.iCoords.y + 'px;background-image:url(' + this.iFile + ')"></div>' +
+        this.element.innerHTML = '<div class="storeIcon" style="float:left; background-position:' + this.itemIcon.x + 'px ' + this.itemIcon.y + 'px;background-image:url(' + this.itemIcon.file + ')"></div>' +
             '<div class="storeContent">' +
-                '<div class="storeHeader">' + this.name + '</div>' +
-                '<div id="item' + this.id + 'cost" class="storeDesc">' + cost + '</div>' +
-                '<div id="item' + this.id + 'qty" class="storeOwned">' + this.qty + '</div>' +
+                '<div class="storeHeader">' + this.itemName + '</div>' +
+                '<div id="item' + this.itemId + 'cost" class="storeDesc">' + cost + '</div>' +
+                '<div id="item' + this.itemId + 'qty" class="storeOwned">' + this.itemAmt + '</div>' +
             '</div>'
         this.visible = 1;
 
-        this.element.onclick = function() { Game.Buy(id, 'Item') };
-        this.element.onmousemove = function() { Game.tooltip.drawTooltip(function() {return Game.ItemThings[id].getTooltip() }, 'store') };
+        this.element.onclick = function() { Game.Buy(itemId, 'Item') };
+        this.element.onmousemove = function() { Game.tooltip.drawTooltip(function() {return Game.ItemThings[itemId].getTooltip() }, 'store') };
         this.element.onmouseout =  function() { Game.tooltip.hideTooltip() };
     };
     this.refresh = function () {
@@ -150,16 +144,12 @@ Game.ItemThing = function(id, name, desc, extDesc, bCost, bPower, bCostMult,
         if (Game.bulkMode == 1) cost =this.getSumCost(Game.bulkQty);
         else if (Game.bulkMode == 2) cost = this.getSumSell(Game.bulkQty);
         this.cost = this.getSumCost(Game.bulkQty);
-        this.element.innerHTML = '<div class="storeIcon" style="float:left; background-position:' + this.iCoords.x + 'px ' + this.iCoords.y + 'px;background-image:url(' + this.iFile + ')"></div>' +
+        this.element.innerHTML = '<div class="storeIcon" style="float:left; background-position:' + this.itemIcon.x + 'px ' + this.itemIcon.y + 'px;background-image:url(' + this.itemIcon.file + ')"></div>' +
             '<div class="storeContent">' +
-                '<div class="storeHeader">' + this.name + '</div>' +
-                '<div id="item' + this.id + 'cost" class="storeDesc">' + cost + '</div>' +
-                '<div id="item' + this.id + 'qty" class="storeOwned">' + this.qty + '</div>' +
+                '<div class="storeHeader">' + this.itemName + '</div>' +
+                '<div id="item' + this.itemId + 'cost" class="storeDesc">' + cost + '</div>' +
+                '<div id="item' + this.itemId + 'qty" class="storeOwned">' + this.itemAmt + '</div>' +
             '</div>'
-    };
-    this.update = function() {
-        this.power = Math.round(((this.bPower * this.powerMult)) * 100) / 100;
-        this.tps = Math.round(((this.power * this.qty)) * 100) / 100;
     };
     Game.ItemThings.push(this);
 }

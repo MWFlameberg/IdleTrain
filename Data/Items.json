@@ -1,52 +1,25 @@
 [
     {
-        "id": 0,
-        "name": "Crappy Train",
-        "desc": "This is a Crappy train",
-        "extDesc": "This train was made out of old wood.",
-        "iFile": "/Images/placeholder.png",
-        "iCoords": {
+        "itemId": 0,
+        "itemName": "Crappy Train",
+        "itemDesc": "This is a Crappy train",
+        "itemExtraDesc": "This train was made out of old wood.",
+        "itemBaseCost": 10,
+        "itemBasePower": 0.1,
+        "itemCostMultiplier": 1.1,
+        "itemIcon": {
+            "file": "/Images/placeholder.png",
             "x": 0,
             "y": 0
         },
-        "ttiFile": "/Images/tooltip-placeholder.png",
-        "ttiCoords": {
+        "tooltipIcon": {
+            "file": "/Images/tooltip-placeholder.png",
             "x": 0,
             "y": 0
         },
-        "stats": {
-            "bCost": 10,
-            "bPower": 0.1,
-            "bCostMult": 1.1
-        },
-        "reqs": [{
-            "item": -1,
-            "qty": 0
-        }]
-    },
-    {
-        "id": 1,
-        "name": "Train Carriage",
-        "desc": "A Carriage for your train to pull along",
-        "extDesc": "Not especially big, but enough to carry a couple guests to earn some income.",
-        "iFile": "/Images/placeholder.png",
-        "iCoords": {
-            "x": 0,
-            "y": 0
-        },
-        "ttiFile": "/Images/tooltip-placeholder.png",
-        "ttiCoords": {
-            "x": 0,
-            "y": 0
-        },
-        "stats": {
-            "bCost": 100,
-            "bPower": 1,
-            "bCostMult": 1.1
-        },
-        "reqs": [{
-            "item": -1,
-            "qty": 0
+        "itemReqs": [{
+            "itemId": -1,
+            "itemAmt": 0
         }]
     }
 ]
