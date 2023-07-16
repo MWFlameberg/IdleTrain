@@ -27,7 +27,11 @@ UnlockReq = function(itemId, itemAmt) {
 
     this.unlock = function() {
         if (this.unlocked == 1) { return 1; };
-        if (this.itemId == -1) {
+        if(this.itemId == -2) {
+            if(Game.trainClicks >= this.itemAmt) 
+                this.unlocked = 1;
+        }
+        else if (this.itemId == -1) {
             if(Game.trainsEarned >= this.itemAmt) 
                 this.unlocked = 1;
         }
@@ -37,6 +41,9 @@ UnlockReq = function(itemId, itemAmt) {
         }
         return this.unlocked;
     };
+    this.reset = function() {
+        this.unlocked = 0;
+    }
 };
 var Game = {};
 /*==========================================================================
@@ -53,12 +60,8 @@ Game.LoadItems = async function() {
             var itemIcon = new Icon(this.itemIcon.file, this.itemIcon.x, this.itemIcon.y);
             var tooltipIcon = new Icon(this.tooltipIcon.file, this.tooltipIcon.x, this.tooltipIcon.y);
 
-            new Game.ItemThing(this.itemId, this.itemName, this.itemDesc, this.itemExtraDesc, itemIcon, tooltipIcon,
+            new ItemThing(this.itemId, this.itemName, this.itemDesc, this.itemExtraDesc, itemIcon, tooltipIcon,
                 this.itemBaseCost, this.itemBasePower, this.itemCostMultiplier, tempReqs);
-
-            if (Game.ItemThings[this.itemId].unlock() == 1) {
-                Game.ItemThings[this.itemId].drawStoreItem();
-            }
         });
     });
 };
@@ -77,7 +80,7 @@ Game.LoadUpgrades = async function() {
             var upgradeIcon = new Icon(this.upgradeIcon.file, this.upgradeIcon.x, this.upgradeIcon.y);
             var tooltipIcon = new Icon(this.tooltipIcon.file, this.tooltipIcon.x, this.tooltipIcon.y);
 
-            new Game.ItemUpgrade(this.upgradeId, this.upgradeName, this.upgradeDesc, this.upgradeExtraDesc, upgradeIcon, tooltipIcon,
+            new ItemUpgrade(this.upgradeId, this.upgradeName, this.upgradeDesc, this.upgradeExtraDesc, upgradeIcon, tooltipIcon,
                 this.upgradeBaseCost, tempItems, tempReqs);
         });
     });
@@ -166,6 +169,33 @@ Game.Resize = function(e) {
     }
 };
 /*==========================================================================
+                        Ascension Logic
+==========================================================================*/
+Game.Ascend = function() {
+    Game.ascTrains += Game.trainsEarned;
+    Game.ascMultiplier = 1 + 0.01 * (Game.ascTrains / Game.ascTrainsReq);
+    Game.timesAscended++;
+
+    Game.lastAscension = Date.now();
+
+    Game.trainsEarned = 0;
+    Game.trains = 0;
+    Game.trainsPs = 0;
+    Game.trainClicks = 0;
+    Game.trainsClicked = 0;
+    Game.itemTps = 0;
+
+    Game.recalcTps = 1;
+    Game.refresh = 1;
+
+    Game.ResetItems();
+};
+Game.ResetItems = function() {
+    Game.ItemThings.forEach(function(item) { item.reset() });
+    Game.ItemThings.forEach(function(item) { item.updateItem() });
+    Game.ItemUpgrades.forEach(function(upgrade) { upgrade.reset() });
+};
+/*==========================================================================
                 Tooltip Control and functionality
 ==========================================================================*/
 Game.tooltip = {};
@@ -222,11 +252,11 @@ Game.CheckForPurchasable = function() {
         if(i.isVisible == 1) {
             if (i.canBuyUpgrade() && !i.isEnabled) {
                 enableElement(el('upgrade' + i.upgradeId));
-                i.isEnabled = 0
-            }
-            else if (!i.canBuyUpgrade() && i.isEnabled) {
-                disableElement(el('upgrade' + i.upgradeId));
                 i.isEnabled = 1
+            }
+            else if (!i.canBuyUpgrade()) {
+                disableElement(el('upgrade' + i.upgradeId));
+                i.isEnabled = 0
             }
         }
     });
@@ -234,11 +264,11 @@ Game.CheckForPurchasable = function() {
         Game.ItemThings.forEach(function(i) {
             if (i.canBuyItem(Game.bulkQty) && !i.isEnabled) {
                 enableElement(el('item' + i.itemId));
-                i.isEnabled = 0
-            }
-            else if (!i.canBuyItem(Game.bulkQty)&& i.isEnabled) {
-                disableElement(el('item' + i.itemId));
                 i.isEnabled = 1
+            }
+            else if (!i.canBuyItem(Game.bulkQty)) {
+                disableElement(el('item' + i.itemId));
+                i.isEnabled = 0
             }
         });
     }
@@ -246,27 +276,33 @@ Game.CheckForPurchasable = function() {
         Game.ItemThings.forEach(function(i) {
             if (i.itemAmt > 0) {
                 enableElement(el('item' + i.itemId));
-                i.isEnabled = 0
+                i.isEnabled = 1
             }
             else {
                 disableElement(el('item' + i.itemId));
-                i.isEnabled = 1
+                i.isEnabled = 0
             }
         });
     }
 };
-Game.CheckForNewUnlocks = function() {
+Game.DrawStore = function() {
     Game.ItemUpgrades.forEach(function(i) {
-        if (i.unlock() == 1) {
+        if (i.unlock() && i.element == null) {
             i.drawStoreItem();
+        }
+        else if (!i.isVisible) {
+            i.clearStoreItem()
         }
     });
     Game.ItemThings.forEach(function(i) {
-        if (i.unlock() == 1) {
+        if (i.unlock() && i.element == null) {
             i.drawStoreItem();
         }
+        else if (!i.isVisible) {
+            i.clearStoreItem()
+        }
     });
-};
+}
 Game.CalculateGains = function() {
     Game.trainsPs = 0;
     Game.ItemThings.forEach(function(i) {
@@ -274,29 +310,28 @@ Game.CalculateGains = function() {
         Game.itemTps += i.itemTrainsPs;
     });
 };
-Game.Draw = function() {
-
-};
 Game.Loop = function() {
-    if(Game.mouseMoved || Game.tooltip.dynamic) 
-        Game.tooltip.updateTooltip();
-    if(Game.recalcTps) {
+    if(Game.recalcTps) 
         Game.CalculateGains();
-        el('tps').innerHTML = 'per second: ' + Game.trainsPs ;
-    }
-    if(Game.refresh == 1) {
-        Game.ItemThings.forEach(function(item) { item.refresh(); });
-    }
-        
+
     Game.Earn(Game.trainsPs / Game.fps);
     Game.ItemThings.forEach(function(item) { item.itemTotalTrains += item.itemTrainsPs / Game.fps; });
-
+    
+    Game.DrawStore();
     Game.CheckForPurchasable();
-    Game.CheckForNewUnlocks();
+
+    if(Game.mouseMoved || Game.tooltip.dynamic) 
+        Game.tooltip.updateTooltip();
+    if(Game.recalcTps) 
+        el('tps').innerHTML = 'per second: ' + Game.trainsPs ;
+    if(Game.refresh == 1) 
+        Game.ItemThings.forEach(function(item) { item.refresh(); });
+    
+    el('tpTotal').innerHTML = formatNum(Game.trains,2);
     
     Game.recalcTps = 0;
     Game.refresh = 0;
-    el('tpTotal').innerHTML = formatNum(Game.trains,2);
+    
     Game.loopT++;
     setTimeout(Game.Loop, 1000/Game.fps);
 };
@@ -316,6 +351,7 @@ Game.Init = function() {
     Game.fullStartDate = Date.now();
     Game.currentDate = Date.now();
     Game.lastAction = Date.now();
+    Game.lastAscension = Date.now();
     // UI and Mouse based variables.
     Game.mouseX = 0;
     Game.mouseY = 0;
@@ -330,6 +366,11 @@ Game.Init = function() {
     Game.bulkMode = 1;
     Game.bulkQty = 1;
     Game.recalcTps = 0;
+    // Ascension based variables.
+    Game.timesAscended = 0;
+    Game.ascTrains = 0;
+    Game.ascTrainsReq = 1;
+    Game.ascMultiplier = 1;
     // Loop/Timing based variables.
     Game.loopT = 0;
     Game.fps = 30;

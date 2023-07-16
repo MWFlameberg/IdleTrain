@@ -1,5 +1,5 @@
 Game.ItemUpgrades = [];
-Game.ItemUpgrade = function(upgradeId, upgradeName, upgradeDesc, upgradeExtraDesc, upgradeIcon, tooltipIcon,
+ItemUpgrade = function(upgradeId, upgradeName, upgradeDesc, upgradeExtraDesc, upgradeIcon, tooltipIcon,
                             upgradeBaseCost, upgradeItems, upgradeReqs) {
     //Upgrade Appearance properties.
     this.upgradeId = upgradeId;
@@ -33,7 +33,6 @@ Game.ItemUpgrade = function(upgradeId, upgradeName, upgradeDesc, upgradeExtraDes
             Game.Spend(this.upgradeBaseCost);
             this.applyUpgrade();
             this.isVisible = 0;
-            el('upgrade' + this.upgradeId).remove();
             Game.tooltip.hideTooltip();
             success = 1;
         }
@@ -59,6 +58,13 @@ Game.ItemUpgrade = function(upgradeId, upgradeName, upgradeDesc, upgradeExtraDes
         }
         return unlockable;
     };
+    this.reset = function() {
+        this.isUnlocked = 0;
+        this.isEnabled = 0;
+        this.isVisible = 0;
+        this.upgradeReqs.forEach(function(req) { req.reset() });
+        this.unlock();
+    };
     this.getTooltip = function() {
         return '<div id="tooltipItem">' +
                 '<div class="tooltipIcon" style="float:left; background-position:' + this.tooltipIcon.x + 'px ' + this.tooltipIcon.y + 'px;background-image:url(' + this.tooltipIcon.file + ')"></div>' +
@@ -78,6 +84,12 @@ Game.ItemUpgrade = function(upgradeId, upgradeName, upgradeDesc, upgradeExtraDes
         this.element.onclick = function() { Game.Buy(upgradeId, 'Upgrade') };
         this.element.onmousemove = function() { Game.tooltip.drawTooltip(function() {return Game.ItemUpgrades[upgradeId].getTooltip() }, 'store') };
         this.element.onmouseout =  function() { Game.tooltip.hideTooltip() };
+    };
+    this.clearStoreItem = function() {
+        if (this.element != null) {
+            this.element.remove();
+            this.element = null;
+        }
     };
     Game.ItemUpgrades.push(this);
 };

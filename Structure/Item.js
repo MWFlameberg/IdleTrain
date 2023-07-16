@@ -1,5 +1,5 @@
 Game.ItemThings = [];
-Game.ItemThing = function(itemId, itemName, itemDesc, itemExtraDesc, itemIcon, tooltipIcon,
+ItemThing = function(itemId, itemName, itemDesc, itemExtraDesc, itemIcon, tooltipIcon,
                             itemBaseCost, itemBasePower, itemCostMultiplier, itemReqs) {
     //Item Appearance properties.
     this.itemId = itemId;
@@ -33,7 +33,7 @@ Game.ItemThing = function(itemId, itemName, itemDesc, itemExtraDesc, itemIcon, t
         this.itemUpgrades.forEach(function(upgrade) {
             multiplier = multiplier * upgrade.multiplier;
         });
-        this.itemPower = this.itemBasePower * multiplier;
+        this.itemPower = this.itemBasePower * multiplier * Game.ascMultiplier;
         this.itemTrainsPs = this.itemPower * this.itemAmt;
     };
     this.canBuyItem = function(amt) {
@@ -101,6 +101,19 @@ Game.ItemThing = function(itemId, itemName, itemDesc, itemExtraDesc, itemIcon, t
         }
         return unlockable;
     };
+    this.reset = function() {
+        this.itemCost = this.itemBaseCost;
+        this.itemPower = this.itemBasePower;
+        this.itemAmt = 0;
+        this.itemTrainsPs = 0;
+        this.itemTotalTrains = 0;
+        this.itemUpgrades = [];
+        this.isUnlocked = 0;
+        this.isEnabled = 0;
+        this.isVisible = 0;
+        this.itemReqs.forEach(function(req) { req.reset() });
+        this.unlock();
+    };
     this.getTooltip = function() {
         var cost = 0;
         if (Game.bulkMode == 1) cost =this.getSumCost(Game.bulkQty);
@@ -138,6 +151,12 @@ Game.ItemThing = function(itemId, itemName, itemDesc, itemExtraDesc, itemIcon, t
         this.element.onclick = function() { Game.Buy(itemId, 'Item') };
         this.element.onmousemove = function() { Game.tooltip.drawTooltip(function() {return Game.ItemThings[itemId].getTooltip() }, 'store') };
         this.element.onmouseout =  function() { Game.tooltip.hideTooltip() };
+    };
+    this.clearStoreItem = function() {
+        if (this.element != null) {
+            this.element.remove();
+            this.element = null;
+        }
     };
     this.refresh = function () {
         var cost = 0;
