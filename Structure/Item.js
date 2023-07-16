@@ -133,7 +133,7 @@ Game.ItemThing = function(itemId, itemName, itemDesc, itemExtraDesc, itemIcon, t
                 '<div id="item' + this.itemId + 'cost" class="storeDesc">' + cost + '</div>' +
                 '<div id="item' + this.itemId + 'qty" class="storeOwned">' + this.itemAmt + '</div>' +
             '</div>'
-        this.visible = 1;
+        this.isVisible = 1;
 
         this.element.onclick = function() { Game.Buy(itemId, 'Item') };
         this.element.onmousemove = function() { Game.tooltip.drawTooltip(function() {return Game.ItemThings[itemId].getTooltip() }, 'store') };

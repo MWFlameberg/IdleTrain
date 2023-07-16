@@ -17,7 +17,7 @@
         },
         "upgradeReqs": [{
             "itemId": -1,
-            "itemAmt": 0
+            "itemAmt": 10
         }],
         "upgradeItems": [{
             "itemId": 0,

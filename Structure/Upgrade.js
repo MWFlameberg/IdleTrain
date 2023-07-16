@@ -73,7 +73,7 @@ Game.ItemUpgrade = function(upgradeId, upgradeName, upgradeDesc, upgradeExtraDes
         this.element.id = 'upgrade' + this.upgradeId;
         this.element.className = 'upgradeItem';
         this.element.innerHTML = '<div class="upgradeIcon" style="float:left; background-position:' + this.upgradeIcon.x + 'px ' + this.upgradeIcon.y + 'px;background-image:url(' + this.upgradeIcon.file + ')"></div>'
-        this.visible = 1;
+        this.isVisible = 1;
 
         this.element.onclick = function() { Game.Buy(upgradeId, 'Upgrade') };
         this.element.onmousemove = function() { Game.tooltip.drawTooltip(function() {return Game.ItemUpgrades[upgradeId].getTooltip() }, 'store') };

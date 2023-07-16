@@ -220,11 +220,11 @@ Game.tooltip.hideTooltip = function() {
 Game.CheckForPurchasable = function() {
     Game.ItemUpgrades.forEach(function(i) {
         if(i.isVisible == 1) {
-            if (i.canBuyUpgrade() && i.isEnabled) {
+            if (i.canBuyUpgrade() && !i.isEnabled) {
                 enableElement(el('upgrade' + i.upgradeId));
                 i.isEnabled = 0
             }
-            else if (!i.canBuyUpgrade() && !i.isEnabled) {
+            else if (!i.canBuyUpgrade() && i.isEnabled) {
                 disableElement(el('upgrade' + i.upgradeId));
                 i.isEnabled = 1
             }
@@ -232,11 +232,11 @@ Game.CheckForPurchasable = function() {
     });
     if (Game.bulkMode == 1) {
         Game.ItemThings.forEach(function(i) {
-            if (i.canBuyItem(Game.bulkQty) && i.isEnabled) {
+            if (i.canBuyItem(Game.bulkQty) && !i.isEnabled) {
                 enableElement(el('item' + i.itemId));
                 i.isEnabled = 0
             }
-            else if (!i.canBuyItem(Game.bulkQty)&& !i.isEnabled) {
+            else if (!i.canBuyItem(Game.bulkQty)&& i.isEnabled) {
                 disableElement(el('item' + i.itemId));
                 i.isEnabled = 1
             }
