@@ -94,9 +94,10 @@ Game.TakeAction = function() {
 Game.Spend = function(amt) {
     Game.trains -= amt;
 };
-Game.Earn = function(amt) {
+Game.Earn = function(amt, sold = false) {
     Game.trains += amt;
-    Game.trainsEarned += amt;
+    if (!sold)
+        Game.trainsEarned += amt;
 };
 Game.ClickTrain = function() {
     Game.Earn(1);
@@ -331,6 +332,9 @@ Game.Loop = function() {
     
     Game.recalcTps = 0;
     Game.refresh = 0;
+
+    Game.ascPercent = ((Game.trainsEarned % Game.ascTrainsReq) / Game.ascTrainsReq) * 100
+    el('ascendBar').style.width = Game.ascPercent + '%';
     
     Game.loopT++;
     setTimeout(Game.Loop, 1000/Game.fps);
@@ -369,8 +373,9 @@ Game.Init = function() {
     // Ascension based variables.
     Game.timesAscended = 0;
     Game.ascTrains = 0;
-    Game.ascTrainsReq = 1;
+    Game.ascTrainsReq = 100;
     Game.ascMultiplier = 1;
+    Game.ascPercent = 0;
     // Loop/Timing based variables.
     Game.loopT = 0;
     Game.fps = 30;

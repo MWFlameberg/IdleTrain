@@ -62,7 +62,7 @@ ItemThing = function(itemId, itemName, itemDesc, itemExtraDesc, itemIcon, toolti
             amt = this.itemAmt;
         };
         var cost = this.getSumSell(amt);
-        Game.Earn(cost);
+        Game.Earn(cost, true);
         this.itemAmt -= amt;
         this.itemCost = this.getSumCost(1);
         this.updateItem();
