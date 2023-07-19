@@ -174,7 +174,7 @@ Game.Resize = function(e) {
 ==========================================================================*/
 Game.Ascend = function() {
     Game.ascTrains += Game.trainsEarned;
-    Game.ascMultiplier = 1 + 0.01 * (Game.ascTrains / Game.ascTrainsReq);
+    Game.ascMultiplier = 1 + 0.01 * Math.floor(Game.ascTrains / Game.ascTrainsReq);
     Game.timesAscended++;
 
     Game.lastAscension = Date.now();
@@ -196,6 +196,17 @@ Game.ResetItems = function() {
     Game.ItemThings.forEach(function(item) { item.updateItem() });
     Game.ItemUpgrades.forEach(function(upgrade) { upgrade.reset() });
 };
+Game.GetAscendTooltip = function() {
+    return '<div id="tooltipItem">' +
+            '<div class="tooltipHeader">' + 'Ascend' + '</div>' +
+            '<div class="tooltipStats">' + 'You currently have ' + Math.floor(Game.ascTrains / Game.ascTrainsReq) + ' ascension power.' + '</div>' +
+            '<div class="tooltipLine"></div>' +
+            '<div class="tooltipStats">' + 'You need ' + (Game.ascTrainsReq - (Game.trainsEarned % Game.ascTrainsReq)) + ' for 1 more ascension power.' + '</div>' +
+            '<div class="tooltipStats">' + 'If you ascend now, you will gain ' + Math.floor(Game.trainsEarned / Game.ascTrainsReq) + ' more ascension power.' + '</div>' +
+            '<div class="tooltipLine"></div>' +
+            '<div class="tooltipStats">' + 'You have been on your current run for ' + ((Date.now() - Game.lastAscension) / 1000) + ' seconds.' + '</div>' +
+        '</div>'
+}
 /*==========================================================================
                 Tooltip Control and functionality
 ==========================================================================*/
@@ -224,6 +235,10 @@ Game.tooltip.updateTooltip = function() {
     if (this.origin == 'store') {
         x = Game.windowW - 404 - this.tt.offsetWidth;
         y = Game.mouseY - 16;
+    }
+    else if (this.origin == 'ascend') {
+        x = Game.windowW - 404 - this.tt.offsetWidth;
+        y = 76;
     }
     if (this.dynamic == 1) {
         this.tta.style.left = x + 'px';

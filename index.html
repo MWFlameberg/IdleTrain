@@ -17,7 +17,7 @@
          <div id="game-container">
             <div id="sectionLeft" >
                <div class="sectionHeader">
-                  <div id="ascend" class="button" onclick="Game.Ascend()">
+                  <div id="ascend" class="button" onclick="Game.Ascend()" onmousemove="Game.tooltip.drawTooltip(function() {return Game.GetAscendTooltip() }, 'ascend');" onmouseout="Game.tooltip.hideTooltip()">
                      <div class="ascendHeader">Ascend</div>
                      <div id="ascendBarContainer" class="barContainer">
                         <div id="ascendBar" class="bar"></div>
