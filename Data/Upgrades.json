@@ -23,5 +23,30 @@
             "itemId": 0,
             "multiplier": 2
         }]
+    },
+    {
+        "upgradeId": 1,
+        "upgradeName": "Crappy Clicker",
+        "upgradeDesc": "This is a Crappy Clicker",
+        "upgradeExtraDesc": "God knows if it still works.",
+        "upgradeBaseCost": 10,
+        "upgradeIcon": {
+            "file": "/Images/upgrade-placeholder.png",
+            "x": 0,
+            "y": 0
+        },
+        "tooltipIcon": {
+            "file": "/Images/tooltip-placeholder.png",
+            "x": 0,
+            "y": 0
+        },
+        "upgradeReqs": [{
+            "itemId": -1,
+            "itemAmt": 10
+        }],
+        "upgradeItems": [{
+            "itemId": -1,
+            "multiplier": 2
+        }]
     }
 ]

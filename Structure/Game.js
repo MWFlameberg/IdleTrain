@@ -100,9 +100,7 @@ Game.Earn = function(amt, sold = false) {
         Game.trainsEarned += amt;
 };
 Game.ClickTrain = function() {
-    Game.Earn(1);
-    Game.trainClicks += 1;
-    Game.trainsClicked += 1;
+    Game.Clicker.click();
 };
 Game.Buy = function(id, type) {
     if (type == 'Item') {
@@ -201,7 +199,7 @@ Game.GetAscendTooltip = function() {
             '<div class="tooltipHeader">' + 'Ascend' + '</div>' +
             '<div class="tooltipStats">' + 'You currently have ' + Math.floor(Game.ascTrains / Game.ascTrainsReq) + ' ascension power.' + '</div>' +
             '<div class="tooltipLine"></div>' +
-            '<div class="tooltipStats">' + 'You need ' + (Game.ascTrainsReq - (Game.trainsEarned % Game.ascTrainsReq)) + ' for 1 more ascension power.' + '</div>' +
+            '<div class="tooltipStats">' + 'You need ' + (Game.ascTrainsReq - ((Game.trainsEarned + Game.ascTrains) % Game.ascTrainsReq)) + ' for 1 more ascension power.' + '</div>' +
             '<div class="tooltipStats">' + 'If you ascend now, you will gain ' + Math.floor(Game.trainsEarned / Game.ascTrainsReq) + ' more ascension power.' + '</div>' +
             '<div class="tooltipLine"></div>' +
             '<div class="tooltipStats">' + 'You have been on your current run for ' + ((Date.now() - Game.lastAscension) / 1000) + ' seconds.' + '</div>' +
@@ -404,6 +402,7 @@ Game.Launch = async function() {
     Game.Init();
     Game.LoadItems();
     Game.LoadUpgrades();
+    Game.Clicker = new Clicker();
     Game.tooltip.initialise();
     Game.Loop();
 };

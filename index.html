@@ -4,6 +4,7 @@
       <link rel="stylesheet" href="style.css">
       <script type="text/javascript" src="./Structure/Game.js"></script>
       <script type="text/javascript" src="./Structure/Item.js"></script>
+      <script type="text/javascript" src="./Structure/Clicker.js"></script>
       <script type="text/javascript" src="./Structure/Upgrade.js"></script>
       <script type="text/javascript" src="./References/code.jquery.com_jquery-3.7.0.js"></script>
       <script type="text/javascript">
@@ -16,7 +17,7 @@
       <div id="wrapper">
          <div id="game-container">
             <div id="sectionLeft" >
-               <div class="sectionHeader">
+               <div class="sectionBigHeader">
                   <div id="ascend" class="button" onclick="Game.Ascend()" onmousemove="Game.tooltip.drawTooltip(function() {return Game.GetAscendTooltip() }, 'ascend');" onmouseout="Game.tooltip.hideTooltip()">
                      <div class="ascendHeader">Ascend</div>
                      <div id="ascendBarContainer" class="barContainer">
@@ -29,7 +30,6 @@
                   <div id="tpTotal" class="header">0</div>
                   <div id="tps" class="miniHeader">per second: 0</div>
                </div>
-               
                <div id="trainAnchor">
                   <div id="train" onclick="Game.ClickTrain()">TRAIN</div>
                </div>

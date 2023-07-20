@@ -93,16 +93,19 @@ div {
   width: auto;
   height: 64px;
 }
+.sectionBigHeader {
+  width: auto;
+  height: 96px;
+}
 .sectionMiniheader {
   width: auto;
   height: 16px;
-  padding: 4px 4px;
 }
 /* ############################## */
 /* Train related css */
 #trainPower {
-  position: absolute;
-  top: 10%;
+  position: relative;
+  top: 2%;
   width: 100%;
   text-align: center;
   background: rgba(0, 0, 0, 0.2);
@@ -126,14 +129,14 @@ div {
   border-width: 1px;
 }
 #ascend {
+  position: relative;
   float: right;
   border-style: solid;
   border-width: 1px;
-  padding: 5px;
   font-family: Arial;
   font-size: 16px;
-  width: 90px;
-  height: 32px;
+  width: 100px;
+  height: 48px;
 }
 .ascendHeader {
   text-align: center;
@@ -144,8 +147,10 @@ div {
 }
 #ascendBarContainer {
   position: absolute;
-  width: 100px;
+  width: 98px;
+  left: 0px;
   right: 0px;
+  bottom: 0px;
 }
 .barContainer {
   border-style: solid;

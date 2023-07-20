@@ -40,8 +40,14 @@ ItemUpgrade = function(upgradeId, upgradeName, upgradeDesc, upgradeExtraDesc, up
     };
     this.applyUpgrade = function() {
         this.upgradeItems.forEach(function(i) {
-            Game.ItemThings[i.itemId].itemUpgrades.push({upgradeId: this.upgradeId, multiplier: i.multiplier})
-            Game.ItemThings[i.itemId].updateItem();
+            if (i.itemId == -1) {
+                Game.Clicker.clickUpgrades.push({upgradeId: this.upgradeId, multiplier: i.multiplier})
+                Game.Clicker.updateClick();
+            }
+            else {
+                Game.ItemThings[i.itemId].itemUpgrades.push({upgradeId: this.upgradeId, multiplier: i.multiplier})
+                Game.ItemThings[i.itemId].updateItem();
+            }
         });
     }
     this.unlock = function() {
