@@ -45,8 +45,8 @@ ItemUpgrade = function(upgradeId, upgradeName, upgradeDesc, upgradeExtraDesc, up
                 Game.Clicker.updateClick();
             }
             else {
-                Game.ItemThings[i.itemId].itemUpgrades.push({upgradeId: this.upgradeId, multiplier: i.multiplier})
-                Game.ItemThings[i.itemId].updateItem();
+                Game.Items[i.itemId].itemUpgrades.push({upgradeId: this.upgradeId, multiplier: i.multiplier})
+                Game.Items[i.itemId].updateItem();
             }
         });
     }

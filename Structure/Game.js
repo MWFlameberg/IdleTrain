@@ -36,7 +36,7 @@ UnlockReq = function(itemId, itemAmt) {
                 this.unlocked = 1;
         }
         else {
-            if(Game.ItemThings[this.itemId].itemAmt >= this.itemAmt) 
+            if(Game.Items[this.itemId].itemAmt >= this.itemAmt) 
                 this.unlocked = 1;
         }
         return this.unlocked;
@@ -50,7 +50,6 @@ var Game = {};
                     Data Loading from Files and Setup
 ==========================================================================*/
 Game.LoadItems = async function() {
-    Game.Items = [];
     await $.getJSON('/Data/Items.json', function(response) {
         $.each(response, function(i) {
             var tempReqs = [];
@@ -60,13 +59,27 @@ Game.LoadItems = async function() {
             var itemIcon = new Icon(this.itemIcon.file, this.itemIcon.x, this.itemIcon.y);
             var tooltipIcon = new Icon(this.tooltipIcon.file, this.tooltipIcon.x, this.tooltipIcon.y);
 
-            new ItemThing(this.itemId, this.itemName, this.itemDesc, this.itemExtraDesc, itemIcon, tooltipIcon,
+            new Item(this.itemId, this.itemName, this.itemDesc, this.itemExtraDesc, itemIcon, tooltipIcon,
                 this.itemBaseCost, this.itemBasePower, this.itemCostMultiplier, tempReqs);
         });
     });
 };
+Game.LoadItemChildren = async function() {
+    await $.getJSON('/Data/ItemChildren.json', function(response) {
+        $.each(response, function(i) {
+            var tempReqs = [];
+            $.each(this.itemReqs, function(j) {
+                tempReqs.push(new UnlockReq(this.itemId, this.itemAmt));
+            });
+            var itemIcon = new Icon(this.itemIcon.file, this.itemIcon.x, this.itemIcon.y);
+            var tooltipIcon = new Icon(this.tooltipIcon.file, this.tooltipIcon.x, this.tooltipIcon.y);
+
+            new Item(this.itemId, this.itemName, this.itemDesc, this.itemExtraDesc, itemIcon, tooltipIcon,
+                this.itemBaseCost, this.itemBasePower, this.itemCostMultiplier, tempReqs, this.itemParent);
+        });
+    });
+};
 Game.LoadUpgrades = async function() {
-    Game.Upgrades = [];
     await $.getJSON('/Data/Upgrades.json', function(response) {
         $.each(response, function(i) {
             var tempReqs = [];
@@ -105,10 +118,18 @@ Game.ClickTrain = function() {
 Game.Buy = function(id, type) {
     if (type == 'Item') {
         if (Game.bulkMode == 1) {
-            Game.ItemThings[id].buyItem(Game.bulkQty)
+            Game.Items[id].buyItem(Game.bulkQty)
         }
         else if (Game.bulkMode == 2) {
-            Game.ItemThings[id].sellItem(Game.bulkQty)
+            Game.Items[id].sellItem(Game.bulkQty)
+        }
+    }
+    else if (type == 'ItemChild') {
+        if (Game.bulkMode == 1) {
+            Game.ItemChildren[id].buyItem(Game.bulkQty)
+        }
+        else if (Game.bulkMode == 2) {
+            Game.ItemChildren[id].sellItem(Game.bulkQty)
         }
     }
     else if (type == 'Upgrade') {
@@ -190,8 +211,8 @@ Game.Ascend = function() {
     Game.ResetItems();
 };
 Game.ResetItems = function() {
-    Game.ItemThings.forEach(function(item) { item.reset() });
-    Game.ItemThings.forEach(function(item) { item.updateItem() });
+    Game.Items.forEach(function(item) { item.reset() });
+    Game.Items.forEach(function(item) { item.updateItem() });
     Game.ItemUpgrades.forEach(function(upgrade) { upgrade.reset() });
 };
 Game.GetAscendTooltip = function() {
@@ -275,7 +296,7 @@ Game.CheckForPurchasable = function() {
         }
     });
     if (Game.bulkMode == 1) {
-        Game.ItemThings.forEach(function(i) {
+        Game.Items.forEach(function(i) {
             if (i.canBuyItem(Game.bulkQty) && !i.isEnabled) {
                 enableElement(el('item' + i.itemId));
                 i.isEnabled = 1
@@ -285,15 +306,35 @@ Game.CheckForPurchasable = function() {
                 i.isEnabled = 0
             }
         });
+        Game.ItemChildren.forEach(function(i) {
+            if (i.canBuyItem(Game.bulkQty) && !i.isEnabled) {
+                enableElement(el('itemChild' + i.itemId));
+                i.isEnabled = 1
+            }
+            else if (!i.canBuyItem(Game.bulkQty)) {
+                disableElement(el('itemChild' + i.itemId));
+                i.isEnabled = 0
+            }
+        });
     }
     else if (Game.bulkMode == 2) {
-        Game.ItemThings.forEach(function(i) {
+        Game.Items.forEach(function(i) {
             if (i.itemAmt > 0) {
                 enableElement(el('item' + i.itemId));
                 i.isEnabled = 1
             }
             else {
                 disableElement(el('item' + i.itemId));
+                i.isEnabled = 0
+            }
+        });
+        Game.ItemChildren.forEach(function(i) {
+            if (i.itemAmt > 0) {
+                enableElement(el('itemChild' + i.itemId));
+                i.isEnabled = 1
+            }
+            else {
+                disableElement(el('itemChild' + i.itemId));
                 i.isEnabled = 0
             }
         });
@@ -308,7 +349,15 @@ Game.DrawStore = function() {
             i.clearStoreItem()
         }
     });
-    Game.ItemThings.forEach(function(i) {
+    Game.Items.forEach(function(i) {
+        if (i.unlock() && i.element == null) {
+            i.drawStoreItem();
+        }
+        else if (!i.isVisible) {
+            i.clearStoreItem()
+        }
+    });
+    Game.ItemChildren.forEach(function(i) {
         if (i.unlock() && i.element == null) {
             i.drawStoreItem();
         }
@@ -319,7 +368,7 @@ Game.DrawStore = function() {
 }
 Game.CalculateGains = function() {
     Game.trainsPs = 0;
-    Game.ItemThings.forEach(function(i) {
+    Game.Items.forEach(function(i) {
         Game.trainsPs += i.itemTrainsPs;
         Game.itemTps += i.itemTrainsPs;
     });
@@ -329,7 +378,7 @@ Game.Loop = function() {
         Game.CalculateGains();
 
     Game.Earn(Game.trainsPs / Game.fps);
-    Game.ItemThings.forEach(function(item) { item.itemTotalTrains += item.itemTrainsPs / Game.fps; });
+    Game.Items.forEach(function(item) { item.itemTotalTrains += item.itemTrainsPs / Game.fps; });
     
     Game.DrawStore();
     Game.CheckForPurchasable();
@@ -338,8 +387,11 @@ Game.Loop = function() {
         Game.tooltip.updateTooltip();
     if(Game.recalcTps) 
         el('tps').innerHTML = 'per second: ' + Game.trainsPs ;
-    if(Game.refresh == 1) 
-        Game.ItemThings.forEach(function(item) { item.refresh(); });
+    if(Game.refresh == 1) {
+        Game.Items.forEach(function(item) { item.refresh(); });
+        Game.ItemChildren.forEach(function(item) { item.refresh(); });
+    }
+        
     
     el('tpTotal').innerHTML = formatNum(Game.trains,2);
     
@@ -401,6 +453,7 @@ Game.Init = function() {
 Game.Launch = async function() {
     Game.Init();
     Game.LoadItems();
+    Game.LoadItemChildren();
     Game.LoadUpgrades();
     Game.Clicker = new Clicker();
     Game.tooltip.initialise();

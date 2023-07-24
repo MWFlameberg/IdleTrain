@@ -225,7 +225,17 @@ div {
 }
 /* ############################## */
 /* Item Store related css */ 
-.storeItem {
+.itemContainer {
+  position: relative;
+  width: auto;
+  height: 66px;
+  overflow: hidden;
+}
+.itemContainer:hover {
+  height: auto;
+  min-height: 66px;
+}
+.item {
   height: 64px;
   width: auto;
   cursor: pointer;
@@ -234,38 +244,76 @@ div {
   border-width: 1px;
   opacity: 0.5;
 }
-.storeIcon {
+.itemIcon {
   width: 64px;
   height: 64px;
   margin-right: 8px;
   display: inline-block;
 }
-.storeContent {
+.itemContent {
   top: 8px;
   left: 64px;
   right: 0px;
   bottom: 8px;
   position: absolute;
 }
-.storeHeader {
+.itemHeader {
   font-family: Arial;
   font-size: 18px;
   font-weight: bold;
   padding: 3px 3px;
 }
-.storeDesc {
+.itemDesc {
   font-family: Arial;
   font-size: 12px;
   padding: 3px 3px;
 }
-.storeOwned {
+.itemOwned {
   font-family: Arial;
   font-size: 40px;
   position: absolute;
   right: 8px;
   top: 4px;
 }
-.storeItem.enabled {
+.itemChild {
+  height: 32px;
+  width: auto;
+  cursor: pointer;
+  position: relative;
+  border-style: solid;
+  border-width: 1px;
+  opacity: 0.5;
+}
+.itemChildIcon {
+  width: 32px;
+  height: 32px;
+  margin-right: 8px;
+  display: inline-block;
+}
+.itemChildContent {
+  top: 8px;
+  left: 32px;
+  right: 0px;
+  bottom: 8px;
+  position: absolute;
+}
+.itemChildHeader {
+  font-family: Arial;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 3px 3px;
+}
+.itemChildOwned {
+  font-family: Arial;
+  font-size: 20px;
+  position: absolute;
+  right: 8px;
+  top: 0px;
+}
+.item.enabled {
+  opacity: 1;
+}
+.itemChild.enabled {
   opacity: 1;
 }
 /* ############################## */
