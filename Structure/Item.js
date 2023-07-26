@@ -1,33 +1,36 @@
 Game.Items = [];
-Game.ItemChildren = [];
-Item = function(itemId, itemName, itemDesc, itemExtraDesc, itemIcon, tooltipIcon,
-                            itemBaseCost, itemBasePower, itemCostMultiplier, itemReqs,
-                            itemParent = -1) {
+Item = function(id, name, desc, extraDesc, icon, tooltipIcon, bCost, bPower, bCostMult, bPowerMult, bSpeedMult, bDiscountMult, unlockReqs, secId = -1) {
     //Item Appearance properties.
-    this.itemId = itemId;
-    this.itemName = itemName;
-    this.itemDesc = itemDesc;
-    this.itemExtraDesc = itemExtraDesc;
-    this.itemIcon = itemIcon;
+    this.id = id;
+    this.secId = secId
+    this.name = name;
+    this.desc = desc;
+    this.extraDesc = extraDesc;
+    this.icon = icon;
     this.tooltipIcon = tooltipIcon;
     //Base Stat properties.
-    this.itemBaseCost = itemBaseCost;
-    this.itemBasePower = itemBasePower;
-    this.itemCostMultiplier = itemCostMultiplier;
-    this.itemBaseMultiplier = 1;
-    //Up to Date Stat properties.
-    this.itemCost = this.itemBaseCost;
-    this.itemPower = this.itemBasePower;
-    this.itemAmt = 0;
-    this.itemTrainsPs = 0;
-    this.itemTotalTrains = 0;
-    this.itemMultiplier = this.itemBaseMultiplier;
+    this.bCost = bCost;
+    this.bPower = bPower;
+    this.bCostMult = bCostMult;
+    this.bPowerMult = bPowerMult;
+    this.bSpeedMult = bSpeedMult;
+    this.bDiscountMult = bDiscountMult;
+    //Actual Stat properties.
+    this.aCost = this.bCost;
+    this.aPower = this.bPower;
+    this.aCostMult = this.bCostMult;
+    this.aCostDiscount = 1;
+    this.aPowerMult = 0;
+    this.aSpeedMult = 0;
+    this.aDiscountMult = 1;
+    //Quantity properties.
+    this.amt = 0;
+    this.trainsPs = 0;
+    this.totalTrains = 0;
     //Unlock properties.
-    this.itemReqs = itemReqs;
-    this.itemUpgrades = [];
-    this.itemParent = itemParent;
-    this.itemMultipliers = [];
-    this.itemType = (this.itemParent == -1 ? 'Parent' : 'Child');
+    this.unlockReqs = unlockReqs;
+    this.upgrades = [];
+    this.children = [];
     //Flag properties.
     this.isUnlocked = 0;
     this.isEnabled = 0;
@@ -36,80 +39,56 @@ Item = function(itemId, itemName, itemDesc, itemExtraDesc, itemIcon, tooltipIcon
     this.element;
 
     this.updateItem = function() {
-        var multiplier = 1;
-        this.itemUpgrades.forEach(function(i) {
-            multiplier = multiplier * i.multiplier;
-        });
-        var childMultiplier = 1;
-        this.itemMultipliers.forEach(function(i) {
-            childMultiplier = childMultiplier + (i.multiplier * i.amt);
-        });
-        if (this.itemType == 'Parent') {
-            this.itemPower = this.itemBasePower * multiplier * Game.ascMultiplier * childMultiplier;
-            this.itemTrainsPs = this.itemPower * this.itemAmt;
-        }
-        else if(this.itemType == 'Child') {
-            Game.Items[this.itemParent].itemMultipliers[this.itemId] = {childId: this.itemId, amt: this.itemAmt, multiplier: this.itemPower}
-            Game.Items[this.itemParent].updateItem();
-        }
-        
+        //Defined in inherited object
     };
-    this.canBuyItem = function(amt) {
+    this.buyItem = function(amt, isBuy) {
         var success = 0;
         var cost = this.getSumCost(amt);
         if(Game.trains >= cost) {
-            success = 1;
-        }
-        return success;
-    };
-    this.buyItem = function(amt) {
-        var success = 0;
-        var cost = this.getSumCost(amt);
-        if(Game.trains >= cost) {
-            Game.Spend(cost);
-            this.itemAmt += amt;
-            this.itemCost = this.getSumCost(1);
-            this.updateItem();
+            if(isBuy) {
+                Game.Spend(cost);
+                this.amt += amt;
+                this.aCost = this.getSumCost(1);
+                this.updateItem();
+            }
             success = 1;
         }
         return success;
     };
     this.sellItem = function(amt) {
         var success = 0;
-        if (amt > this.itemAmt) {
-            amt = this.itemAmt;
-        };
+        if (amt > this.amt) { amt = this.amt; };
         var cost = this.getSumSell(amt);
         Game.Earn(cost, true);
-        this.itemAmt -= amt;
-        this.itemCost = this.getSumCost(1);
+        this.amt -= amt;
+        this.aCost = this.getSumCost(1);
         this.updateItem();
         success = 1;
         return success;
     };
     this.getSumCost = function(amt) {
         var cost = 0;
-        for (var i = this.itemAmt; i < this.itemAmt + amt; i++) {
-            cost += Math.ceil(this.itemBaseCost * Math.pow(this.itemCostMultiplier, i));
+        for (var i = this.amt; i < this.amt + amt; i++) {
+            cost += Math.ceil(this.bCost * this.aCostDiscount * Math.pow(this.aCostMult, i));
         }
         return cost;
     };
     this.getSumSell = function(amt) {
-        if (this.itemAmt == 0) { return 0; };
-        if (amt > this.itemAmt) { amt = this.itemAmt; };
+        if (this.amt == 0) { return 0; };
+        if (amt > this.amt) { amt = this.amt; };
         var cost = 0;
         var i = amt;
         do {
-            cost += Math.ceil(this.itemBaseCost * Math.pow(this.itemCostMultiplier, this.itemAmt - 1) * 0.6);
+            cost += Math.ceil(this.bCost * Math.pow(this.aCostMult, this.amt - 1) * 0.6);
             i--;
-        } while (i > this.itemAmt - amt)
+        } while (i > this.amt - amt)
         return cost;
     };
     this.unlock = function() {
         if (this.isUnlocked == 1 && this.isVisible == 1) { return 0; }
         var unlockable = 1;
-        this.itemReqs.forEach(function(req) {
-            if (!req.unlock()) {
+        this.unlockReqs.forEach(function(i) {
+            if (!i.unlock()) {
                 unlockable = 0;
             }
         });
@@ -120,96 +99,28 @@ Item = function(itemId, itemName, itemDesc, itemExtraDesc, itemIcon, tooltipIcon
         return unlockable;
     };
     this.reset = function() {
-        this.itemCost = this.itemBaseCost;
-        this.itemPower = this.itemBasePower;
-        this.itemAmt = 0;
-        this.itemTrainsPs = 0;
-        this.itemTotalTrains = 0;
-        this.itemUpgrades = [];
+        //Reset actual stats to base.
+        this.aCost = this.bCost;
+        this.aPower = this.bPower;
+        this.aCostMult = this.bCostMult;
+        this.aCostDiscount = 1;
+        this.aPowerMult = 0;
+        this.aSpeedMult = 0;
+        this.aDiscountMult = 1;
+        //Reset quantity properties.
+        this.amt = 0;
+        this.trainsPs = 0;
+        this.totalTrains = 0;
+        //Reset unlock properties
+        this.upgrades = [];
+        this.children.forEach(function(i) { i.reset() });
+        this.unlockReqs.forEach(function(i) { i.reset() });
+        //Reset flags.
         this.isUnlocked = 0;
         this.isEnabled = 0;
         this.isVisible = 0;
-        this.itemReqs.forEach(function(req) { req.reset() });
+        
         this.unlock();
-    };
-    this.getTooltip = function() {
-        var cost = 0;
-        if (Game.bulkMode == 1) cost =this.getSumCost(Game.bulkQty);
-        else if (Game.bulkMode == 2) cost = this.getSumSell(Game.bulkQty);
-
-        if (this.itemType == 'Parent')
-            return '<div id="tooltipItem">' +
-                    '<div class="tooltipIcon" style="float:left; background-position:' + this.tooltipIcon.x + 'px ' + this.tooltipIcon.y + 'px;background-image:url(' + this.tooltipIcon.file + ')"></div>' +
-                    '<div style="float:right; text-align:right;">' + cost + '</div>' +
-                    '<div class="tooltipHeader">' + this.itemName + '</div>' +
-                    '<div class="tooltipTag">' + 'owned: ' + this.itemAmt + '</div>' +
-                    '<div class="tooltipLine"></div>' +
-                    '<div class="tooltipDesc">' + this.itemDesc + '</div>' +
-                    '<div class="tooltipLine"></div>' +
-                    '<div class="tooltipStats">' + 'Each ' + this.itemName + ' generates ' + this.itemPower + ' per second.' + '</div>' +
-                    '<div class="tooltipStats">' + this.itemAmt + ' ' + this.itemName + ' generating ' + this.itemTrainsPs + ' per second.' + '</div>' +
-                    '<div class="tooltipStats">' + this.itemTotalTrains + ' generated so far' + '</div>' +
-                '</div>'
-        else if (this.itemType == 'Child') 
-            return '<div id="tooltipItem">' +
-                    '<div class="tooltipIcon" style="float:left; background-position:' + this.tooltipIcon.x + 'px ' + this.tooltipIcon.y + 'px;background-image:url(' + this.tooltipIcon.file + ')"></div>' +
-                    '<div style="float:right; text-align:right;">' + cost + '</div>' +
-                    '<div class="tooltipHeader">' + this.itemName + '</div>' +
-                    '<div class="tooltipTag">' + 'owned: ' + this.itemAmt + '</div>' +
-                    '<div class="tooltipLine"></div>' +
-                    '<div class="tooltipDesc">' + this.itemDesc + '</div>' +
-                    '<div class="tooltipLine"></div>' +
-                    '<div class="tooltipStats">' + 'Each ' + this.itemName + ' improves ' + Game.Items[this.itemParent].itemName +' efficiency by ' + (this.itemPower * 100) + '%.' + '</div>' +
-                    '<div class="tooltipStats">' + 'Current improving efficiency by ' + (this.itemPower * 100) * this.itemAmt + '%.' + '</div>' +
-                '</div>'
-    };
-    this.drawStoreItem = function() {
-        if (this.itemType == 'Parent')
-            this.drawStoreParent();
-        else if(this.itemType == 'Child')
-            this.drawStoreChild();
-    };
-    this.drawStoreParent = function() {
-        var cost = 0;
-        if (Game.bulkMode == 1) cost =this.getSumCost(Game.bulkQty);
-        else if (Game.bulkMode == 2) cost = this.getSumSell(Game.bulkQty);
-
-        tempElement = el('items').appendChild(document.createElement('div'));
-        tempElement.id = 'item' + this.itemId + 'Container';
-        tempElement.className = 'itemContainer';
-        this.element = tempElement.appendChild(document.createElement('div'));
-        this.element.id = 'item' + this.itemId;
-        this.element.className = 'item';
-        this.element.innerHTML = '<div class="itemIcon" style="float:left; background-position:' + this.itemIcon.x + 'px ' + this.itemIcon.y + 'px;background-image:url(' + this.itemIcon.file + ')"></div>' +
-            '<div class="itemContent">' +
-                '<div class="itemHeader">' + this.itemName + '</div>' +
-                '<div id="item' + this.itemId + 'cost" class="itemDesc">' + cost + '</div>' +
-                '<div id="item' + this.itemId + 'qty" class="itemOwned">' + this.itemAmt + '</div>' +
-            '</div>'
-        this.isVisible = 1;
-
-        this.element.onclick = function() { Game.Buy(itemId, 'Item') };
-        this.element.onmousemove = function() { Game.tooltip.drawTooltip(function() {return Game.Items[itemId].getTooltip() }, 'store') };
-        this.element.onmouseout =  function() { Game.tooltip.hideTooltip() };
-    };
-    this.drawStoreChild = function() {
-        var cost = 0;
-        if (Game.bulkMode == 1) cost =this.getSumCost(Game.bulkQty);
-        else if (Game.bulkMode == 2) cost = this.getSumSell(Game.bulkQty);
-
-        this.element = el('item' + this.itemParent + 'Container').appendChild(document.createElement('div'));
-        this.element.id = 'itemChild' + this.itemId;
-        this.element.className = 'itemChild';
-        this.element.innerHTML = '<div class="itemChildIcon" style="float:left; background-position:' + this.itemIcon.x + 'px ' + this.itemIcon.y + 'px;background-image:url(' + this.itemIcon.file + ')"></div>' +
-            '<div class="itemChildContent">' +
-                '<div class="itemChildHeader">' + this.itemName + ' - ' + cost + '</div>' +
-                '<div id="item' + this.itemId + 'qty" class="itemChildOwned">' + this.itemAmt + '</div>' +
-            '</div>'
-        this.isVisible = 1;
-
-        this.element.onclick = function() { Game.Buy(itemId, 'ItemChild') };
-        this.element.onmousemove = function() { Game.tooltip.drawTooltip(function() {return Game.ItemChildren[itemId].getTooltip() }, 'store') };
-        this.element.onmouseout =  function() { Game.tooltip.hideTooltip() };
     };
     this.clearStoreItem = function() {
         if (this.element != null) {
@@ -217,37 +128,151 @@ Item = function(itemId, itemName, itemDesc, itemExtraDesc, itemIcon, tooltipIcon
             this.element = null;
         }
     };
+    this.getTooltip = function() {
+        //Defined in inherited object
+    };
+    this.drawStoreItem = function() {
+        //Defined in inherited object
+    };
     this.refresh = function () {
-        if (this.itemType == 'Parent')
-            this.refreshParent();
-        else if(this.itemType == 'Child')
-            this.refreshChild();
+        //Defined in inherited object
     };
-    this.refreshParent = function() {
+};
+ItemParent = function(id, name, desc, extraDesc, icon, tooltipIcon, bCost, bPower, bCostMult, unlockReqs) {
+    __proto__: Item;
+    Item.call(this, id, name, desc, extraDesc, icon, tooltipIcon, bCost, bPower, bCostMult, 0, 0, 1, unlockReqs, secId = -1);
+
+    this.updateItem = function() {
+        var multiplier = 1;
+        this.upgrades.forEach(function(i) {
+            multiplier = multiplier * i.multiplier;
+        });
+        var cPowerMult = 1;
+        var cSpeedMult = 1;
+        var cDiscountMult = 1;
+        this.children.forEach(function(i) {
+            cPowerMult += i.aPowerMult;
+            cSpeedMult += i.aSpeedMult;
+            cDiscountMult *= i.aDiscountMult
+        });
+        this.aPowerMult = cPowerMult;
+        this.aSpeedMult = cSpeedMult;
+        this.aCostDiscount = cDiscountMult;
+
+        this.aPower = this.bPower * multiplier * Game.ascMultiplier * this.aPowerMult;
+        this.trainsPs = this.aPower * this.amt;
+    };
+    this.getTooltip = function() {
+        var cost = 0;
+        if (Game.bulkMode == 1) cost =this.getSumCost(Game.bulkQty);
+        else if (Game.bulkMode == 2) cost = this.getSumSell(Game.bulkQty);
+
+        return '<div id="tooltipItem">' +
+                    '<div class="tooltipIcon" style="float:left; background-position:' + this.tooltipIcon.xCoord + 'px ' + this.tooltipIcon.yCoord + 'px;background-image:url(' + this.tooltipIcon.file + ')"></div>' +
+                    '<div style="float:right; text-align:right;">' + cost + '</div>' +
+                    '<div class="tooltipHeader">' + this.name + '</div>' +
+                    '<div class="tooltipTag">' + 'owned: ' + this.amt + '</div>' +
+                    '<div class="tooltipLine"></div>' +
+                    '<div class="tooltipDesc">' + this.desc + '</div>' +
+                    '<div class="tooltipLine"></div>' +
+                    '<div class="tooltipStats">' + 'Each ' + this.name + ' generates ' + this.aPower + ' per second.' + '</div>' +
+                    '<div class="tooltipStats">' + this.amt + ' ' + this.name + ' generating ' + this.trainsPs + ' per second.' + '</div>' +
+                    '<div class="tooltipStats">' + this.totalTrains + ' generated so far' + '</div>' +
+                '</div>'
+    };
+    this.drawStoreItem = function() {
+        var cost = 0;
+        if (Game.bulkMode == 1) cost = this.getSumCost(Game.bulkQty);
+        else if (Game.bulkMode == 2) cost = this.getSumSell(Game.bulkQty);
+
+        tempElement = el('items').appendChild(document.createElement('div'));
+        tempElement.id = 'item' + this.id + 'Container';
+        tempElement.className = 'itemContainer';
+        this.element = tempElement.appendChild(document.createElement('div'));
+        this.element.id = 'item' + this.id;
+        this.element.className = 'item';
+        this.element.innerHTML = '<div class="itemIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
+            '<div class="itemContent">' +
+                '<div class="itemHeader">' + this.name + '</div>' +
+                '<div id="item' + this.id + 'cost" class="itemDesc">' + cost + '</div>' +
+                '<div id="item' + this.id + 'qty" class="itemOwned">' + this.amt + '</div>' +
+            '</div>'
+        this.isVisible = 1;
+
+        this.element.onclick = function() { Game.Buy(id, 'Item') };
+        this.element.onmousemove = function() { Game.tooltip.drawTooltip(function() {return Game.Items[id].getTooltip() }, 'store') };
+        this.element.onmouseout =  function() { Game.tooltip.hideTooltip() };
+    };
+    this.refresh = function () {
         var cost = 0;
         if (Game.bulkMode == 1) cost =this.getSumCost(Game.bulkQty);
         else if (Game.bulkMode == 2) cost = this.getSumSell(Game.bulkQty);
         this.cost = this.getSumCost(Game.bulkQty);
-        this.element.innerHTML = '<div class="itemIcon" style="float:left; background-position:' + this.itemIcon.x + 'px ' + this.itemIcon.y + 'px;background-image:url(' + this.itemIcon.file + ')"></div>' +
+        this.element.innerHTML = '<div class="itemIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
         '<div class="itemContent">' +
-            '<div class="itemHeader">' + this.itemName + '</div>' +
-            '<div id="item' + this.itemId + 'cost" class="itemDesc">' + cost + '</div>' +
-            '<div id="item' + this.itemId + 'qty" class="itemOwned">' + this.itemAmt + '</div>' +
+            '<div class="itemHeader">' + this.name + '</div>' +
+            '<div id="item' + this.id + 'cost" class="itemDesc">' + cost + '</div>' +
+            '<div id="item' + this.id + 'qty" class="itemOwned">' + this.amt + '</div>' +
         '</div>'
     };
-    this.refreshChild = function() {
+    Game.Items.push(this);
+}
+ItemChild = function(id, name, desc, extraDesc, icon, tooltipIcon, bCost, bCostMult, bPowerMult, bSpeedMult, bDiscountMult, unlockReqs, secId) {
+    __proto__: Item
+    Item.call(this, id, name, desc, extraDesc, icon, tooltipIcon, bCost, 0, bCostMult, bPowerMult, bSpeedMult, bDiscountMult, unlockReqs, secId);
+
+    this.updateItem = function() {
+        this.aPowerMult = this.bPowerMult * this.amt;
+        this.aSpeedMult = this.bSpeedMult * this.amt;
+        this.aDiscountMult = Math.pow(this.bDiscountMult,this.amt);
+        Game.Items[this.secId].updateItem();
+    };
+    this.getTooltip = function() {
+        var cost = 0;
+        if (Game.bulkMode == 1) cost = this.getSumCost(Game.bulkQty);
+        else if (Game.bulkMode == 2) cost = this.getSumSell(Game.bulkQty);
+
+        return '<div id="tooltipItem">' +
+                    '<div class="tooltipIcon" style="float:left; background-position:' + this.tooltipIcon.xCoord + 'px ' + this.tooltipIcon.yCoord + 'px;background-image:url(' + this.tooltipIcon.file + ')"></div>' +
+                    '<div style="float:right; text-align:right;">' + cost + '</div>' +
+                    '<div class="tooltipHeader">' + this.name + '</div>' +
+                    '<div class="tooltipTag">' + 'owned: ' + this.amt + '</div>' +
+                    '<div class="tooltipLine"></div>' +
+                    '<div class="tooltipDesc">' + this.desc + '</div>' +
+                    '<div class="tooltipLine"></div>' +
+                    '<div class="tooltipStats">' + 'Each ' + this.name + ' improves ' + Game.Items[this.secId].name +' efficiency by ' + (this.aPowerMult * 100) + '%.' + '</div>' +
+                    '<div class="tooltipStats">' + 'Current improving efficiency by ' + (this.aPowerMult * 100) * this.amt + '%.' + '</div>' +
+                '</div>'
+    };
+    this.drawStoreItem = function() {
+        var cost = 0;
+        if (Game.bulkMode == 1) cost =this.getSumCost(Game.bulkQty);
+        else if (Game.bulkMode == 2) cost = this.getSumSell(Game.bulkQty);
+
+        this.element = el('item' + this.secId + 'Container').appendChild(document.createElement('div'));
+        this.element.id = 'itemChild' + this.id;
+        this.element.className = 'itemChild';
+        this.element.innerHTML = '<div class="itemChildIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yYoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
+            '<div class="itemChildContent">' +
+                '<div class="itemChildHeader">' + this.name + ' - ' + cost + '</div>' +
+                '<div id="item' + this.id + 'qty" class="itemChildOwned">' + this.amt + '</div>' +
+            '</div>'
+        this.isVisible = 1;
+
+        this.element.onclick = function() { Game.Buy(id, 'ItemChild', secId) };
+        this.element.onmousemove = function() { Game.tooltip.drawTooltip(function() {return Game.Items[secId].children[id].getTooltip() }, 'store') };
+        this.element.onmouseout =  function() { Game.tooltip.hideTooltip() };
+    };
+    this.refresh = function () {
         var cost = 0;
         if (Game.bulkMode == 1) cost =this.getSumCost(Game.bulkQty);
         else if (Game.bulkMode == 2) cost = this.getSumSell(Game.bulkQty);
         this.cost = this.getSumCost(Game.bulkQty);
-        this.element.innerHTML = '<div class="itemChildIcon" style="float:left; background-position:' + this.itemIcon.x + 'px ' + this.itemIcon.y + 'px;background-image:url(' + this.itemIcon.file + ')"></div>' +
+        this.element.innerHTML = '<div class="itemChildIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
         '<div class="itemChildContent">' +
-            '<div class="itemChildHeader">' + this.itemName + ' - ' + cost + '</div>' +
-            '<div id="item' + this.itemId + 'qty" class="itemChildOwned">' + this.itemAmt + '</div>' +
+            '<div class="itemChildHeader">' + this.name + ' - ' + cost + '</div>' +
+            '<div id="item' + this.id + 'qty" class="itemChildOwned">' + this.amt + '</div>' +
         '</div>'
     };
-    if (this.itemType == 'Parent')
-        Game.Items.push(this);
-    else if (this.itemType == 'Child')
-        Game.ItemChildren.push(this);
-}
+    Game.Items[secId].children.push(this);
+};

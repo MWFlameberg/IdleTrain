@@ -18,8 +18,35 @@
             "y": 0
         },
         "itemReqs": [{
-            "itemId": -1,
-            "itemAmt": 0
+            "type": "Clicks",
+            "id": 0,
+            "amt": 0
+        }],
+        "subItems": [{
+            "itemId": 0,
+            "itemName": "Crappy Train Oil",
+            "itemDesc": "Buy some oil to improve your Crappy Train.",
+            "itemExtraDesc": "It barely works but hey, thats more than nothing.",
+            "itemBaseCost": 10,
+            "itemBasePowerMult": 0.01,
+            "itemBaseSpeedMult": 0.00,
+            "itemBaseDiscountMult": 0.99,
+            "itemCostMultiplier": 1.1,
+            "itemIcon": {
+                "file": "/Images/small-placeholder.png",
+                "x": 0,
+                "y": 0
+            },
+            "tooltipIcon": {
+                "file": "/Images/tooltip-placeholder.png",
+                "x": 0,
+                "y": 0
+            },
+            "itemReqs": [{
+                "type": "Items",
+                "id": 0,
+                "amt": 0
+            }]
         }]
     }
 ]

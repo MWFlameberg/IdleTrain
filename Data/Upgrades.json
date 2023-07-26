@@ -16,8 +16,9 @@
             "y": 0
         },
         "upgradeReqs": [{
-            "itemId": -1,
-            "itemAmt": 10
+            "type": "Clicks",
+            "id": 0,
+            "amt": 10
         }],
         "upgradeItems": [{
             "itemId": 0,
@@ -41,8 +42,9 @@
             "y": 0
         },
         "upgradeReqs": [{
-            "itemId": -1,
-            "itemAmt": 10
+            "type": "Items",
+            "id": 0,
+            "amt": 1
         }],
         "upgradeItems": [{
             "itemId": -1,

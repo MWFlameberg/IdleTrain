@@ -228,8 +228,8 @@ div {
 .itemContainer {
   position: relative;
   width: auto;
-  height: 66px;
-  overflow: hidden;
+  height: auto;
+  min-height: 66px;
 }
 .itemContainer:hover {
   height: auto;
@@ -278,6 +278,7 @@ div {
 .itemChild {
   height: 32px;
   width: auto;
+  margin-left: 64px;
   cursor: pointer;
   position: relative;
   border-style: solid;
