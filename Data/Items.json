@@ -1,13 +1,13 @@
 [
     {
-        "itemId": 0,
-        "itemName": "Crappy Train",
-        "itemDesc": "This is a Crappy train",
-        "itemExtraDesc": "This train was made out of old wood.",
-        "itemBaseCost": 10,
-        "itemBasePower": 0.1,
-        "itemCostMultiplier": 1.1,
-        "itemIcon": {
+        "id1": 0,
+        "name": "Crappy Train",
+        "desc1": "This is a Crappy train",
+        "desc2": "This train was made out of old wood.",
+        "baseCost": 10,
+        "baseCostMult": 1.1,
+        "basePower": 0.1,
+        "icon": {
             "file": "/Images/placeholder.png",
             "x": 0,
             "y": 0
@@ -17,22 +17,22 @@
             "x": 0,
             "y": 0
         },
-        "itemReqs": [{
+        "unlockReqs": [{
             "type": "Clicks",
             "id": 0,
             "amt": 0
         }],
         "subItems": [{
-            "itemId": 0,
-            "itemName": "Crappy Train Oil",
-            "itemDesc": "Buy some oil to improve your Crappy Train.",
-            "itemExtraDesc": "It barely works but hey, thats more than nothing.",
-            "itemBaseCost": 10,
-            "itemBasePowerMult": 0.01,
-            "itemBaseSpeedMult": 0.00,
-            "itemBaseDiscountMult": 0.99,
-            "itemCostMultiplier": 1.1,
-            "itemIcon": {
+            "id1": 0,
+            "name": "Crappy Train Oil",
+            "desc1": "Buy some oil to improve your Crappy Train.",
+            "desc2": "It barely works but hey, thats more than nothing.",
+            "baseCost": 10,
+            "baseCostMult": 1.1,
+            "basePowerMult": 0.01,
+            "baseSpeedMult": 0.00,
+            "baseDiscountMult": 0.99,  
+            "icon": {
                 "file": "/Images/small-placeholder.png",
                 "x": 0,
                 "y": 0
@@ -42,7 +42,7 @@
                 "x": 0,
                 "y": 0
             },
-            "itemReqs": [{
+            "unlockReqs": [{
                 "type": "Items",
                 "id": 0,
                 "amt": 0

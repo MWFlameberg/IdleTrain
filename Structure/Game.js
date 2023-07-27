@@ -49,7 +49,7 @@ UnlockReq = function(unlockType, id, amt) {
                     this.unlocked = 1;
                 break;
             case "Items":
-                if (Game.Items[this.id].amt >= this.amt)
+                if (Game.StoreItems[this.id].amt >= this.amt)
                     this.unlocked = 1;
                 break;
             default:
@@ -62,6 +62,7 @@ UnlockReq = function(unlockType, id, amt) {
     }
 };
 var Game = {};
+Game.StoreItems = [];
 /*==========================================================================
                     Data Loading from Files and Setup
 ==========================================================================*/
@@ -69,26 +70,23 @@ Game.LoadItems = async function() {
     await $.getJSON('/Data/Items.json', function(response) {
         $.each(response, function(i) {
             var reqs = [];
-            $.each(this.itemReqs, function(j) {
+            $.each(this.unlockReqs, function(j) {
                 reqs.push(new UnlockReq(this.type, this.id, this.amt));
             });
-            var itemIcon = new Icon(this.itemIcon.file, this.itemIcon.x, this.itemIcon.y);
+            var icon = new Icon(this.icon.file, this.icon.x, this.icon.y);
             var tooltipIcon = new Icon(this.tooltipIcon.file, this.tooltipIcon.x, this.tooltipIcon.y);
 
-            var parentId = this.itemId;
-            new ItemParent(this.itemId, this.itemName, this.itemDesc, this.itemExtraDesc, itemIcon, tooltipIcon,
-                this.itemBaseCost, this.itemBasePower, this.itemCostMultiplier, reqs);
+            var parentId = this.id1;
+            new StoreItem(this.id1, -1, this.name, this.desc1, this.desc2, icon, tooltipIcon, this.baseCost, this.baseCostMult, reqs, this.basePower);
 
             $.each(this.subItems, function(j) {
                 var reqs = [];
-                $.each(this.itemReqs, function(j) {
+                $.each(this.unlockReqs, function(j) {
                     reqs.push(new UnlockReq(this.type, this.id, this.amt));
                 });
-                var itemIcon = new Icon(this.itemIcon.file, this.itemIcon.x, this.itemIcon.y);
+                var icon = new Icon(this.icon.file, this.icon.x, this.icon.y);
                 var tooltipIcon = new Icon(this.tooltipIcon.file, this.tooltipIcon.x, this.tooltipIcon.y);
-
-                new ItemChild(this.itemId, this.itemName, this.itemDesc, this.itemExtraDesc, itemIcon, tooltipIcon,
-                    this.itemBaseCost, this.itemCostMultiplier, this.itemBasePowerMult, this.itemBaseSpeedMult, this.itemBaseDiscountMult, reqs, parentId);
+                new StoreSubItem(this.id1, parentId, this.name, this.desc1, this.desc2, icon, tooltipIcon, this.baseCost, this.baseCostMult, reqs, this.basePowerMult, this.baseSpeedMult, this.baseDiscountMult);
             });
         });
     });
@@ -132,21 +130,21 @@ Game.Earn = function(amt, sold = false) {
 Game.ClickTrain = function() {
     Game.Clicker.click();
 };
-Game.Buy = function(id, type, parentId = -1) {
+Game.Buy = function(id1, id2, type) {
     if (type == 'Item') {
         if (Game.bulkMode == 1) {
-            Game.Items[id].buyItem(Game.bulkQty, 1)
+            Game.StoreItems[id1].buy(Game.bulkQty)
         } else if (Game.bulkMode == 2) {
-            Game.Items[id].sellItem(Game.bulkQty)
+            Game.StoreItems[id1].sell(Game.bulkQty)
         }
-    } else if (type == 'ItemChild') {
+    } else if (type == 'SubItem') {
         if (Game.bulkMode == 1) {
-            Game.Items[parentId].children[id].buyItem(Game.bulkQty, 1)
+            Game.StoreItems[id2].subItems[id1].buy(Game.bulkQty)
         } else if (Game.bulkMode == 2) {
-            Game.Items[parentId].children[id].sellItem(Game.bulkQty)
+            Game.StoreItems[id2].subItems[id1].sell(Game.bulkQty)
         }
     } else if (type == 'Upgrade') {
-        Game.ItemUpgrades[id].buyUpgrade()
+        Game.ItemUpgrades[id1].buyUpgrade()
     }
     Game.refresh = 1;
     Game.recalcTps = 1;
@@ -229,14 +227,14 @@ Game.Ascend = function() {
     Game.ResetItems();
 };
 Game.ResetItems = function() {
-    Game.Items.forEach(function(item) {
-        item.reset()
+    Game.StoreItems.forEach(function(item) {
+        item.resetObject()
     });
-    Game.Items.forEach(function(item) {
-        item.updateItem()
+    Game.StoreItems.forEach(function(item) {
+        item.update()
     });
     Game.ItemUpgrades.forEach(function(upgrade) {
-        upgrade.reset()
+        upgrade.resetObject()
     });
 };
 Game.GetAscendTooltip = function() {
@@ -318,46 +316,38 @@ Game.CheckForPurchasable = function() {
         }
     });
     if (Game.bulkMode == 1) {
-        Game.Items.forEach(function(i) {
+        Game.StoreItems.forEach(function(i) {
             if (i.isVisible == 1) {
-                if (i.buyItem(Game.bulkQty, 0) && !i.isEnabled) {
-                    enableElement(el('item' + i.id));
-                    i.isEnabled = 1
-                } else if (!i.buyItem(Game.bulkQty, 0)) {
-                    disableElement(el('item' + i.id));
-                    i.isEnabled = 0
+                if (i.canBuy(Game.bulkQty) && !i.isEnabled) {
+                    i.enable();
+                } else if (!i.canBuy(Game.bulkQty)) {
+                    i.disable();
                 }
-                i.children.forEach(function(j) {
+                i.subItems.forEach(function(j) {
                     if (j.isVisible == 1) {
-                        if (j.buyItem(Game.bulkQty, 0) && !j.isEnabled) {
-                            enableElement(el('itemChild' + j.id));
-                            j.isEnabled = 1
-                        } else if (!j.buyItem(Game.bulkQty, 0)) {
-                            disableElement(el('itemChild' + j.id));
-                            j.isEnabled = 0
+                        if (j.canBuy(Game.bulkQty) && !j.isEnabled) {
+                            j.enable();
+                        } else if (!j.canBuy(Game.bulkQty)) {
+                            j.disable();
                         }
                     }
                 });
             }
         });
     } else if (Game.bulkMode == 2) {
-        Game.Items.forEach(function(i) {
+        Game.StoreItems.forEach(function(i) {
             if (i.isVisible == 1) {
-                if (i.amt > 0) {
-                    enableElement(el('item' + i.id));
-                    i.isEnabled = 1
-                } else {
-                    disableElement(el('item' + i.id));
-                    i.isEnabled = 0
+                if (i.canSell() && !i.isEnabled) {
+                    i.enable();
+                } else if (!i.canSell()) {
+                    i.disable();
                 }
-                i.children.forEach(function(j) {
+                i.subItems.forEach(function(j) {
                     if (j.isVisible == 1) {
-                        if (j.amt > 0) {
-                            enableElement(el('itemChild' + j.id));
-                            j.isEnabled = 1
-                        } else {
-                            disableElement(el('itemChild' + j.id));
-                            j.isEnabled = 0
+                        if (j.canSell() && !j.isEnabled) {
+                            j.enable();
+                        } else if (!i.canSell()) {
+                            j.disable();
                         }
                     }
                 });
@@ -373,13 +363,13 @@ Game.DrawStore = function() {
             i.clearStoreItem()
         }
     });
-    Game.Items.forEach(function(i) {
+    Game.StoreItems.forEach(function(i) {
         if (i.unlock() && i.element == null) {
             i.drawStoreItem();
         } else if (!i.isVisible) {
             i.clearStoreItem()
         }
-        i.children.forEach(function(j) {
+        i.subItems.forEach(function(j) {
             if (j.unlock() && j.element == null) {
                 j.drawStoreItem();
             } else if (!j.isVisible) {
@@ -387,10 +377,10 @@ Game.DrawStore = function() {
             }
         });
     });
-}
+};
 Game.CalculateGains = function() {
     Game.trainsPs = 0;
-    Game.Items.forEach(function(i) {
+    Game.StoreItems.forEach(function(i) {
         Game.trainsPs += i.trainsPs;
         Game.itemTps += i.trainsPs;
     });
@@ -400,7 +390,7 @@ Game.Loop = function() {
         Game.CalculateGains();
 
     Game.Earn(Game.trainsPs / Game.fps);
-    Game.Items.forEach(function(item) {
+    Game.StoreItems.forEach(function(item) {
         item.totalTrains += item.trainsPs / Game.fps;
     });
 
@@ -412,11 +402,11 @@ Game.Loop = function() {
     if (Game.recalcTps)
         el('tps').innerHTML = 'per second: ' + Game.trainsPs;
     if (Game.refresh == 1) {
-        Game.Items.forEach(function(i) {
-            i.refresh();
-            i.children.forEach(function(j) {
-                j.refresh();
-            })
+        Game.StoreItems.forEach(function(i) {
+            i.refreshStoreItem();
+            i.subItems.forEach(function(j) {
+                j.refreshStoreItem();
+            });
         });
     }
 
