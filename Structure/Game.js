@@ -63,6 +63,7 @@ UnlockReq = function(unlockType, id, amt) {
 };
 var Game = {};
 Game.StoreItems = [];
+Game.StoreUpgrades = [];
 /*==========================================================================
                     Data Loading from Files and Setup
 ==========================================================================*/
@@ -94,22 +95,18 @@ Game.LoadItems = async function() {
 Game.LoadUpgrades = async function() {
     await $.getJSON('/Data/Upgrades.json', function(response) {
         $.each(response, function(i) {
-            var tempReqs = [];
-            $.each(this.upgradeReqs, function(j) {
-                tempReqs.push(new UnlockReq(this.type, this.id, this.amt));
+            var reqs = [];
+            $.each(this.unlockReqs, function(j) {
+                reqs.push(new UnlockReq(this.type, this.id, this.amt));
             });
-            var tempItems = [];
+            var upgItems = [];
             $.each(this.upgradeItems, function(j) {
-                tempItems.push({
-                    itemId: this.itemId,
-                    multiplier: this.multiplier
-                });
+                upgItems.push({type: this.type, id: this.id, mult: this.mult});
             });
-            var upgradeIcon = new Icon(this.upgradeIcon.file, this.upgradeIcon.x, this.upgradeIcon.y);
+            var icon = new Icon(this.icon.file, this.icon.x, this.icon.y);
             var tooltipIcon = new Icon(this.tooltipIcon.file, this.tooltipIcon.x, this.tooltipIcon.y);
-
-            new ItemUpgrade(this.upgradeId, this.upgradeName, this.upgradeDesc, this.upgradeExtraDesc, upgradeIcon, tooltipIcon,
-                this.upgradeBaseCost, tempItems, tempReqs);
+            
+            new StoreUpgrade(this.id1, -1, this.name, this.desc1, this.desc2, icon, tooltipIcon, this.baseCost, this.baseCostMult, reqs, upgItems);
         });
     });
 };
@@ -144,7 +141,7 @@ Game.Buy = function(id1, id2, type) {
             Game.StoreItems[id2].subItems[id1].sell(Game.bulkQty)
         }
     } else if (type == 'Upgrade') {
-        Game.ItemUpgrades[id1].buyUpgrade()
+        Game.StoreUpgrades[id1].buy(1)
     }
     Game.refresh = 1;
     Game.recalcTps = 1;
@@ -233,7 +230,7 @@ Game.ResetItems = function() {
     Game.StoreItems.forEach(function(item) {
         item.update()
     });
-    Game.ItemUpgrades.forEach(function(upgrade) {
+    Game.StoreUpgrades.forEach(function(upgrade) {
         upgrade.resetObject()
     });
 };
@@ -304,27 +301,25 @@ Game.tooltip.hideTooltip = function() {
                 Core Loop function and loop based logic
 ==========================================================================*/
 Game.CheckForPurchasable = function() {
-    Game.ItemUpgrades.forEach(function(i) {
-        if (i.isVisible == 1) {
-            if (i.canBuyUpgrade() && !i.isEnabled) {
-                enableElement(el('upgrade' + i.upgradeId));
-                i.isEnabled = 1
-            } else if (!i.canBuyUpgrade()) {
-                disableElement(el('upgrade' + i.upgradeId));
-                i.isEnabled = 0
+    Game.StoreUpgrades.forEach(function(i) {
+        if (i.isVisible == 1 && i.element != null) {
+            if (i.canBuy(1) && !i.isEnabled) {
+                i.enable();
+            } else if (!i.canBuy(1)) {
+                i.disable();
             }
         }
     });
     if (Game.bulkMode == 1) {
         Game.StoreItems.forEach(function(i) {
-            if (i.isVisible == 1) {
+            if (i.isVisible == 1 && i.element != null) {
                 if (i.canBuy(Game.bulkQty) && !i.isEnabled) {
                     i.enable();
                 } else if (!i.canBuy(Game.bulkQty)) {
                     i.disable();
                 }
                 i.subItems.forEach(function(j) {
-                    if (j.isVisible == 1) {
+                    if (j.isVisible == 1 && j.element != null) {
                         if (j.canBuy(Game.bulkQty) && !j.isEnabled) {
                             j.enable();
                         } else if (!j.canBuy(Game.bulkQty)) {
@@ -336,14 +331,14 @@ Game.CheckForPurchasable = function() {
         });
     } else if (Game.bulkMode == 2) {
         Game.StoreItems.forEach(function(i) {
-            if (i.isVisible == 1) {
+            if (i.isVisible == 1 && i.element != null) {
                 if (i.canSell() && !i.isEnabled) {
                     i.enable();
                 } else if (!i.canSell()) {
                     i.disable();
                 }
                 i.subItems.forEach(function(j) {
-                    if (j.isVisible == 1) {
+                    if (j.isVisible == 1 && j.element != null) {
                         if (j.canSell() && !j.isEnabled) {
                             j.enable();
                         } else if (!i.canSell()) {
@@ -356,24 +351,24 @@ Game.CheckForPurchasable = function() {
     }
 };
 Game.DrawStore = function() {
-    Game.ItemUpgrades.forEach(function(i) {
+    Game.StoreUpgrades.forEach(function(i) {
         if (i.unlock() && i.element == null) {
             i.drawStoreItem();
         } else if (!i.isVisible) {
-            i.clearStoreItem()
+            i.clear()
         }
     });
     Game.StoreItems.forEach(function(i) {
         if (i.unlock() && i.element == null) {
             i.drawStoreItem();
         } else if (!i.isVisible) {
-            i.clearStoreItem()
+            i.clear()
         }
         i.subItems.forEach(function(j) {
             if (j.unlock() && j.element == null) {
                 j.drawStoreItem();
             } else if (!j.isVisible) {
-                j.clearStoreItem()
+                j.clear()
             }
         });
     });

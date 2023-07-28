@@ -18,7 +18,7 @@ Clicker = function() {
     this.updateClick = function() {
         var multiplier = 1;
         this.clickUpgrades.forEach(function(upgrade) {
-            multiplier = multiplier * upgrade.multiplier;
+            multiplier = multiplier * upgrade.mult;
         });
         this.clickPower = this.clickBasePower * multiplier * Game.ascMultiplier;
     };

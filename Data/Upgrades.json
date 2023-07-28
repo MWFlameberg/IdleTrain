@@ -1,11 +1,12 @@
 [ 
     {
-        "upgradeId": 0,
-        "upgradeName": "Crappy Engine",
-        "upgradeDesc": "This is a Crappy engine",
-        "upgradeExtraDesc": "God knows if it still works.",
-        "upgradeBaseCost": 10,
-        "upgradeIcon": {
+        "id1": 0,
+        "name": "Crappy Engine",
+        "desc1": "This is a Crappy engine",
+        "desc2": "God knows if it still works.",
+        "baseCost": 10,
+        "baseCostMult": 1.0,
+        "icon": {
             "file": "/Images/upgrade-placeholder.png",
             "x": 0,
             "y": 0
@@ -15,40 +16,15 @@
             "x": 0,
             "y": 0
         },
-        "upgradeReqs": [{
+        "unlockReqs": [{
             "type": "Clicks",
             "id": 0,
             "amt": 10
         }],
         "upgradeItems": [{
-            "itemId": 0,
-            "multiplier": 2
-        }]
-    },
-    {
-        "upgradeId": 1,
-        "upgradeName": "Crappy Clicker",
-        "upgradeDesc": "This is a Crappy Clicker",
-        "upgradeExtraDesc": "God knows if it still works.",
-        "upgradeBaseCost": 10,
-        "upgradeIcon": {
-            "file": "/Images/upgrade-placeholder.png",
-            "x": 0,
-            "y": 0
-        },
-        "tooltipIcon": {
-            "file": "/Images/tooltip-placeholder.png",
-            "x": 0,
-            "y": 0
-        },
-        "upgradeReqs": [{
             "type": "Items",
             "id": 0,
-            "amt": 1
-        }],
-        "upgradeItems": [{
-            "itemId": -1,
-            "multiplier": 2
+            "mult": 2
         }]
     }
 ]

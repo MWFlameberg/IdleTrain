@@ -13,7 +13,7 @@ BaseObject = function(id1, id2, name, desc1, desc2, icon, tooltipIcon) {
     this.isUnlocked = 0;
     this.isEnabled = 0;
     this.isVisible = 0;
-    this.isDymaic = 0;
+    this.isDynamic = 0;
     //HTML properties.
     this.element = null;
     //Functions
@@ -165,7 +165,7 @@ StoreItem = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost, 
     this.update = function() {
         var upgPowerMult = 1;
         this.upgrades.forEach(function(i) {
-            upgPowerMult *= i.multiplier;
+            upgPowerMult *= i.mult;
         });
         var subPowerMult = 1;
         var subDiscountMult = 1;
@@ -293,4 +293,70 @@ StoreSubItem = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCos
         '</div>'
     };
     Game.StoreItems[id2].subItems.push(this);
+};
+StoreUpgrade = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost, baseCostMult, unlockReqs, upgradeItems) {
+    //Parent calls.
+    this.prototype = StoreObject;
+    StoreObject.call(this, id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost, baseCostMult, unlockReqs);
+    //Child Collection properties.
+    this.upgradeItems = upgradeItems;
+    //Functions
+    var parentResetObject = this.resetObject;
+    this.resetObject = function() {
+        parentResetObject.call(this);
+
+        this.currentPowerMult = 0;
+        this.currentSpeedMult = 0;
+        this.currentDiscountMult = 1;
+    };
+    var parentUpdate = this.update;
+    this.update = function() {
+        this.upgradeItems.forEach(function(i) {
+            if (i.type == 'Clicks') {
+                Game.Clicker.clickUpgrades.push({id: this.id, mult: i.mult})
+                Game.Clicker.updateClick();
+            }
+            else if (i.type =='Items') {
+                Game.StoreItems[i.id].upgrades.push({id: this.id, mult: i.mult})
+                Game.StoreItems[i.id].update();
+            }
+        });
+        this.clear();
+        parentUpdate.call(this);
+    };
+    this.buy = function(amt) {
+        var success = 0;
+        if(Game.trains >= this.getBuyCost(1)) {
+            Game.Spend(this.getBuyCost(1));
+            this.amt += amt;
+            this.update();
+            Game.tooltip.hideTooltip();
+            success = 1;
+        }
+        return success;
+    };
+    this.canBuy = function(amt) {
+        return Game.trains >= this.getBuyCost(1);
+    };
+    this.drawTooltip = function() {
+        return '<div id="tooltipItem">' +
+                '<div class="tooltipIcon" style="float:left; background-position:' + this.tooltipIcon.xCoord + 'px ' + this.tooltipIcon.yCoord + 'px;background-image:url(' + this.tooltipIcon.file + ')"></div>' +
+                '<div style="float:right; text-align:right;">' + this.getCurrentCost() + '</div>' +
+                '<div class="tooltipHeader">' + this.name + '</div>' +
+                '<div class="tooltipShortLine"></div>' +
+                '<div class="tooltipDesc">' + this.desc1 + '</div>' +
+            '</div>'
+    };
+    this.drawStoreItem = function() {
+        this.element = el('upgrades').appendChild(document.createElement('div'));
+        this.element.id = 'upgrade' + this.upgradeId;
+        this.element.className = 'upgradeItem';
+        this.element.innerHTML = '<div class="upgradeIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>'
+        this.isVisible = 1;
+
+        this.element.onclick = function() { Game.Buy(id1, id2, 'Upgrade') };
+        this.element.onmousemove = function() { Game.tooltip.drawTooltip(function() {return Game.StoreUpgrades[id1].drawTooltip() }, 'store') };
+        this.element.onmouseout =  function() { Game.tooltip.hideTooltip() };
+    };
+    Game.StoreUpgrades.push(this);
 };
