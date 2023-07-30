@@ -244,6 +244,22 @@ div {
   border-width: 1px;
   opacity: 0.5;
 }
+.trainLine {
+  height: 80px;
+  width: auto;
+  cursor: pointer;
+  position: relative;
+  border-style: solid;
+  border-width: 1px;
+  opacity: 0.5;
+}
+#trainLineBarContainer {
+  position: absolute;
+  margin: 3px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+}
 .itemIcon {
   width: 64px;
   height: 64px;
@@ -315,6 +331,9 @@ div {
   opacity: 1;
 }
 .itemChild.enabled {
+  opacity: 1;
+}
+.trainLine.enabled {
   opacity: 1;
 }
 /* ############################## */

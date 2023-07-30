@@ -64,6 +64,7 @@ UnlockReq = function(unlockType, id, amt) {
 var Game = {};
 Game.StoreItems = [];
 Game.StoreUpgrades = [];
+Game.StoreTrainLines = [];
 /*==========================================================================
                     Data Loading from Files and Setup
 ==========================================================================*/
@@ -88,6 +89,31 @@ Game.LoadItems = async function() {
                 var icon = new Icon(this.icon.file, this.icon.x, this.icon.y);
                 var tooltipIcon = new Icon(this.tooltipIcon.file, this.tooltipIcon.x, this.tooltipIcon.y);
                 new StoreSubItem(this.id1, parentId, this.name, this.desc1, this.desc2, icon, tooltipIcon, this.baseCost, this.baseCostMult, reqs, this.basePowerMult, this.baseSpeedMult, this.baseDiscountMult);
+            });
+        });
+    });
+};
+Game.LoadTrainLines = async function() {
+    await $.getJSON('/Data/TrainLines.json', function(response) {
+        $.each(response, function(i) {
+            var reqs = [];
+            $.each(this.unlockReqs, function(j) {
+                reqs.push(new UnlockReq(this.type, this.id, this.amt));
+            });
+            var icon = new Icon(this.icon.file, this.icon.x, this.icon.y);
+            var tooltipIcon = new Icon(this.tooltipIcon.file, this.tooltipIcon.x, this.tooltipIcon.y);
+
+            var parentId = this.id1;
+            new StoreTrainLine(this.id1, -1, this.name, this.desc1, this.desc2, icon, tooltipIcon, this.baseCost, this.baseCostMult, reqs, this.basePower, this.baseSpeed);
+
+            $.each(this.subItems, function(j) {
+                var reqs = [];
+                $.each(this.unlockReqs, function(j) {
+                    reqs.push(new UnlockReq(this.type, this.id, this.amt));
+                });
+                var icon = new Icon(this.icon.file, this.icon.x, this.icon.y);
+                var tooltipIcon = new Icon(this.tooltipIcon.file, this.tooltipIcon.x, this.tooltipIcon.y);
+                new StoreSubTrainLine(this.id1, parentId, this.name, this.desc1, this.desc2, icon, tooltipIcon, this.baseCost, this.baseCostMult, reqs, this.basePowerMult, this.baseSpeedMult, this.baseDiscountMult);
             });
         });
     });
@@ -134,11 +160,24 @@ Game.Buy = function(id1, id2, type) {
         } else if (Game.bulkMode == 2) {
             Game.StoreItems[id1].sell(Game.bulkQty)
         }
+    }
+    else if (type == 'Line') {
+        if (Game.bulkMode == 1) {
+            Game.StoreTrainLines[id1].buy(Game.bulkQty)
+        } else if (Game.bulkMode == 2) {
+            Game.StoreTrainLines[id1].sell(Game.bulkQty)
+        }
     } else if (type == 'SubItem') {
         if (Game.bulkMode == 1) {
             Game.StoreItems[id2].subItems[id1].buy(Game.bulkQty)
         } else if (Game.bulkMode == 2) {
             Game.StoreItems[id2].subItems[id1].sell(Game.bulkQty)
+        }
+    } else if (type == 'SubLine') {
+        if (Game.bulkMode == 1) {
+            Game.StoreTrainLines[id2].subItems[id1].buy(Game.bulkQty)
+        } else if (Game.bulkMode == 2) {
+            Game.StoreTrainLines[id2].subItems[id1].sell(Game.bulkQty)
         }
     } else if (type == 'Upgrade') {
         Game.StoreUpgrades[id1].buy(1)
@@ -227,12 +266,16 @@ Game.ResetItems = function() {
     Game.StoreItems.forEach(function(item) {
         item.resetObject()
     });
-    Game.StoreItems.forEach(function(item) {
-        item.update()
-    });
     Game.StoreUpgrades.forEach(function(upgrade) {
         upgrade.resetObject()
     });
+    Game.StoreTrainLines.forEach(function(i) {
+        i.resetObject()
+    });
+    Game.StoreItems.forEach(function(item) {
+        item.update()
+    });
+    
 };
 Game.GetAscendTooltip = function() {
     return '<div id="tooltipItem">' +
@@ -329,8 +372,44 @@ Game.CheckForPurchasable = function() {
                 });
             }
         });
+        Game.StoreTrainLines.forEach(function(i) {
+            if (i.isVisible == 1 && i.element != null) {
+                if (i.canBuy(Game.bulkQty) && !i.isEnabled) {
+                    i.enable();
+                } else if (!i.canBuy(Game.bulkQty)) {
+                    i.disable();
+                }
+                i.subItems.forEach(function(j) {
+                    if (j.isVisible == 1 && j.element != null) {
+                        if (j.canBuy(Game.bulkQty) && !j.isEnabled) {
+                            j.enable();
+                        } else if (!j.canBuy(Game.bulkQty)) {
+                            j.disable();
+                        }
+                    }
+                });
+            }
+        });
     } else if (Game.bulkMode == 2) {
         Game.StoreItems.forEach(function(i) {
+            if (i.isVisible == 1 && i.element != null) {
+                if (i.canSell() && !i.isEnabled) {
+                    i.enable();
+                } else if (!i.canSell()) {
+                    i.disable();
+                }
+                i.subItems.forEach(function(j) {
+                    if (j.isVisible == 1 && j.element != null) {
+                        if (j.canSell() && !j.isEnabled) {
+                            j.enable();
+                        } else if (!i.canSell()) {
+                            j.disable();
+                        }
+                    }
+                });
+            }
+        });
+        Game.StoreTrainLines.forEach(function(i) {
             if (i.isVisible == 1 && i.element != null) {
                 if (i.canSell() && !i.isEnabled) {
                     i.enable();
@@ -372,6 +451,20 @@ Game.DrawStore = function() {
             }
         });
     });
+    Game.StoreTrainLines.forEach(function(i) {
+        if (i.unlock() && i.element == null) {
+            i.drawStoreItem();
+        } else if (!i.isVisible) {
+            i.clear()
+        }
+        i.subItems.forEach(function(j) {
+            if (j.unlock() && j.element == null) {
+                j.drawStoreItem();
+            } else if (!j.isVisible) {
+                j.clear()
+            }
+        });
+    });
 };
 Game.CalculateGains = function() {
     Game.trainsPs = 0;
@@ -386,7 +479,14 @@ Game.Loop = function() {
 
     Game.Earn(Game.trainsPs / Game.fps);
     Game.StoreItems.forEach(function(item) {
-        item.totalTrains += item.trainsPs / Game.fps;
+        item.trainsEarned += item.trainsPs / Game.fps;
+    });
+    Game.StoreTrainLines.forEach(function(item) {
+        if (item.checkTimeElapse()) {
+            Game.Earn(item.trainsPs);
+            item.trainsEarned += item.trainsPs;
+            item.currentStart = Date.now();
+        }
     });
 
     Game.DrawStore();
@@ -403,6 +503,12 @@ Game.Loop = function() {
                 j.refreshStoreItem();
             });
         });
+        Game.StoreTrainLines.forEach(function(i) {
+            i.refreshStoreItem();
+            i.subItems.forEach(function(j) {
+                j.refreshStoreItem();
+            });
+        });
     }
 
     el('tpTotal').innerHTML = formatNum(Game.trains, 2);
@@ -412,6 +518,10 @@ Game.Loop = function() {
 
     Game.ascPercent = ((Game.trainsEarned % Game.ascTrainsReq) / Game.ascTrainsReq) * 100
     el('ascendBar').style.width = Game.ascPercent + '%';
+
+    Game.StoreTrainLines.forEach(function(i) {
+        el('trainLine' + i.id1 + 'Bar').style.width = (((Date.now() - i.currentStart) / i.currentSpeed) * 100) + '%';
+    });
 
     Game.loopT++;
     setTimeout(Game.Loop, 1000 / Game.fps);
@@ -465,6 +575,7 @@ Game.Init = function() {
 Game.Launch = async function() {
     Game.Init();
     Game.LoadItems();
+    Game.LoadTrainLines();
     Game.LoadUpgrades();
     Game.Clicker = new Clicker();
     Game.tooltip.initialise();

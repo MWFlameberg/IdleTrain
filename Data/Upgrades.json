@@ -26,5 +26,33 @@
             "id": 0,
             "mult": 2
         }]
+    },
+    {
+        "id1": 1,
+        "name": "Crappy Engine",
+        "desc1": "This is a Crappy engine",
+        "desc2": "God knows if it still works.",
+        "baseCost": 10,
+        "baseCostMult": 1.0,
+        "icon": {
+            "file": "/Images/upgrade-placeholder.png",
+            "x": 0,
+            "y": 0
+        },
+        "tooltipIcon": {
+            "file": "/Images/tooltip-placeholder.png",
+            "x": 0,
+            "y": 0
+        },
+        "unlockReqs": [{
+            "type": "Clicks",
+            "id": 0,
+            "amt": 10
+        }],
+        "upgradeItems": [{
+            "type": "Lines",
+            "id": 0,
+            "mult": 2
+        }]
     }
 ]
