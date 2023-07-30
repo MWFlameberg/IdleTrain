@@ -264,16 +264,15 @@ Game.Ascend = function() {
 };
 Game.ResetItems = function() {
     Game.StoreItems.forEach(function(item) {
-        item.resetObject()
+        item.resetObject();
+        item.update();
     });
     Game.StoreUpgrades.forEach(function(upgrade) {
-        upgrade.resetObject()
+        upgrade.resetObject();
     });
     Game.StoreTrainLines.forEach(function(i) {
-        i.resetObject()
-    });
-    Game.StoreItems.forEach(function(item) {
-        item.update()
+        i.resetObject();
+        i.update();
     });
     
 };

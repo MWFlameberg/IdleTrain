@@ -180,7 +180,7 @@ StoreItem = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost, 
 
         this.currentDiscountMult = subDiscountMult
         this.currentPowerMult = upgPowerMult * subPowerMult;
-        this.currentPower = this.basePower * this.currentPowerMult * 1;
+        this.currentPower = this.basePower * this.currentPowerMult * 1 * Game.ascMultiplier;
         this.trainsPs = this.currentPower * this.amt
 
         parentUpdate.call(this);
@@ -283,7 +283,7 @@ StoreTrainLine = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseC
 
         this.currentDiscountMult = subDiscountMult
         this.currentPowerMult = upgPowerMult * subPowerMult;
-        this.currentPower = this.basePower * this.currentPowerMult * 1;
+        this.currentPower = this.basePower * this.currentPowerMult * 1 * Game.ascMultiplier;
         this.currentSpeedMult = subSpeedMult;
         this.currentSpeed = this.baseSpeed * this.currentSpeedMult * 1;
         this.trainsPs = this.currentPower * this.amt
