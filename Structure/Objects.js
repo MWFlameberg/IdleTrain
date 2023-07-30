@@ -47,11 +47,11 @@ StoreObject = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost
     //Base Stat properties.
     this.baseCost = baseCost;
     this.baseCostMult = baseCostMult;
-    this.baseDiscount = 1.0;
+    this.baseDiscountMult = 1.0;
     //Up to Date Stat properties.
     this.currentCost = this.baseCost;
     this.currentCostMult = this.baseCostMult;
-    this.currentDiscount = this.baseDiscount;
+    this.currentDiscountMult = this.baseDiscountMult;
     this.currentDiscountCost = this.currentCost * this.currentDiscount;
     //Prereq Collection properties.
     this.unlockReqs = unlockReqs;
@@ -62,14 +62,14 @@ StoreObject = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost
 
         this.currentCost = this.baseCost;
         this.currentCostMult = this.baseCostMult;
-        this.currentDiscount = this.baseDiscount;
-        this.currentDiscountCost = this.currentCost * this.currentDiscount;
+        this.baseDiscountMult = this.baseDiscountMult;
+        this.currentDiscountCost = this.currentCost * this.currentDiscountMult;
         this.unlockReqs.forEach(function(i) { i.reset() });
         this.unlock();
     };
     this.update = function() {
         this.currentCost = this.getBuyCost(1);
-        this.currentDiscountCost = this.currentCost * this.currentDiscount
+        this.currentDiscountCost = this.currentCost * this.currentDiscountMult
     };
     this.unlock = function() {
         if (this.isUnlocked == 1 && this.isVisible == 1) { return 0; }
@@ -114,7 +114,7 @@ StoreObject = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost
     this.getBuyCost = function(amt) {
         var cost = 0;
         for (var i = this.amt; i < this.amt + amt; i++) {
-            cost += Math.ceil(this.baseCost * this.currentDiscount * Math.pow(this.currentCostMult, i));
+            cost += Math.ceil(this.baseCost * this.currentDiscountMult * Math.pow(this.currentCostMult, i));
         }
         return cost;
     };
@@ -124,7 +124,7 @@ StoreObject = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost
         var cost = 0;
         var i = amt;
         do {
-            cost += Math.ceil(this.bCost * Math.pow(this.aCostMult, this.amt - 1) * 0.6);
+            cost += Math.ceil(this.baseCost * this.currentDiscountMult * Math.pow(this.currentCostMult, this.amt - 1) * 0.6);
             i--;
         } while (i > this.amt - amt)
         return cost;
@@ -390,17 +390,29 @@ StoreSubItem = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCos
         Game.StoreItems[id2].update();
     };
     this.drawTooltip = function() {
-        return '<div id="tooltipItem">' +
+        var toolTip = '<div id="tooltipItem">' +
                     '<div class="tooltipIcon" style="float:left; background-position:' + this.tooltipIcon.xCoord + 'px ' + this.tooltipIcon.yCoord + 'px;background-image:url(' + this.tooltipIcon.file + ')"></div>' +
                     '<div style="float:right; text-align:right;">' + this.getCurrentCost() + '</div>' +
                     '<div class="tooltipHeader">' + this.name + '</div>' +
                     '<div class="tooltipTag">' + 'owned: ' + this.amt + '</div>' +
                     '<div class="tooltipLine"></div>' +
                     '<div class="tooltipDesc">' + this.desc1 + '</div>' +
-                    '<div class="tooltipLine"></div>' +
-                    '<div class="tooltipStats">' + 'Each ' + this.name + ' improves ' + Game.StoreItems[this.id2].name +' efficiency by ' + (this.currentPowerMult * 100) + '%.' + '</div>' +
-                    '<div class="tooltipStats">' + 'Current improving efficiency by ' + (this.currentPowerMult * 100) * this.amt + '%.' + '</div>' +
-                '</div>'
+                    '<div class="tooltipLine"></div>'
+        if (this.basePowerMult != 0) {
+            toolTip += '<div class="tooltipStats">' + 'Each ' + this.name + ' improves ' + Game.StoreItems[this.id2].name +' strength by ' + (this.basePowerMult * 100) + '%.' + '</div>' +
+                                    '<div class="tooltipStats">' + 'Currently improving strength by ' + this.currentPowerMult + '%.' + '</div>'
+        }
+        if (this.baseSpeedMult != 1) {
+            toolTip += '<div class="tooltipStats">' + 'Each ' + this.name + ' improves ' + Game.StoreItems[this.id2].name +' speed by ' + ((1 - this.baseSpeedMult) * 100) + '%.' + '</div>' +
+                                    '<div class="tooltipStats">' + 'Currently improving speed by ' +  ((1 - this.currentSpeedMult) * 100) + '%.' + '</div>'
+        }
+        if (this.baseDiscountMult != 1) {
+            toolTip += '<div class="tooltipStats">' + 'Each ' + this.name + ' reduces ' + Game.StoreItems[this.id2].name +' cost by ' + ((1 - this.baseDiscountMult) * 100) + '%.' + '</div>' +
+                                    '<div class="tooltipStats">' + 'Currently reducing cost by ' + ((1 - this.currentDiscountMult) * 100) + '%.' + '</div>'
+        }
+                    
+        toolTip += '</div>'
+        return toolTip;
     };
     this.drawStoreItem = function() {
         this.element = el('item' + this.id2 + 'Container').appendChild(document.createElement('div'));
@@ -439,17 +451,29 @@ StoreSubTrainLine = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, ba
         Game.StoreTrainLines[id2].update();
     };
     this.drawTooltip = function() {
-        return '<div id="tooltipItem">' +
+        var toolTip = '<div id="tooltipItem">' +
                     '<div class="tooltipIcon" style="float:left; background-position:' + this.tooltipIcon.xCoord + 'px ' + this.tooltipIcon.yCoord + 'px;background-image:url(' + this.tooltipIcon.file + ')"></div>' +
                     '<div style="float:right; text-align:right;">' + this.getCurrentCost() + '</div>' +
                     '<div class="tooltipHeader">' + this.name + '</div>' +
                     '<div class="tooltipTag">' + 'owned: ' + this.amt + '</div>' +
                     '<div class="tooltipLine"></div>' +
                     '<div class="tooltipDesc">' + this.desc1 + '</div>' +
-                    '<div class="tooltipLine"></div>' +
-                    '<div class="tooltipStats">' + 'Each ' + this.name + ' improves ' + Game.StoreTrainLines[this.id2].name +' efficiency by ' + (this.currentPowerMult * 100) + '%.' + '</div>' +
-                    '<div class="tooltipStats">' + 'Current improving efficiency by ' + (this.currentPowerMult * 100) * this.amt + '%.' + '</div>' +
-                '</div>'
+                    '<div class="tooltipLine"></div>'
+        if (this.basePowerMult != 0) {
+            toolTip += '<div class="tooltipStats">' + 'Each ' + this.name + ' improves ' + Game.StoreTrainLines[this.id2].name +' strength by ' + (this.basePowerMult * 100) + '%.' + '</div>' +
+                        '<div class="tooltipStats">' + 'Currently improving strength by ' + this.currentPowerMult + '%.' + '</div>'
+        }
+        if (this.baseSpeedMult != 1) {
+            toolTip += '<div class="tooltipStats">' + 'Each ' + this.name + ' improves ' + Game.StoreTrainLines[this.id2].name +' speed by ' + ((1 - this.baseSpeedMult) * 100) + '%.' + '</div>' +
+                        '<div class="tooltipStats">' + 'Currently improving speed by ' +  ((1 - this.currentSpeedMult) * 100) + '%.' + '</div>'
+        }
+        if (this.baseDiscountMult != 1) {
+            toolTip += '<div class="tooltipStats">' + 'Each ' + this.name + ' reduces ' + Game.StoreTrainLines[this.id2].name +' cost by ' + ((1 - this.baseDiscountMult) * 100) + '%.' + '</div>' +
+                        '<div class="tooltipStats">' + 'Currently reducing cost by ' + ((1 - this.currentDiscountMult) * 100) + '%.' + '</div>'
+        }
+                    
+        toolTip += '</div>'
+        return toolTip;
     };
     this.drawStoreItem = function() {
         this.element = el('trainLine' + this.id2 + 'Container').appendChild(document.createElement('div'));

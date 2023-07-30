@@ -30,7 +30,7 @@
             "baseCost": 10,
             "baseCostMult": 1.1,
             "basePowerMult": 0.01,
-            "baseSpeedMult": 0.00,
+            "baseSpeedMult": 1,
             "baseDiscountMult": 0.99,  
             "icon": {
                 "file": "/Images/small-placeholder.png",
