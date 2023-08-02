@@ -13,14 +13,61 @@ function disableElement(element) {
     element.classList.remove('enabled');
 };
 
+function formatEveryThirdPower(format, num)
+
+{
+	var base = 0
+    var formatValue = '';
+	if (!isFinite(num)) return 'Infinity';
+	if (num >= 1000000)
+	{
+		num /= 1000;
+		while(Math.round(num)>=1000)
+		{
+			num /= 1000;
+			base++;
+		}
+		if (base >= format.length) {return 'Infinity';} else {formatValue = format[base];}
+	}
+	return (Math.round(num * 1000) / 1000) + formatValue;
+}
+
+var numFormatLong = [' thousand',' million',' billion',' trillion',' quadrillion',' quintillion',' sextillion',' septillion',' octillion',' nonillion'];
+var numPrefix = ['','un','duo','tre','quattuor','quin','sex','septen','octo','novem'];
+var numSuffix = ['decillion','vigintillion','trigintillion','quadragintillion','quinquagintillion','sexagintillion','septuagintillion','octogintillion','nonagintillion'];
+
+for (var i in numPrefix)
+	for (var ii in numSuffix)
+        numFormatLong.push(' ' + numPrefix[ii] + numSuffix[i]);
+
+var numFormatShort = ['k','M','B','T','Qa','Qi','Sx','Sp','Oc','No'];
+var numPrefix = ['','Un','Do','Tr','Qa','Qi','Sx','Sp','Oc','No'];
+var numSuffix = ['D','V','T','Qa','Qi','Sx','Sp','O','N'];
+for (var i in numPrefix)
+	for (var ii in numSuffix)
+        numFormatShort.push(' ' + numPrefix[ii] + numSuffix[i]);
+
 function formatNum(num, floats) {
     var negative = (num < 0);
     var decimal = '';
     var fixed = num.toFixed(floats);
-    if (floats > 0) decimal = '.' + fixed.toString().split('.')[1];
+    if (floats > 0 && num < 1000) decimal = '.' + fixed.toString().split('.')[1];
     num = Math.floor(Math.abs(num));
-    return negative ? '-' + num : num + decimal;
+    var output = ''
+    var output = formatEveryThirdPower(numFormatLong, num).toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');
+    return negative ? '-' + output : output + decimal;
 };
+function formatNumSimple(num) {
+	var input = num.toString();
+	var output = '';
+	for (var i in input)
+	{
+		if ((input.length-i) % 3 == 0 && i > 0) 
+            output += ',';
+		output += input[i];
+	}
+	return output;
+}
 /*==========================================================================
                     Useful/Reused Objects for storage
 ==========================================================================*/
@@ -494,7 +541,7 @@ Game.Loop = function() {
     if (Game.mouseMoved || Game.tooltip.dynamic)
         Game.tooltip.updateTooltip();
     if (Game.recalcTps)
-        el('tps').innerHTML = 'per second: ' + Game.trainsPs;
+        el('tps').innerHTML = 'per second: ' + formatNum(Game.trainsPs, 1);
     if (Game.refresh == 1) {
         Game.StoreItems.forEach(function(i) {
             i.refreshStoreItem();
@@ -510,7 +557,7 @@ Game.Loop = function() {
         });
     }
 
-    el('tpTotal').innerHTML = formatNum(Game.trains, 2);
+    el('tpTotal').innerHTML = formatNum(Game.trains, 0);
 
     Game.recalcTps = 0;
     Game.refresh = 0;

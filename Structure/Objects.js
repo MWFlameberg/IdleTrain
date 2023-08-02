@@ -129,7 +129,7 @@ StoreObject = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost
         } while (i > this.amt - amt)
         return cost;
     };
-    this.getCurrentCost = function(amt) {
+    this.getCurrentCost = function() {
         if (Game.bulkMode == 1) 
             return this.getBuyCost(Game.bulkQty);
         else if (Game.bulkMode == 2) 
@@ -188,15 +188,15 @@ StoreItem = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost, 
     this.drawTooltip = function() {
         return '<div id="tooltipItem">' +
                     '<div class="tooltipIcon" style="float:left; background-position:' + this.tooltipIcon.xCoord + 'px ' + this.tooltipIcon.yCoord + 'px;background-image:url(' + this.tooltipIcon.file + ')"></div>' +
-                    '<div style="float:right; text-align:right;">' + this.getCurrentCost() + '</div>' +
+                    '<div style="float:right; text-align:right;">' + formatNum(this.getCurrentCost(), 0) + '</div>' +
                     '<div class="tooltipHeader">' + this.name + '</div>' +
-                    '<div class="tooltipTag">' + 'owned: ' + this.amt + '</div>' +
+                    '<div class="tooltipTag">' + 'owned: ' + formatNum(this.amt, 0) + '</div>' +
                     '<div class="tooltipLine"></div>' +
                     '<div class="tooltipDesc">' + this.desc1 + '</div>' +
                     '<div class="tooltipLine"></div>' +
-                    '<div class="tooltipStats">' + 'Each ' + this.name + ' generates ' + this.currentPower + ' per second.' + '</div>' +
-                    '<div class="tooltipStats">' + this.amt + ' ' + this.name + ' generating ' + this.trainsPs + ' per second.' + '</div>' +
-                    '<div class="tooltipStats">' + this.trainsEarned + ' generated so far' + '</div>' +
+                    '<div class="tooltipStats">' + 'Each ' + this.name + ' generates ' + formatNum(this.currentPower, 1) + ' per second.' + '</div>' +
+                    '<div class="tooltipStats">' + formatNum(this.amt, 0) + ' ' + this.name + ' generating ' + formatNum(this.trainsPs, 1) + ' per second.' + '</div>' +
+                    '<div class="tooltipStats">' + formatNum(this.trainsEarned, 1) + ' generated so far' + '</div>' +
                 '</div>'
     };
     this.drawStoreItem = function() {
@@ -209,8 +209,8 @@ StoreItem = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost, 
         this.element.innerHTML = '<div class="itemIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
             '<div class="itemContent">' +
                 '<div class="itemHeader">' + this.name + '</div>' +
-                '<div id="item' + this.id1 + 'cost" class="itemDesc">' + this.getCurrentCost() + '</div>' +
-                '<div id="item' + this.id1 + 'qty" class="itemOwned">' + this.amt + '</div>' +
+                '<div id="item' + this.id1 + 'cost" class="itemDesc">' + formatNum(this.getCurrentCost(), 0) + '</div>' +
+                '<div id="item' + this.id1 + 'qty" class="itemOwned">' + formatNum(this.amt, 0) + '</div>' +
             '</div>'
         this.isVisible = 1;
         this.element.onclick = function() { Game.Buy(id1, id2, 'Item') };
@@ -221,8 +221,8 @@ StoreItem = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost, 
         this.element.innerHTML = '<div class="itemIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
         '<div class="itemContent">' +
             '<div class="itemHeader">' + this.name + '</div>' +
-            '<div id="item' + this.id + 'cost" class="itemDesc">' + this.getCurrentCost() + '</div>' +
-            '<div id="item' + this.id + 'qty" class="itemOwned">' + this.amt + '</div>' +
+            '<div id="item' + this.id + 'cost" class="itemDesc">' + formatNum(this.getCurrentCost(), 0) + '</div>' +
+            '<div id="item' + this.id + 'qty" class="itemOwned">' + formatNum(this.amt, 0) + '</div>' +
         '</div>'
     };
     Game.StoreItems.push(this);
@@ -303,15 +303,15 @@ StoreTrainLine = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseC
     this.drawTooltip = function() {
         return '<div id="tooltipItem">' +
                     '<div class="tooltipIcon" style="float:left; background-position:' + this.tooltipIcon.xCoord + 'px ' + this.tooltipIcon.yCoord + 'px;background-image:url(' + this.tooltipIcon.file + ')"></div>' +
-                    '<div style="float:right; text-align:right;">' + this.getCurrentCost() + '</div>' +
+                    '<div style="float:right; text-align:right;">' + formatNum(this.getCurrentCost(), 0) + '</div>' +
                     '<div class="tooltipHeader">' + this.name + '</div>' +
-                    '<div class="tooltipTag">' + 'owned: ' + this.amt + '</div>' +
+                    '<div class="tooltipTag">' + 'owned: ' + formatNum(this.amt, 0) + '</div>' +
                     '<div class="tooltipLine"></div>' +
                     '<div class="tooltipDesc">' + this.desc1 + '</div>' +
                     '<div class="tooltipLine"></div>' +
-                    '<div class="tooltipStats">' + 'Each ' + this.name + ' generates ' + this.currentPower + ' per second.' + '</div>' +
-                    '<div class="tooltipStats">' + this.amt + ' ' + this.name + ' generating ' + this.trainsPs + ' per second.' + '</div>' +
-                    '<div class="tooltipStats">' + this.trainsEarned + ' generated so far' + '</div>' +
+                    '<div class="tooltipStats">' + 'Each ' + this.name + ' generates ' + formatNum(this.currentPower, 1) + ' per second.' + '</div>' +
+                    '<div class="tooltipStats">' + formatNum(this.amt, 0) + ' ' + this.name + ' generating ' + formatNum(this.trainsPs, 1) + ' per second.' + '</div>' +
+                    '<div class="tooltipStats">' + formatNum(this.trainsEarned, 1) + ' generated so far' + '</div>' +
                 '</div>'
     };
     this.drawStoreItem = function() {
@@ -324,8 +324,8 @@ StoreTrainLine = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseC
         this.element.innerHTML = '<div class="itemIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
             '<div class="itemContent">' +
                 '<div class="itemHeader">' + this.name + '</div>' +
-                '<div id="item' + this.id1 + 'cost" class="itemDesc">' + this.getCurrentCost() + '</div>' +
-                '<div id="item' + this.id1 + 'qty" class="itemOwned">' + this.amt + '</div>' +
+                '<div id="item' + this.id1 + 'cost" class="itemDesc">' + formatNum(this.getCurrentCost(), 0) + '</div>' +
+                '<div id="item' + this.id1 + 'qty" class="itemOwned">' + formatNum(this.amt, 0) + '</div>' +
             '</div>' + 
             '<div id="trainLineBarContainer" class="barContainer">' + 
                 '<div id="trainLine' + this.id1 + 'Bar" class="bar"></div>' + 
@@ -339,8 +339,8 @@ StoreTrainLine = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseC
         this.element.innerHTML = '<div class="itemIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
         '<div class="itemContent">' +
             '<div class="itemHeader">' + this.name + '</div>' +
-            '<div id="item' + this.id + 'cost" class="itemDesc">' + this.getCurrentCost() + '</div>' +
-            '<div id="item' + this.id + 'qty" class="itemOwned">' + this.amt + '</div>' +
+            '<div id="item' + this.id + 'cost" class="itemDesc">' + formatNum(this.getCurrentCost(), 0) + '</div>' +
+            '<div id="item' + this.id + 'qty" class="itemOwned">' + formatNum(this.amt, 0) + '</div>' +
         '</div>' +
         '<div id="trainLineBarContainer" class="barContainer">' + 
             '<div id="trainLine' + this.id1 + 'Bar" class="bar"></div>' + 
@@ -392,23 +392,23 @@ StoreSubItem = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCos
     this.drawTooltip = function() {
         var toolTip = '<div id="tooltipItem">' +
                     '<div class="tooltipIcon" style="float:left; background-position:' + this.tooltipIcon.xCoord + 'px ' + this.tooltipIcon.yCoord + 'px;background-image:url(' + this.tooltipIcon.file + ')"></div>' +
-                    '<div style="float:right; text-align:right;">' + this.getCurrentCost() + '</div>' +
+                    '<div style="float:right; text-align:right;">' + formatNum(this.getCurrentCost(), 0) + '</div>' +
                     '<div class="tooltipHeader">' + this.name + '</div>' +
                     '<div class="tooltipTag">' + 'owned: ' + this.amt + '</div>' +
                     '<div class="tooltipLine"></div>' +
                     '<div class="tooltipDesc">' + this.desc1 + '</div>' +
                     '<div class="tooltipLine"></div>'
         if (this.basePowerMult != 0) {
-            toolTip += '<div class="tooltipStats">' + 'Each ' + this.name + ' improves ' + Game.StoreItems[this.id2].name +' strength by ' + (this.basePowerMult * 100) + '%.' + '</div>' +
-                                    '<div class="tooltipStats">' + 'Currently improving strength by ' + this.currentPowerMult + '%.' + '</div>'
+            toolTip += '<div class="tooltipStats">' + 'Each ' + this.name + ' improves ' + Game.StoreItems[this.id2].name +' strength by ' + formatNum((this.basePowerMult * 100), 2) + '%.' + '</div>' +
+                                    '<div class="tooltipStats">' + 'Currently improving strength by ' + formatNum((this.currentPowerMult * 100), 2) + '%.' + '</div>'
         }
         if (this.baseSpeedMult != 1) {
-            toolTip += '<div class="tooltipStats">' + 'Each ' + this.name + ' improves ' + Game.StoreItems[this.id2].name +' speed by ' + ((1 - this.baseSpeedMult) * 100) + '%.' + '</div>' +
-                                    '<div class="tooltipStats">' + 'Currently improving speed by ' +  ((1 - this.currentSpeedMult) * 100) + '%.' + '</div>'
+            toolTip += '<div class="tooltipStats">' + 'Each ' + this.name + ' improves ' + Game.StoreItems[this.id2].name +' speed by ' + formatNum(((1 - this.baseSpeedMult) * 100), 2) + '%.' + '</div>' +
+                                    '<div class="tooltipStats">' + 'Currently improving speed by ' +  formatNum(((1 - this.currentSpeedMult) * 100), 2) + '%.' + '</div>'
         }
         if (this.baseDiscountMult != 1) {
-            toolTip += '<div class="tooltipStats">' + 'Each ' + this.name + ' reduces ' + Game.StoreItems[this.id2].name +' cost by ' + ((1 - this.baseDiscountMult) * 100) + '%.' + '</div>' +
-                                    '<div class="tooltipStats">' + 'Currently reducing cost by ' + ((1 - this.currentDiscountMult) * 100) + '%.' + '</div>'
+            toolTip += '<div class="tooltipStats">' + 'Each ' + this.name + ' reduces ' + Game.StoreItems[this.id2].name +' cost by ' + formatNum(((1 - this.baseDiscountMult) * 100), 2) + '%.' + '</div>' +
+                                    '<div class="tooltipStats">' + 'Currently reducing cost by ' + formatNum(((1 - this.currentDiscountMult) * 100), 2) + '%.' + '</div>'
         }
                     
         toolTip += '</div>'
@@ -420,8 +420,8 @@ StoreSubItem = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCos
         this.element.className = 'itemChild';
         this.element.innerHTML = '<div class="itemChildIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yYoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
             '<div class="itemChildContent">' +
-                '<div class="itemChildHeader">' + this.name + ' - ' + this.getCurrentCost() + '</div>' +
-                '<div id="item' + this.id + 'qty" class="itemChildOwned">' + this.amt + '</div>' +
+                '<div class="itemChildHeader">' + this.name + ' - ' + formatNum(this.getCurrentCost(), 0) + '</div>' +
+                '<div id="item' + this.id + 'qty" class="itemChildOwned">' + formatNum(this.amt, 0) + '</div>' +
             '</div>'
         this.isVisible = 1;
 
@@ -433,8 +433,8 @@ StoreSubItem = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCos
     this.refreshStoreItem = function () {
         this.element.innerHTML = '<div class="itemChildIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
         '<div class="itemChildContent">' +
-            '<div class="itemChildHeader">' + this.name + ' - ' + this.getCurrentCost() + '</div>' +
-            '<div id="item' + this.id + 'qty" class="itemChildOwned">' + this.amt + '</div>' +
+            '<div class="itemChildHeader">' + this.name + ' - ' + formatNum(this.getCurrentCost(), 0) + '</div>' +
+            '<div id="item' + this.id + 'qty" class="itemChildOwned">' + formatNum(this.amt, 0) + '</div>' +
         '</div>'
     };
     Game.StoreItems[id2].subItems.push(this);
@@ -453,23 +453,23 @@ StoreSubTrainLine = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, ba
     this.drawTooltip = function() {
         var toolTip = '<div id="tooltipItem">' +
                     '<div class="tooltipIcon" style="float:left; background-position:' + this.tooltipIcon.xCoord + 'px ' + this.tooltipIcon.yCoord + 'px;background-image:url(' + this.tooltipIcon.file + ')"></div>' +
-                    '<div style="float:right; text-align:right;">' + this.getCurrentCost() + '</div>' +
+                    '<div style="float:right; text-align:right;">' + formatNum(this.getCurrentCost(), 0) + '</div>' +
                     '<div class="tooltipHeader">' + this.name + '</div>' +
                     '<div class="tooltipTag">' + 'owned: ' + this.amt + '</div>' +
                     '<div class="tooltipLine"></div>' +
                     '<div class="tooltipDesc">' + this.desc1 + '</div>' +
                     '<div class="tooltipLine"></div>'
         if (this.basePowerMult != 0) {
-            toolTip += '<div class="tooltipStats">' + 'Each ' + this.name + ' improves ' + Game.StoreTrainLines[this.id2].name +' strength by ' + (this.basePowerMult * 100) + '%.' + '</div>' +
-                        '<div class="tooltipStats">' + 'Currently improving strength by ' + this.currentPowerMult + '%.' + '</div>'
+            toolTip += '<div class="tooltipStats">' + 'Each ' + this.name + ' improves ' + Game.StoreTrainLines[this.id2].name +' strength by ' + formatNum((this.basePowerMult * 100), 2) + '%.' + '</div>' +
+                        '<div class="tooltipStats">' + 'Currently improving strength by ' + formatNum((this.currentPowerMult * 100), 2) + '%.' + '</div>'
         }
         if (this.baseSpeedMult != 1) {
-            toolTip += '<div class="tooltipStats">' + 'Each ' + this.name + ' improves ' + Game.StoreTrainLines[this.id2].name +' speed by ' + ((1 - this.baseSpeedMult) * 100) + '%.' + '</div>' +
-                        '<div class="tooltipStats">' + 'Currently improving speed by ' +  ((1 - this.currentSpeedMult) * 100) + '%.' + '</div>'
+            toolTip += '<div class="tooltipStats">' + 'Each ' + this.name + ' improves ' + Game.StoreTrainLines[this.id2].name +' speed by ' + formatNum(((1 - this.baseSpeedMult) * 100), 2) + '%.' + '</div>' +
+                        '<div class="tooltipStats">' + 'Currently improving speed by ' +  formatNum(((1 - this.currentSpeedMult) * 100), 2) + '%.' + '</div>'
         }
         if (this.baseDiscountMult != 1) {
-            toolTip += '<div class="tooltipStats">' + 'Each ' + this.name + ' reduces ' + Game.StoreTrainLines[this.id2].name +' cost by ' + ((1 - this.baseDiscountMult) * 100) + '%.' + '</div>' +
-                        '<div class="tooltipStats">' + 'Currently reducing cost by ' + ((1 - this.currentDiscountMult) * 100) + '%.' + '</div>'
+            toolTip += '<div class="tooltipStats">' + 'Each ' + this.name + ' reduces ' + Game.StoreTrainLines[this.id2].name +' cost by ' + formatNum(((1 - this.baseDiscountMult) * 100), 2) + '%.' + '</div>' +
+                        '<div class="tooltipStats">' + 'Currently reducing cost by ' + formatNum(((1 - this.currentDiscountMult) * 100), 2) + '%.' + '</div>'
         }
                     
         toolTip += '</div>'
@@ -481,8 +481,8 @@ StoreSubTrainLine = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, ba
         this.element.className = 'itemChild';
         this.element.innerHTML = '<div class="itemChildIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yYoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
             '<div class="itemChildContent">' +
-                '<div class="itemChildHeader">' + this.name + ' - ' + this.getCurrentCost() + '</div>' +
-                '<div id="item' + this.id + 'qty" class="itemChildOwned">' + this.amt + '</div>' +
+                '<div class="itemChildHeader">' + this.name + ' - ' + formatNum(this.getCurrentCost(), 0) + '</div>' +
+                '<div id="item' + this.id + 'qty" class="itemChildOwned">' + formatNum(this.amt, 0) + '</div>' +
             '</div>'
         this.isVisible = 1;
 
@@ -494,8 +494,8 @@ StoreSubTrainLine = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, ba
     this.refreshStoreItem = function () {
         this.element.innerHTML = '<div class="itemChildIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
         '<div class="itemChildContent">' +
-            '<div class="itemChildHeader">' + this.name + ' - ' + this.getCurrentCost() + '</div>' +
-            '<div id="item' + this.id + 'qty" class="itemChildOwned">' + this.amt + '</div>' +
+            '<div class="itemChildHeader">' + this.name + ' - ' + formatNum(this.getCurrentCost(), ) + '</div>' +
+            '<div id="item' + this.id + 'qty" class="itemChildOwned">' + formatNum(this.amt, 0) + '</div>' +
         '</div>'
     };
     Game.StoreTrainLines[id2].subItems.push(this);
@@ -568,5 +568,8 @@ StoreUpgrade = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCos
         this.element.onmousemove = function() { Game.tooltip.drawTooltip(function() {return Game.StoreUpgrades[id1].drawTooltip() }, 'store') };
         this.element.onmouseout =  function() { Game.tooltip.hideTooltip() };
     };
+    this.getCurrentCost = function() {
+        return this.getBuyCost(1);
+    }
     Game.StoreUpgrades.push(this);
 };

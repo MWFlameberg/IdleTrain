@@ -6,7 +6,7 @@
         "desc2": "This train was made out of old wood.",
         "baseCost": 10,
         "baseCostMult": 1.1,
-        "basePower": 0.1,
+        "basePower": 10.1,
         "icon": {
             "file": "/Images/placeholder.png",
             "x": 0,
