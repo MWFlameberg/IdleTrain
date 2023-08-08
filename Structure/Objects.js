@@ -573,3 +573,47 @@ StoreUpgrade = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCos
     }
     Game.StoreUpgrades.push(this);
 };
+Achievement = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, unlockReqs) {
+    //Parent calls.
+    this.prototype = BaseObject;
+    BaseObject.call(this, id1, id2, name, desc1, desc2, icon, tooltipIcon);
+    //Prereq Collection properties.
+    this.unlockReqs = unlockReqs;
+    //Functions
+    this.unlock = function() {
+        if (this.isUnlocked == 1) { return 0; }
+        var unlockable = 1;
+        this.unlockReqs.forEach(function(i) {
+            if (!i.unlock()) {
+                unlockable = 0;
+            }
+        });
+        if (unlockable == 1) { 
+            this.isUnlocked = 1; 
+            this.isVisible = 1;
+        }
+        return unlockable;
+    };
+    this.drawNotification = function() {
+        this.element = el('notifications').appendChild(document.createElement('div'));
+        this.element.id = 'achievement' + this.id1;
+        this.element.className = 'notificationItem';
+        this.element.innerHTML = '<div class="notificationIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
+            '<div class="notificationContent">' +
+                '<div class="notificationHeader">' + this.name + '</div>' +
+            '</div>'
+        var closeButton = this.element.appendChild(document.createElement('div'));
+        closeButton.className = 'closeButton'
+        closeButton.innerHTML = '&#10006;'
+        this.element.onclick = function() { Game.Achievements[id1].clearNotification(); };
+        this.isVisible = 1;
+    };
+    this.clearNotification = function() {
+        this.isVisible = 0;
+        if (this.element != null) {
+            this.element.remove();
+            this.element = null;
+        }
+    }
+    Game.Achievements.push(this);
+};

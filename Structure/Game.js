@@ -112,6 +112,7 @@ var Game = {};
 Game.StoreItems = [];
 Game.StoreUpgrades = [];
 Game.StoreTrainLines = [];
+Game.Achievements = [];
 /*==========================================================================
                     Data Loading from Files and Setup
 ==========================================================================*/
@@ -180,6 +181,20 @@ Game.LoadUpgrades = async function() {
             var tooltipIcon = new Icon(this.tooltipIcon.file, this.tooltipIcon.x, this.tooltipIcon.y);
             
             new StoreUpgrade(this.id1, -1, this.name, this.desc1, this.desc2, icon, tooltipIcon, this.baseCost, this.baseCostMult, reqs, upgItems);
+        });
+    });
+};
+Game.LoadAchievements = async function() {
+    await $.getJSON('/Data/Achievements.json', function(response) {
+        $.each(response, function(i) {
+            var reqs = [];
+            $.each(this.unlockReqs, function(j) {
+                reqs.push(new UnlockReq(this.type, this.id, this.amt));
+            });
+            var icon = new Icon(this.icon.file, this.icon.x, this.icon.y);
+            var tooltipIcon = new Icon(this.tooltipIcon.file, this.tooltipIcon.x, this.tooltipIcon.y);
+
+            new Achievement(this.id1, -1, this.name, this.desc1, this.desc2, icon, tooltipIcon, reqs);
         });
     });
 };
@@ -535,6 +550,12 @@ Game.Loop = function() {
         }
     });
 
+    Game.Achievements.forEach(function(i) {
+        if (i.unlock()) {
+            i.drawNotification();
+        }
+    });
+
     Game.DrawStore();
     Game.CheckForPurchasable();
 
@@ -623,6 +644,7 @@ Game.Launch = async function() {
     Game.LoadItems();
     Game.LoadTrainLines();
     Game.LoadUpgrades();
+    Game.LoadAchievements();
     Game.Clicker = new Clicker();
     Game.tooltip.initialise();
     Game.Loop();

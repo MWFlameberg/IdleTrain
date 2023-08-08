@@ -1,0 +1,23 @@
+[
+    {
+        "id1": 0,
+        "name": "Crappy Train",
+        "desc1": "This is a Crappy train",
+        "desc2": "This train was made out of old wood.",
+        "icon": {
+            "file": "/Images/placeholder.png",
+            "x": 0,
+            "y": 0
+        },
+        "tooltipIcon": {
+            "file": "/Images/tooltip-placeholder.png",
+            "x": 0,
+            "y": 0
+        },
+        "unlockReqs": [{
+            "type": "Clicks",
+            "id": 0,
+            "amt": 10
+        }]
+    }
+]
