@@ -14,7 +14,6 @@ function disableElement(element) {
 };
 
 function formatEveryThirdPower(format, num)
-
 {
 	var base = 0
     var formatValue = '';
@@ -402,6 +401,69 @@ Game.tooltip.hideTooltip = function() {
     this.visible = 0;
 };
 /*==========================================================================
+                Notification Control and functionality
+==========================================================================*/
+Game.GameAlerts = [];
+GameAlert = function(size, content, source) {
+    this.id = Game.GameAlerts.length;
+    this.size = size + 9;
+    this.content = content;
+    this.source = source;
+    this.element = null;
+    this.isVisible = 0;
+
+    this.draw = function() {
+        var tempId = this.id;
+        this.element = el('notifications').appendChild(document.createElement('div'));
+        this.element.id = 'achievement' + this.id;
+        this.element.className = 'notificationItem';
+        this.element.innerHTML = this.content;
+        var closeButton = this.element.appendChild(document.createElement('div'));
+        closeButton.className = 'closeButton'
+        closeButton.innerHTML = '&#10006;'
+        this.element.onclick = function() { Game.GameAlerts[tempId].clear(); };
+        this.isVisible = 1;
+    };
+
+    this.clear = function() {
+        if (this.element != null) {
+            this.element.remove();
+            this.element = null;
+        }
+        Game.alertsSize -= this.size;
+        Game.GameAlerts.splice(this.id, 1);
+        for (let i = 0; i < Game.GameAlerts.length; i++) {
+            Game.GameAlerts[i].id = i;
+            if(Game.GameAlerts[i].isVisible)
+                Game.GameAlerts[i].element.onclick = function() { Game.GameAlerts[i].clear(); };
+        }
+    };
+    Game.GameAlerts.push(this);
+};
+Game.DrawAlerts = function() {
+    var overflowAlerts = false;
+    Game.GameAlerts.forEach(function(i) {
+        if(!i.isVisible && Game.alertsSize <= Game.alertsMaxSize) {
+            Game.alertsSize += i.size;
+            i.draw();
+        }
+        if(!i.isVisible)
+            overflowAlerts = true;
+    });
+    if(Game.alertsOverflowElement == null) {
+        Game.alertsOverflowElement = el('notifications').appendChild(document.createElement('div'));
+        Game.alertsOverflowElement.id = 'alertOverflow';
+        Game.alertsOverflowElement.className = 'notificationItem';
+        Game.alertsOverflowElement.innerHTML = '<div class="notificationContent">' +
+            '<div class="notificationHeader">Additional Alerts, clear existing to make room.</div>' +
+        '</div>'
+    }
+    if(Game.alertsSize >= Game.alertsMaxSize && overflowAlerts)  
+        Game.alertsOverflowElement.style.visibility = 'visible';
+    else 
+        Game.alertsOverflowElement.style.visibility = 'hidden';
+}
+/*==========================================================================
                 Core Loop function and loop based logic
 ==========================================================================*/
 Game.CheckForPurchasable = function() {
@@ -552,12 +614,13 @@ Game.Loop = function() {
 
     Game.Achievements.forEach(function(i) {
         if (i.unlock()) {
-            i.drawNotification();
+            i.createAlert();
         }
     });
 
     Game.DrawStore();
     Game.CheckForPurchasable();
+    Game.DrawAlerts();
 
     if (Game.mouseMoved || Game.tooltip.dynamic)
         Game.tooltip.updateTooltip();
@@ -633,6 +696,10 @@ Game.Init = function() {
     // Loop/Timing based variables.
     Game.loopT = 0;
     Game.fps = 30;
+    // Alert based variables.
+    Game.alertsSize = 0;
+    Game.alertsMaxSize = 200;
+    Game.alertsOverflowElement = null;
     // Document Element based variables.
     Game.wrapper = el('wrapper');
     // Event Listeners.

@@ -594,26 +594,12 @@ Achievement = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, unlockRe
         }
         return unlockable;
     };
-    this.drawNotification = function() {
-        this.element = el('notifications').appendChild(document.createElement('div'));
-        this.element.id = 'achievement' + this.id1;
-        this.element.className = 'notificationItem';
-        this.element.innerHTML = '<div class="notificationIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
-            '<div class="notificationContent">' +
-                '<div class="notificationHeader">' + this.name + '</div>' +
-            '</div>'
-        var closeButton = this.element.appendChild(document.createElement('div'));
-        closeButton.className = 'closeButton'
-        closeButton.innerHTML = '&#10006;'
-        this.element.onclick = function() { Game.Achievements[id1].clearNotification(); };
-        this.isVisible = 1;
+    this.createAlert = function() {
+        var content = '<div class="notificationIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
+        '<div class="notificationContent">' +
+            '<div class="notificationHeader">' + this.name + '</div>' +
+        '</div>'
+        new GameAlert(64, content, this);
     };
-    this.clearNotification = function() {
-        this.isVisible = 0;
-        if (this.element != null) {
-            this.element.remove();
-            this.element = null;
-        }
-    }
     Game.Achievements.push(this);
 };
