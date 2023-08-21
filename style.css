@@ -63,10 +63,95 @@ div {
   bottom: 0px;
   transform-origin: 0 0;
 }
+/* ############################## */
+/* Bar Related css */
+#bar-top {
+  width: 100%;
+  height: 88px;
+  position: relative;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+}
+#bar-top-store {
+  position: relative;
+  float: right;
+  height: 88px;
+}
+.sub-bar {
+  width: 100%;
+  height: 24px;
+}
+.bar-btn {
+  position: relative;
+  float: left;
+  width: 128px;
+  height: 88px;
+  cursor: pointer;
+}
+.bar-sub-btn {
+  position: relative;
+  float: left;
+  width: 128px;
+  height: 64px;
+  cursor: pointer;
+}
+.bar-btn-border {
+  box-sizing: border-box;
+  border-style: solid;
+  border-width: 4px;
+}
+/* ############################## */
+/* Ascension related css */
+#btn-ascend {
+  float: left;
+}
+/* ############################## */
+/* Generic Text related css */
+.txt-header {
+  text-align: center;
+  font-family: Arial;
+  font-size: 18px;
+}
+.txt-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}
+/* ############################## */
+/* Popup Window related css */
+.popup {
+  position: absolute;
+  top: 110px;
+  bottom: 110px;
+  right: 0px;
+  z-index: 1;
+}
+/* ############################## */
+/* Progress/Loading Bar css */
+.lbar-container {
+  box-sizing: border-box;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 2px;
+  height: 8px;
+  width: 100%;
+}
+.lbar {
+  background: url(Images/ascendBar-placeholder.png) 0px 0px;
+  position: relative;
+  height: 100%;
+  max-width: 100%;
+}
+.lbar-bottom {
+  position: absolute;
+  bottom: 0px;
+}
 #sectionLeft {
   position: absolute;
   left: 0px;
-  top: 0px;
+  top: 88px;
   right: 400px;
   min-width: 100px;
   height: 100%;
@@ -74,7 +159,7 @@ div {
 #sectionRight {
   position: absolute;
   right: 0px;
-  top: 0px;
+  top: 88px;
   min-width: 100px;
 }
 #dividerRight {
@@ -85,8 +170,15 @@ div {
   right: 384px;
 }
 .dividerHorizontal {
+  position: relative;
   width: 100%;
   height: 16px;
+  background-color: black;
+}
+.divider-vertical {
+  position: relative;
+  width: 16px;
+  height: 100%;
   background-color: black;
 }
 .sectionHeader {
@@ -128,30 +220,7 @@ div {
   border-style: solid;
   border-width: 1px;
 }
-#ascend {
-  position: relative;
-  float: right;
-  border-style: solid;
-  border-width: 1px;
-  font-family: Arial;
-  font-size: 16px;
-  width: 100px;
-  height: 48px;
-}
-.ascendHeader {
-  text-align: center;
-  font-family: Arial;
-  font-size: 18px;
-  font-weight: bold;
-  padding: 5px;
-}
-#ascendBarContainer {
-  position: absolute;
-  width: 98px;
-  left: 0px;
-  right: 0px;
-  bottom: 0px;
-}
+
 .barContainer {
   border-style: solid;
   border-width: 1px;
@@ -245,7 +314,7 @@ div {
   opacity: 0.5;
 }
 .trainLine {
-  height: 80px;
+  height: 100px;
   width: auto;
   cursor: pointer;
   position: relative;
@@ -259,6 +328,23 @@ div {
   left: 0px;
   right: 0px;
   bottom: 0px;
+}
+.trainLineIcon {
+  width: 382px;
+  height:64px;
+}
+.trainLineContent {
+  top: 64px;
+  left: 0px;
+  right: 0px;
+  bottom: 8px;
+}
+.trainLineOwned {
+  font-family: Arial;
+  font-size: 20px;
+  position: absolute;
+  right: 8px;
+  top: 64px;
 }
 .itemIcon {
   width: 64px;

@@ -15,53 +15,49 @@
    <body>
       <div id="wrapper">
          <div id="game-container">
-            <div id="sectionLeft" >
-               <div class="sectionBigHeader">
-                  <div id="ascend" class="button" onclick="Game.Ascend()" onmousemove="Game.tooltip.drawTooltip(function() {return Game.GetAscendTooltip() }, 'ascend');" onmouseout="Game.tooltip.hideTooltip()">
-                     <div class="ascendHeader">Ascend</div>
-                     <div id="ascendBarContainer" class="barContainer">
-                        <div id="ascendBar" class="bar"></div>
-                     </div>
+            <div id="bar-top">
+               <div id="btn-ascend" class="bar-btn bar-btn-border" onclick="Game.Ascend()" onmousemove="Game.tooltip.drawTooltip(function() {return Game.GetAscendTooltip() }, 'ascend');" onmouseout="Game.tooltip.hideTooltip()">
+                  <div class="txt-center txt-header">Ascend</div>
+                  <div class="lbar-container lbar-bottom">
+                     <div id="ascendBar" class="lbar"></div>
                   </div>
                </div>
-               <div class="dividerHorizontal"></div>
-               <div id="trainPower">
-                  <div id="tpTotal" class="header">0</div>
-                  <div id="tps" class="miniHeader">per second: 0</div>
-               </div>
-               <div id="trainAnchor">
-                  <div id="train" onclick="Game.ClickTrain()">TRAIN</div>
+               <div id="bar-top-store">
+                  <div class="sub-bar">
+                     <div class="txt-header">STORE</div>
+                  </div>
+                  <div id="btn-item" class="bar-sub-btn bar-btn-border">
+                     <div class="txt-center txt-header">ITEMS</div>
+                  </div>
+                  <div id="btn-tline" class="bar-sub-btn bar-btn-border">
+                     <div class="txt-center txt-header">TRAIN LINES</div>
+                  </div>
+                  <div id="btn-upgrade" class="bar-sub-btn bar-btn-border">
+                     <div class="txt-center txt-header">UPGRADES</div>
+                  </div>
                </div>
             </div>
-            <div id="dividerRight"></div>
-            <div id="sectionRight">
-               <div id="store">
-                  <div class="sectionHeader">
-                     <div class="header" style="text-align:center;">Store</div>
-                  </div>
-                  <div class="dividerHorizontal"></div>
-                  <div class="sectionMiniheader">
-                     <div class="miniHeader">Upgrades</div>
-                  </div>
-                  <div id="upgrades" class="storeSection"></div>
-                  <div class="dividerHorizontal"></div>
-                  <div class="sectionMiniheader">
-                     <div class="miniHeader">Items</div>
-                  </div>
-                  <div id="storeBulk">
-                     <div id="storeBulkBuy" class="button storeBulkMode selected" onclick="Game.StoreBulkMode(4)">Buy</div>
-                     <div id="storeBulkSell" class="button storeBulkMode" onclick="Game.StoreBulkMode(5)">Sell</div>
-                     <div id="storeBulk1" class="button storeBulkAmount selected" onclick="Game.StoreBulkMode(1)">1</div>
-                     <div id="storeBulk10" class="button storeBulkAmount" onclick="Game.StoreBulkMode(2)">10</div>
-                     <div id="storeBulk100" class="button storeBulkAmount" onclick="Game.StoreBulkMode(3)">100</div>
-                  </div>
-                  <div id="items" class="storeSection"></div>
-                  <div class="dividerHorizontal"></div>
-                  <div class="sectionMiniheader">
-                     <div class="miniHeader">Train Lines</div>
-                  </div>
-                  <div id="trainLines" class="storeSection"></div>
+            <div class="dividerHorizontal"></div>
+            <div id="trainPower">
+               <div id="tpTotal" class="header">0</div>
+               <div id="tps" class="miniHeader">per second: 0</div>
+            </div>
+            <div id="trainAnchor">
+               <div id="train" onclick="Game.ClickTrain()">TRAIN</div>
+            </div>
+
+            
+            <div id="popup-store" class="popup" style="display: none;">
+               <div id="storeBulk">
+                  <div id="storeBulkBuy" class="button storeBulkMode selected" onclick="Game.StoreBulkMode(4)">Buy</div>
+                  <div id="storeBulkSell" class="button storeBulkMode" onclick="Game.StoreBulkMode(5)">Sell</div>
+                  <div id="storeBulk1" class="button storeBulkAmount selected" onclick="Game.StoreBulkMode(1)">1</div>
+                  <div id="storeBulk10" class="button storeBulkAmount" onclick="Game.StoreBulkMode(2)">10</div>
+                  <div id="storeBulk100" class="button storeBulkAmount" onclick="Game.StoreBulkMode(3)">100</div>
                </div>
+               <div id="items" class="storeSection"></div>
+               <div id="trainLines" class="storeSection"></div>
+               <div id="upgrades" class="storeSection"></div>
             </div>
             <div id="notifications"></div>
          </div>

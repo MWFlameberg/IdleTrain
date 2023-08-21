@@ -321,11 +321,10 @@ StoreTrainLine = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseC
         this.element = itemContainer.appendChild(document.createElement('div'));
         this.element.id = 'trainLine' + this.id1;
         this.element.className = 'trainLine';
-        this.element.innerHTML = '<div class="itemIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
-            '<div class="itemContent">' +
-                '<div class="itemHeader">' + this.name + '</div>' +
-                '<div id="item' + this.id1 + 'cost" class="itemDesc">' + formatNum(this.getCurrentCost(), 0) + '</div>' +
-                '<div id="item' + this.id1 + 'qty" class="itemOwned">' + formatNum(this.amt, 0) + '</div>' +
+        this.element.innerHTML = '<div class="trainLineIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
+            '<div class="trainLineContent">' +
+                '<div class="itemHeader">' + this.name + ' - ' + formatNum(this.getCurrentCost(), 0) + '</div>' +
+                '<div id="item' + this.id1 + 'qty" class="trainLineOwned">' + formatNum(this.amt, 0) + '</div>' +
             '</div>' + 
             '<div id="trainLineBarContainer" class="barContainer">' + 
                 '<div id="trainLine' + this.id1 + 'Bar" class="bar"></div>' + 
@@ -336,15 +335,14 @@ StoreTrainLine = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseC
         this.element.onmouseout =  function() { Game.tooltip.hideTooltip() };
     };
     this.refreshStoreItem = function () {
-        this.element.innerHTML = '<div class="itemIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
-        '<div class="itemContent">' +
-            '<div class="itemHeader">' + this.name + '</div>' +
-            '<div id="item' + this.id + 'cost" class="itemDesc">' + formatNum(this.getCurrentCost(), 0) + '</div>' +
-            '<div id="item' + this.id + 'qty" class="itemOwned">' + formatNum(this.amt, 0) + '</div>' +
-        '</div>' +
-        '<div id="trainLineBarContainer" class="barContainer">' + 
-            '<div id="trainLine' + this.id1 + 'Bar" class="bar"></div>' + 
-        '</div>'
+        this.element.innerHTML = '<div class="trainLineIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
+            '<div class="trainLineContent">' +
+                '<div class="itemHeader">' + this.name + ' - ' + formatNum(this.getCurrentCost(), 0) + '</div>' +
+                '<div id="item' + this.id1 + 'qty" class="trainLineOwned">' + formatNum(this.amt, 0) + '</div>' +
+            '</div>' + 
+            '<div id="trainLineBarContainer" class="barContainer">' + 
+                '<div id="trainLine' + this.id1 + 'Bar" class="bar"></div>' + 
+            '</div>'
     };
     Game.StoreTrainLines.push(this);
 };

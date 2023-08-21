@@ -437,6 +437,7 @@ GameAlert = function(size, content, source) {
             if(Game.GameAlerts[i].isVisible)
                 Game.GameAlerts[i].element.onclick = function() { Game.GameAlerts[i].clear(); };
         }
+        Game.DrawAlerts();
     };
     Game.GameAlerts.push(this);
 };
@@ -705,6 +706,55 @@ Game.Init = function() {
     // Event Listeners.
     document.addEventListener('mousemove', Game.GetMouseCoords);
     window.addEventListener('resize', Game.Resize);
+
+    el('btn-item').onclick = function() {
+        var pop = el('popup-store');
+        if(pop.style.display == 'none') {
+            pop.style.display = 'block';
+            el('storeBulk').style.display = 'block';
+            el('items').style.display = 'block';
+            el('trainLines').style.display = 'none';
+            el('upgrades').style.display = 'none';
+        }
+        else {
+            el('storeBulk').style.display = 'block';
+            el('items').style.display = 'block';
+            el('trainLines').style.display = 'none'; 
+            el('upgrades').style.display = 'none';
+        }
+    }
+    el('btn-tline').onclick = function() {
+        var pop = el('popup-store');
+        if(pop.style.display == 'none') {
+            pop.style.display = 'block';
+            el('storeBulk').style.display = 'block';
+            el('items').style.display = 'none';
+            el('trainLines').style.display = 'block';
+            el('upgrades').style.display = 'none';
+        }
+        else {
+            el('storeBulk').style.display = 'block';
+            el('items').style.display = 'none';
+            el('trainLines').style.display = 'block';
+            el('upgrades').style.display = 'none'; 
+        }
+    }
+    el('btn-upgrade').onclick = function() {
+        var pop = el('popup-store');
+        if(pop.style.display == 'none') {
+            pop.style.display = 'block';
+            el('storeBulk').style.display = 'none';
+            el('items').style.display = 'none';
+            el('trainLines').style.display = 'none';
+            el('upgrades').style.display = 'block';
+        }
+        else {
+            el('storeBulk').style.display = 'none';
+            el('items').style.display = 'none';
+            el('trainLines').style.display = 'none'; 
+            el('upgrades').style.display = 'block';
+        }
+    }
 };
 Game.Launch = async function() {
     Game.Init();
