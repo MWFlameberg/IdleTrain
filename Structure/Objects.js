@@ -557,9 +557,13 @@ StoreUpgrade = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCos
     };
     this.drawStoreItem = function() {
         this.element = el('upgrades').appendChild(document.createElement('div'));
-        this.element.id = 'upgrade' + this.upgradeId;
-        this.element.className = 'upgradeItem';
-        this.element.innerHTML = '<div class="upgradeIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>'
+        this.element.id = 'upgrade' + this.id1;
+        this.element.className = 'item disabled';
+        this.element.innerHTML = '<div class="itemIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
+        '<div class="itemContent">' +
+            '<div class="itemHeader">' + this.name + '</div>' +
+            '<div id="item' + this.id + 'cost" class="itemDesc">' + formatNum(this.getCurrentCost(), 0) + '</div>' +
+        '</div>'
         this.isVisible = 1;
 
         this.element.onclick = function() { Game.Buy(id1, id2, 'Upgrade') };

@@ -220,7 +220,6 @@ div {
   border-style: solid;
   border-width: 1px;
 }
-
 .barContainer {
   border-style: solid;
   border-width: 1px;
@@ -246,16 +245,6 @@ div {
 /* Store related css */
 #store {
   position: relative;
-}
-#upgrades {
-  position: relative;
-  width: 384px;
-  height: 48px;
-  overflow: hidden;
-}
-#upgrades:hover {
-  height: auto;
-  min-height: 48px;
 }
 #storeBulk {
   width: 336px;
