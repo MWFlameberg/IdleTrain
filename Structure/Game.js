@@ -253,16 +253,16 @@ Game.StoreBulkMode = function(id) {
     else if (id == 4) Game.bulkMode = 1;
     else if (id == 5) Game.bulkMode = 2;
 
-    if (Game.bulkQty == 1) el('storeBulk1').classList.add("selected");
-    else el('storeBulk1').classList.remove("selected");
-    if (Game.bulkQty == 10) el('storeBulk10').classList.add("selected");
-    else el('storeBulk10').classList.remove("selected");
-    if (Game.bulkQty == 100) el('storeBulk100').classList.add("selected");
-    else el('storeBulk100').classList.remove("selected");
-    if (Game.bulkMode == 1) el('storeBulkBuy').classList.add("selected");
-    else el('storeBulkBuy').classList.remove("selected");
-    if (Game.bulkMode == 2) el('storeBulkSell').classList.add("selected");
-    else el('storeBulkSell').classList.remove("selected");
+    if (Game.bulkQty == 1) el('store-bulk-1').classList.add("selected");
+    else el('store-bulk-1').classList.remove("selected");
+    if (Game.bulkQty == 10) el('store-bulk-10').classList.add("selected");
+    else el('store-bulk-10').classList.remove("selected");
+    if (Game.bulkQty == 100) el('store-bulk-100').classList.add("selected");
+    else el('store-bulk-100').classList.remove("selected");
+    if (Game.bulkMode == 1) el('store-bulk-buy').classList.add("selected");
+    else el('store-bulk-buy').classList.remove("selected");
+    if (Game.bulkMode == 2) el('store-bulk-sell').classList.add("selected");
+    else el('store-bulk-sell').classList.remove("selected");
 
     Game.refresh = 1;
 };
@@ -711,13 +711,13 @@ Game.Init = function() {
         var pop = el('popup-store');
         if(pop.style.display == 'none') {
             pop.style.display = 'block';
-            el('storeBulk').style.display = 'block';
+            el('store-bulk').style.display = 'block';
             el('items').style.display = 'block';
             el('trainLines').style.display = 'none';
             el('upgrades').style.display = 'none';
         }
         else {
-            el('storeBulk').style.display = 'block';
+            el('store-bulk').style.display = 'block';
             el('items').style.display = 'block';
             el('trainLines').style.display = 'none'; 
             el('upgrades').style.display = 'none';
@@ -727,13 +727,13 @@ Game.Init = function() {
         var pop = el('popup-store');
         if(pop.style.display == 'none') {
             pop.style.display = 'block';
-            el('storeBulk').style.display = 'block';
+            el('store-bulk').style.display = 'block';
             el('items').style.display = 'none';
             el('trainLines').style.display = 'block';
             el('upgrades').style.display = 'none';
         }
         else {
-            el('storeBulk').style.display = 'block';
+            el('store-bulk').style.display = 'block';
             el('items').style.display = 'none';
             el('trainLines').style.display = 'block';
             el('upgrades').style.display = 'none'; 
@@ -743,13 +743,13 @@ Game.Init = function() {
         var pop = el('popup-store');
         if(pop.style.display == 'none') {
             pop.style.display = 'block';
-            el('storeBulk').style.display = 'none';
+            el('store-bulk').style.display = 'none';
             el('items').style.display = 'none';
             el('trainLines').style.display = 'none';
             el('upgrades').style.display = 'block';
         }
         else {
-            el('storeBulk').style.display = 'none';
+            el('store-bulk').style.display = 'none';
             el('items').style.display = 'none';
             el('trainLines').style.display = 'none'; 
             el('upgrades').style.display = 'block';

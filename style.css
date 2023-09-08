@@ -64,6 +64,99 @@ div {
   transform-origin: 0 0;
 }
 /* ############################## */
+/* General purpose css */
+.border {
+  box-sizing: border-box;
+  border: 9px solid transparent;
+  border-radius: 4px;
+  border-image: url(Images/border.png) 9 round;
+}
+.shadow {
+  box-shadow: 3px 3px 8px #000000;
+}
+.btn {
+  cursor: pointer;
+}
+.header {
+  font-family: Arial;
+  font-size: 36px;
+  font-weight: bold;
+}
+.miniHeader {
+  font-family: Arial;
+  font-size: 16px;
+  font-weight: bold;
+}
+.line-vertical {
+  height: 100%;
+  border-left: 9px solid #000000;
+}
+.line-horizontal {
+  width: 100%;
+  border-top: 9px solid #000000;
+}
+.top {
+  top: 0px;
+}
+.bot {
+  bottom: 0px;
+}
+/* ############################## */
+/* Popup Window related css */
+.popup {
+  position: absolute;
+  top: 110px;
+  bottom: 110px;
+  right: 32px;
+  z-index: 1;
+}
+/* ############################## */
+/* Store related css */
+#store-bulk {
+  height: 32px;
+  padding-left: 80px;
+  position: relative;
+  text-align: center;
+  font-family: Arial;
+  font-weight: bold;
+  font-size: 14px;
+  background-color: #9294a0;
+}
+.store-section {
+  width: 384px;
+  position: relative;
+  overflow-y: hidden;
+}
+.store-bulk-btn {
+  cursor: pointer;
+  opacity: 0.5;
+}
+.store-bulk-btn.selected {
+  text-shadow: 1px 1px 2px #000000;
+  opacity: 1;
+}
+.store-bulk-mode {
+  position: absolute;
+  width: 80px;
+  left: 0px;
+}
+.store-bulk-amt {
+  float: left;
+  width: 48px;
+  padding: 9px 0px;
+}
+.storeBulkMode {
+  float: left;
+  height: 16px;
+  width: 48px;
+}
+.storeBulkAmount {
+  float: left;
+  text-align: center;
+  width: 32px;
+  padding: 9px 0px;
+}
+/* ############################## */
 /* Bar Related css */
 #bar-top {
   width: 100%;
@@ -119,15 +212,7 @@ div {
   left: 50%;
   transform: translateX(-50%) translateY(-50%);
 }
-/* ############################## */
-/* Popup Window related css */
-.popup {
-  position: absolute;
-  top: 110px;
-  bottom: 110px;
-  right: 0px;
-  z-index: 1;
-}
+
 /* ############################## */
 /* Progress/Loading Bar css */
 .lbar-container {
@@ -241,46 +326,7 @@ div {
 .button.selected {
   font-weight: bold;
 }
-/* ############################## */
-/* Store related css */
-#store {
-  position: relative;
-}
-#storeBulk {
-  width: 336px;
-  height: 32px;
-  padding: 0px;
-  padding-left: 48px;
-  position: relative;
-}
-.storeSection {
-  width: 384px;
-  position: relative;
-  overflow-y: hidden;
-}
-#storeBulkBuy {
-  position: absolute;
-  left: 0px;
-  top: 0px;
-  text-align: center;
-}
-#storeBulkSell {
-  position: absolute;
-  left: 0px;
-  bottom: 0px;
-  text-align: center;
-}
-.storeBulkMode {
-  float: left;
-  height: 16px;
-  width: 48px;
-}
-.storeBulkAmount {
-  float: left;
-  text-align: center;
-  width: 32px;
-  padding: 9px 0px;
-}
+
 /* ############################## */
 /* Item Store related css */ 
 .itemContainer {
@@ -428,24 +474,7 @@ div {
 .upgradeItem.enabled {
   opacity: 1;
 }
-/* ############################## */
-/* General purpose css */
-.border {
-  padding: 16px;
-  border: 4px solid black;
-  border-radius: 4px;
-  margin: 4px;
-}
-.header {
-  font-family: Arial;
-  font-size: 36px;
-  font-weight: bold;
-}
-.miniHeader {
-  font-family: Arial;
-  font-size: 16px;
-  font-weight: bold;
-}
+
 /* ############################## */
 /* Notification related css */ 
 #notifications {
