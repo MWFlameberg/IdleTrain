@@ -87,6 +87,7 @@ StoreObject = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost
     };
     this.buy = function(amt) {
         var success = 0;
+        if (amt == -1) { amt = this.getBuyAmt() };
         if(Game.trains >= this.getBuyCost(amt)) {
             Game.Spend(this.getBuyCost(amt));
             this.amt += amt;
@@ -97,6 +98,7 @@ StoreObject = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost
     };
     this.sell = function(amt) {
         var success = 0;
+        if (amt == -1) { amt = this.amt; };
         if (amt > this.amt) { amt = this.amt; };
         var cost = this.getSellCost(amt);
         Game.Earn(cost, true);
@@ -111,15 +113,38 @@ StoreObject = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost
     this.canSell = function(amt) {
         return this.amt > 0;
     };
+    var prevBuyAmt = 1;
+    this.getBuyAmt = function () {
+        var cost = 0;
+        var i = this.amt;
+        while (true) {
+            var costToAdd = Math.ceil(this.baseCost * this.currentDiscountMult * Math.pow(this.currentCostMult, i));
+            if (cost + costToAdd > Game.trains)
+                break;
+            else  
+                cost += costToAdd;
+            i++;
+        }
+        i -= this.amt;
+        if (prevBuyAmt != i) { Game.refresh = 1};
+        if (i == 0) { i = 1 };
+        prevBuyAmt = i;
+        return prevBuyAmt;
+    }
     this.getBuyCost = function(amt) {
         var cost = 0;
+        if (amt == -1) {
+            amt = this.getBuyAmt();
+        }
         for (var i = this.amt; i < this.amt + amt; i++) {
             cost += Math.ceil(this.baseCost * this.currentDiscountMult * Math.pow(this.currentCostMult, i));
         }
+        
         return cost;
     };
     this.getSellCost = function(amt) {
         if (this.amt == 0) { return 0; };
+        if (amt == -1) { amt = this.amt; };
         if (amt > this.amt) { amt = this.amt; };
         var cost = 0;
         var i = amt;

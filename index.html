@@ -48,12 +48,16 @@
 
             
             <div id="popup-store" class="popup border shadow" style="display: none;">
+               <div class="btn-close btn" onclick="hide('popup-store')">
+                  <div class="btn-close-text">✖</div>
+               </div>
                <div id="store-bulk">
-                  <div id="store-bulk-buy" class="store-bulk-btn store-bulk-mode top selected" onclick="Game.StoreBulkMode(4)">Buy</div>
-                  <div id="store-bulk-sell" class="store-bulk-btn store-bulk-mode bot" onclick="Game.StoreBulkMode(5)">Sell</div>
+                  <div id="store-bulk-buy" class="store-bulk-btn store-bulk-mode top selected" onclick="Game.StoreBulkMode(5)">Buy</div>
+                  <div id="store-bulk-sell" class="store-bulk-btn store-bulk-mode bot" onclick="Game.StoreBulkMode(6)">Sell</div>
                   <div id="store-bulk-1" class="store-bulk-btn store-bulk-amt selected" onclick="Game.StoreBulkMode(1)">1</div>
                   <div id="store-bulk-10" class="store-bulk-btn store-bulk-amt" onclick="Game.StoreBulkMode(2)">10</div>
                   <div id="store-bulk-100" class="store-bulk-btn store-bulk-amt" onclick="Game.StoreBulkMode(3)">100</div>
+                  <div id="store-bulk-max" class="store-bulk-btn store-bulk-amt" onclick="Game.StoreBulkMode(4)">Max</div>
                </div>
                <div class="line-horizontal"></div>
                <div id="items" class="store-section"></div>

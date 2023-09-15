@@ -4,15 +4,15 @@
 function el(id) {
     return document.getElementById(id);
 };
-
+function hide(id) {
+    document.getElementById(id).style.display = 'none';
+};
 function enableElement(element) {
     element.classList.add('enabled');
 };
-
 function disableElement(element) {
     element.classList.remove('enabled');
 };
-
 function formatEveryThirdPower(format, num)
 {
 	var base = 0
@@ -29,16 +29,14 @@ function formatEveryThirdPower(format, num)
 		if (base >= format.length) {return 'Infinity';} else {formatValue = format[base];}
 	}
 	return (Math.round(num * 1000) / 1000) + formatValue;
-}
+};
 
 var numFormatLong = [' thousand',' million',' billion',' trillion',' quadrillion',' quintillion',' sextillion',' septillion',' octillion',' nonillion'];
 var numPrefix = ['','un','duo','tre','quattuor','quin','sex','septen','octo','novem'];
 var numSuffix = ['decillion','vigintillion','trigintillion','quadragintillion','quinquagintillion','sexagintillion','septuagintillion','octogintillion','nonagintillion'];
-
 for (var i in numPrefix)
 	for (var ii in numSuffix)
         numFormatLong.push(' ' + numPrefix[ii] + numSuffix[i]);
-
 var numFormatShort = ['k','M','B','T','Qa','Qi','Sx','Sp','Oc','No'];
 var numPrefix = ['','Un','Do','Tr','Qa','Qi','Sx','Sp','Oc','No'];
 var numSuffix = ['D','V','T','Qa','Qi','Sx','Sp','O','N'];
@@ -66,7 +64,7 @@ function formatNumSimple(num) {
 		output += input[i];
 	}
 	return output;
-}
+};
 /*==========================================================================
                     Useful/Reused Objects for storage
 ==========================================================================*/
@@ -250,8 +248,9 @@ Game.StoreBulkMode = function(id) {
     if (id == 1) Game.bulkQty = 1;
     else if (id == 2) Game.bulkQty = 10;
     else if (id == 3) Game.bulkQty = 100;
-    else if (id == 4) Game.bulkMode = 1;
-    else if (id == 5) Game.bulkMode = 2;
+    else if (id == 4) Game.bulkQty = -1;
+    else if (id == 5) Game.bulkMode = 1;
+    else if (id == 6) Game.bulkMode = 2;
 
     if (Game.bulkQty == 1) el('store-bulk-1').classList.add("selected");
     else el('store-bulk-1').classList.remove("selected");
@@ -259,6 +258,8 @@ Game.StoreBulkMode = function(id) {
     else el('store-bulk-10').classList.remove("selected");
     if (Game.bulkQty == 100) el('store-bulk-100').classList.add("selected");
     else el('store-bulk-100').classList.remove("selected");
+    if (Game.bulkQty == -1) el('store-bulk-max').classList.add("selected");
+    else el('store-bulk-max').classList.remove("selected");
     if (Game.bulkMode == 1) el('store-bulk-buy').classList.add("selected");
     else el('store-bulk-buy').classList.remove("selected");
     if (Game.bulkMode == 2) el('store-bulk-sell').classList.add("selected");

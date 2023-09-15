@@ -101,6 +101,24 @@ div {
 .bot {
   bottom: 0px;
 }
+.btn-close {
+  position: absolute;
+    top: -9px;
+    right: -8px;
+    width: 16px;
+    height: 16px;
+    z-index: 2;
+    background-image: url(Images/btn-close.png);
+}
+.btn-close-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: Arial;
+  font-size: 14px;
+  text-align: center;
+}
 /* ############################## */
 /* Popup Window related css */
 .popup {
@@ -120,7 +138,8 @@ div {
   font-family: Arial;
   font-weight: bold;
   font-size: 14px;
-  background-color: #9294a0;
+  color: #ffffff;
+  background-color: #222329;
 }
 .store-section {
   width: 384px;
@@ -132,7 +151,7 @@ div {
   opacity: 0.5;
 }
 .store-bulk-btn.selected {
-  text-shadow: 1px 1px 2px #000000;
+  text-shadow: 1px 1px 2px #ffffff;
   opacity: 1;
 }
 .store-bulk-mode {
@@ -141,6 +160,7 @@ div {
   left: 0px;
 }
 .store-bulk-amt {
+  font-size: 16px;
   float: left;
   width: 48px;
   padding: 9px 0px;
