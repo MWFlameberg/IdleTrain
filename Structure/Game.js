@@ -47,9 +47,12 @@ for (var i in numPrefix)
 function formatNum(num, floats) {
     var negative = (num < 0);
     var decimal = '';
+    var round = num.toFixed(1);
     var fixed = num.toFixed(floats);
     if (floats > 0 && num < 1000) decimal = '.' + fixed.toString().split('.')[1];
     num = Math.floor(Math.abs(num));
+    if (floats > 0 && fixed == num + 1) num++;
+    if (round == num + 1) num++;
     var output = ''
     var output = formatEveryThirdPower(numFormatLong, num).toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');
     return negative ? '-' + output : output + decimal;
