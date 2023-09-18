@@ -4,6 +4,7 @@
       <link rel="stylesheet" href="style.css">
       <script type="text/javascript" src="./Structure/Game.js"></script>
       <script type="text/javascript" src="./Structure/Objects.js"></script>
+      <script type="text/javascript" src="./Structure/Interface.js"></script>
       <script type="text/javascript" src="./Structure/Clicker.js"></script>
       <script type="text/javascript" src="./References/code.jquery.com_jquery-3.7.0.js"></script>
       <script type="text/javascript">
@@ -60,9 +61,11 @@
                   <div id="store-bulk-max" class="store-bulk-btn store-bulk-amt" onclick="Game.StoreBulkMode(4)">Max</div>
                </div>
                <div class="line-horizontal"></div>
-               <div id="items" class="store-section"></div>
-               <div id="trainLines" class="store-section"></div>
-               <div id="upgrades" class="store-section"></div>
+               <div class="container">
+                  <div id="items" class="store-section"></div>
+                  <div id="trainLines" class="store-section"></div>
+                  <div id="upgrades" class="store-section"></div>
+               </div>
             </div>
             <div id="notifications"></div>
          </div>

@@ -15,7 +15,7 @@ BaseObject = function(id1, id2, name, desc1, desc2, icon, tooltipIcon) {
     this.isVisible = 0;
     this.isDynamic = 0;
     //HTML properties.
-    this.element = null;
+    this.uiElement = null;
     //Functions
     this.resetObject = function() {
         this.isUnlocked = 0;
@@ -26,17 +26,17 @@ BaseObject = function(id1, id2, name, desc1, desc2, icon, tooltipIcon) {
     };
     this.clear = function() {
         this.resetObject();
-        if (this.element != null) {
-            this.element.remove();
-            this.element = null;
+        if (this.uiElement != null) {
+            this.uiElement.remove();
+            this.uiElement = null;
         }
     };
     this.enable = function() {
-        enableElement(this.element);
+        this.uiElement.enable();
         this.isEnabeled = 1;
     };
     this.disable = function() {
-        disableElement(this.element);
+        this.uiElement.disable();
         this.isEnabeled = 0;
     };
 };
@@ -170,6 +170,7 @@ StoreItem = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost, 
     this.basePowerMult = 1;
     //Up to Date Stat properties.
     this.currentPower = this.basePower;
+    this.currentPowerBonus = 0;
     this.currentPowerMult = this.basePowerMult;
     //Child Collection properties.
     this.upgrades = [];
@@ -186,6 +187,7 @@ StoreItem = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost, 
             i.resetObject();
         });
         this.currentPower = this.basePower;
+        this.currentPowerBonus = 0;
         this.currentPowerMult = this.basePowerMult;
         this.trainsEarned = 0;
         this.trainsPs = 0;
@@ -196,16 +198,19 @@ StoreItem = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost, 
         this.upgrades.forEach(function(i) {
             upgPowerMult *= i.mult;
         });
+        var subPowerBonus = 0;
         var subPowerMult = 1;
         var subDiscountMult = 1;
         this.subItems.forEach(function(i) {
+            subPowerBonus += i.currentPowerBonus;
             subPowerMult += i.currentPowerMult;
             subDiscountMult *= i.currentDiscountMult;
         });
 
         this.currentDiscountMult = subDiscountMult
+        this.currentPowerBonus = subPowerBonus;
         this.currentPowerMult = upgPowerMult * subPowerMult;
-        this.currentPower = this.basePower * this.currentPowerMult * 1 * Game.ascMultiplier;
+        this.currentPower = (this.basePower + this.currentPowerBonus) * this.currentPowerMult * 1 * Game.ascMultiplier;
         this.trainsPs = this.currentPower * this.amt
 
         parentUpdate.call(this);
@@ -224,32 +229,6 @@ StoreItem = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost, 
                     '<div class="tooltipStats">' + formatNum(this.trainsEarned, 1) + ' generated so far' + '</div>' +
                 '</div>'
     };
-    this.drawStoreItem = function() {
-        var itemContainer = el('items').appendChild(document.createElement('div'));
-        itemContainer.id = 'item' + this.id1 + 'Container';
-        itemContainer.className = 'itemContainer';
-        this.element = itemContainer.appendChild(document.createElement('div'));
-        this.element.id = 'item' + this.id1;
-        this.element.className = 'item';
-        this.element.innerHTML = '<div class="itemIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
-            '<div class="itemContent">' +
-                '<div class="itemHeader">' + this.name + '</div>' +
-                '<div id="item' + this.id1 + 'cost" class="itemDesc">' + formatNum(this.getCurrentCost(), 0) + '</div>' +
-                '<div id="item' + this.id1 + 'qty" class="itemOwned">' + formatNum(this.amt, 0) + '</div>' +
-            '</div>'
-        this.isVisible = 1;
-        this.element.onclick = function() { Game.Buy(id1, id2, 'Item') };
-        this.element.onmousemove = function() { Game.tooltip.drawTooltip(function() {return Game.StoreItems[id1].drawTooltip() }, 'store') };
-        this.element.onmouseout =  function() { Game.tooltip.hideTooltip() };
-    };
-    this.refreshStoreItem = function () {
-        this.element.innerHTML = '<div class="itemIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
-        '<div class="itemContent">' +
-            '<div class="itemHeader">' + this.name + '</div>' +
-            '<div id="item' + this.id + 'cost" class="itemDesc">' + formatNum(this.getCurrentCost(), 0) + '</div>' +
-            '<div id="item' + this.id + 'qty" class="itemOwned">' + formatNum(this.amt, 0) + '</div>' +
-        '</div>'
-    };
     Game.StoreItems.push(this);
 };
 StoreTrainLine = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost, baseCostMult, unlockReqs, basePower, baseSpeed) {
@@ -263,6 +242,7 @@ StoreTrainLine = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseC
     this.baseSpeedMult = 1;
     //Up to Date Stat properties.
     this.currentPower = this.basePower;
+    this.currentPowerBonus = 0;
     this.currentPowerMult = this.basePowerMult;
     this.currentSpeed = this.baseSpeed;
     this.currentSpeedMult = this.baseSpeedMult;
@@ -284,6 +264,7 @@ StoreTrainLine = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseC
             i.resetObject();
         });
         this.currentPower = this.basePower;
+        this.currentPowerBonus = 0;
         this.currentPowerMult = this.basePowerMult;
         this.currentSpeed = this.baseSpeed;
         this.currentSpeedMult = this.baseSpeedMult;
@@ -298,20 +279,23 @@ StoreTrainLine = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseC
             upgPowerMult *= i.mult;
         });
         var subPowerMult = 1;
+        var subPowerBonus = 0;
         var subSpeedMult = 1;
         var subDiscountMult = 1;
         this.subItems.forEach(function(i) {
             subPowerMult += i.currentPowerMult;
+            subPowerBonus += i.currentPowerBonus;
             subSpeedMult *= i.currentSpeedMult;
             subDiscountMult *= i.currentDiscountMult;
         });
 
-        this.currentDiscountMult = subDiscountMult
+        this.currentDiscountMult = subDiscountMult;
+        this.currentPowerBonus = subPowerBonus;
         this.currentPowerMult = upgPowerMult * subPowerMult;
-        this.currentPower = this.basePower * this.currentPowerMult * 1 * Game.ascMultiplier;
+        this.currentPower = (this.basePower + this.currentPowerBonus) * this.currentPowerMult * 1 * Game.ascMultiplier;
         this.currentSpeedMult = subSpeedMult;
         this.currentSpeed = this.baseSpeed * this.currentSpeedMult * 1;
-        this.trainsPs = this.currentPower * this.amt
+        this.trainsPs = this.currentPower * this.amt;
 
         parentUpdate.call(this);
     };
@@ -343,10 +327,10 @@ StoreTrainLine = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseC
         var itemContainer = el('trainLines').appendChild(document.createElement('div'));
         itemContainer.id = 'trainLine' + this.id1 + 'Container';
         itemContainer.className = 'itemContainer';
-        this.element = itemContainer.appendChild(document.createElement('div'));
-        this.element.id = 'trainLine' + this.id1;
-        this.element.className = 'trainLine';
-        this.element.innerHTML = '<div class="trainLineIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
+        this.uiElement = itemContainer.appendChild(document.createElement('div'));
+        this.uiElement.id = 'trainLine' + this.id1;
+        this.uiElement.className = 'trainLine';
+        this.uiElement.innerHTML = '<div class="trainLineIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
             '<div class="trainLineContent">' +
                 '<div class="itemHeader">' + this.name + ' - ' + formatNum(this.getCurrentCost(), 0) + '</div>' +
                 '<div id="item' + this.id1 + 'qty" class="trainLineOwned">' + formatNum(this.amt, 0) + '</div>' +
@@ -355,12 +339,12 @@ StoreTrainLine = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseC
                 '<div id="trainLine' + this.id1 + 'Bar" class="bar"></div>' + 
             '</div>'
         this.isVisible = 1;
-        this.element.onclick = function() { Game.Buy(id1, id2, 'Line') };
-        this.element.onmousemove = function() { Game.tooltip.drawTooltip(function() {return Game.StoreTrainLines[id1].drawTooltip() }, 'store') };
-        this.element.onmouseout =  function() { Game.tooltip.hideTooltip() };
+        this.uiElement.onclick = function() { Game.Buy(id1, id2, 'Line') };
+        this.uiElement.onmousemove = function() { Game.tooltip.drawTooltip(function() {return Game.StoreTrainLines[id1].drawTooltip() }, 'store') };
+        this.uiElement.onmouseout =  function() { Game.tooltip.hideTooltip() };
     };
     this.refreshStoreItem = function () {
-        this.element.innerHTML = '<div class="trainLineIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
+        this.uiElement.innerHTML = '<div class="trainLineIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
             '<div class="trainLineContent">' +
                 '<div class="itemHeader">' + this.name + ' - ' + formatNum(this.getCurrentCost(), 0) + '</div>' +
                 '<div id="item' + this.id1 + 'qty" class="trainLineOwned">' + formatNum(this.amt, 0) + '</div>' +
@@ -371,16 +355,18 @@ StoreTrainLine = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseC
     };
     Game.StoreTrainLines.push(this);
 };
-StoreSubObject = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost, baseCostMult, unlockReqs, basePowerMult, baseSpeedMult, baseDiscountMult) {
+StoreSubObject = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost, baseCostMult, unlockReqs, basePowerMult, basePowerBonus, baseSpeedMult, baseDiscountMult) {
     //Parent calls.
     this.prototype = StoreObject;
     StoreObject.call(this, id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost, baseCostMult, unlockReqs);
     //Base Stat properties.
     this.basePowerMult = basePowerMult;
+    this.basePowerBonus = basePowerBonus;
     this.baseSpeedMult = baseSpeedMult;
     this.baseDiscountMult = baseDiscountMult;
     //Up to Date Stat properties.
     this.currentPowerMult = 0;
+    this.currentPowerBonus = 0;
     this.currentSpeedMult = 1;
     this.currentDiscountMult = 1;
     //Functions
@@ -395,16 +381,17 @@ StoreSubObject = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseC
     var parentUpdate = this.update;
     this.update = function() {
         this.currentPowerMult = this.basePowerMult * this.amt;
+        this.currentPowerBonus = this.basePowerBonus * this.amt;
         this.currentSpeedMult =  Math.pow(this.baseSpeedMult, this.amt);
         this.currentDiscountMult = Math.pow(this.baseDiscountMult, this.amt);
 
         parentUpdate.call(this);
     };
 };
-StoreSubItem = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost, baseCostMult, unlockReqs, basePowerMult, baseSpeedMult, baseDiscountMult) {
+StoreSubItem = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost, baseCostMult, unlockReqs, basePowerMult, basePowerBonus, baseSpeedMult, baseDiscountMult) {
     //Parent calls.
     this.prototype = StoreSubObject;
-    StoreSubObject.call(this, id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost, baseCostMult, unlockReqs, basePowerMult, baseSpeedMult, baseDiscountMult);
+    StoreSubObject.call(this, id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost, baseCostMult, unlockReqs, basePowerMult, basePowerBonus, baseSpeedMult, baseDiscountMult);
     //Functions
     var parentUpdate = this.update;
     this.update = function() {
@@ -437,35 +424,12 @@ StoreSubItem = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCos
         toolTip += '</div>'
         return toolTip;
     };
-    this.drawStoreItem = function() {
-        this.element = el('item' + this.id2 + 'Container').appendChild(document.createElement('div'));
-        this.element.id = 'itemChild' + this.id1;
-        this.element.className = 'itemChild';
-        this.element.innerHTML = '<div class="itemChildIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yYoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
-            '<div class="itemChildContent">' +
-                '<div class="itemChildHeader">' + this.name + ' - ' + formatNum(this.getCurrentCost(), 0) + '</div>' +
-                '<div id="item' + this.id + 'qty" class="itemChildOwned">' + formatNum(this.amt, 0) + '</div>' +
-            '</div>'
-        this.isVisible = 1;
-
-        this.element.onclick = function() { Game.Buy(id1, id2, 'SubItem') };
-        this.element.onmousemove = function() { Game.tooltip.drawTooltip(function() {return Game.StoreItems[id2].subItems[id1].drawTooltip() }, 'store') };
-        this.element.onmouseout =  function() { Game.tooltip.hideTooltip() };
-    };
-    this.draw
-    this.refreshStoreItem = function () {
-        this.element.innerHTML = '<div class="itemChildIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
-        '<div class="itemChildContent">' +
-            '<div class="itemChildHeader">' + this.name + ' - ' + formatNum(this.getCurrentCost(), 0) + '</div>' +
-            '<div id="item' + this.id + 'qty" class="itemChildOwned">' + formatNum(this.amt, 0) + '</div>' +
-        '</div>'
-    };
     Game.StoreItems[id2].subItems.push(this);
 };
-StoreSubTrainLine = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost, baseCostMult, unlockReqs, basePowerMult, baseSpeedMult, baseDiscountMult) {
+StoreSubTrainLine = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost, baseCostMult, unlockReqs, basePowerMult, basePowerBonus, baseSpeedMult, baseDiscountMult) {
     //Parent calls.
     this.prototype = StoreSubObject;
-    StoreSubObject.call(this, id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost, baseCostMult, unlockReqs, basePowerMult, baseSpeedMult, baseDiscountMult);
+    StoreSubObject.call(this, id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCost, baseCostMult, unlockReqs, basePowerMult, basePowerBonus, baseSpeedMult, baseDiscountMult);
     //Functions
     var parentUpdate = this.update;
     this.update = function() {
@@ -499,23 +463,23 @@ StoreSubTrainLine = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, ba
         return toolTip;
     };
     this.drawStoreItem = function() {
-        this.element = el('trainLine' + this.id2 + 'Container').appendChild(document.createElement('div'));
-        this.element.id = 'itemChild' + this.id1;
-        this.element.className = 'itemChild';
-        this.element.innerHTML = '<div class="itemChildIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yYoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
+        this.uiElement = el('trainLine' + this.id2 + 'Container').appendChild(document.createElement('div'));
+        this.uiElement.id = 'itemChild' + this.id1;
+        this.uiElement.className = 'itemChild';
+        this.uiElement.innerHTML = '<div class="itemChildIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yYoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
             '<div class="itemChildContent">' +
                 '<div class="itemChildHeader">' + this.name + ' - ' + formatNum(this.getCurrentCost(), 0) + '</div>' +
                 '<div id="item' + this.id + 'qty" class="itemChildOwned">' + formatNum(this.amt, 0) + '</div>' +
             '</div>'
         this.isVisible = 1;
 
-        this.element.onclick = function() { Game.Buy(id1, id2, 'SubLine') };
-        this.element.onmousemove = function() { Game.tooltip.drawTooltip(function() {return Game.StoreTrainLines[id2].subItems[id1].drawTooltip() }, 'store') };
-        this.element.onmouseout =  function() { Game.tooltip.hideTooltip() };
+        this.uiElement.onclick = function() { Game.Buy(id1, id2, 'SubLine') };
+        this.uiElement.onmousemove = function() { Game.tooltip.drawTooltip(function() {return Game.StoreTrainLines[id2].subItems[id1].drawTooltip() }, 'store') };
+        this.uiElement.onmouseout =  function() { Game.tooltip.hideTooltip() };
     };
     this.draw
     this.refreshStoreItem = function () {
-        this.element.innerHTML = '<div class="itemChildIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
+        this.uiElement.innerHTML = '<div class="itemChildIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
         '<div class="itemChildContent">' +
             '<div class="itemChildHeader">' + this.name + ' - ' + formatNum(this.getCurrentCost(), ) + '</div>' +
             '<div id="item' + this.id + 'qty" class="itemChildOwned">' + formatNum(this.amt, 0) + '</div>' +
@@ -581,19 +545,19 @@ StoreUpgrade = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCos
             '</div>'
     };
     this.drawStoreItem = function() {
-        this.element = el('upgrades').appendChild(document.createElement('div'));
-        this.element.id = 'upgrade' + this.id1;
-        this.element.className = 'item disabled';
-        this.element.innerHTML = '<div class="itemIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
+        this.uiElement = el('upgrades').appendChild(document.createElement('div'));
+        this.uiElement.id = 'upgrade' + this.id1;
+        this.uiElement.className = 'item disabled';
+        this.uiElement.innerHTML = '<div class="itemIcon" style="float:left; background-position:' + this.icon.xCoord + 'px ' + this.icon.yCoord + 'px;background-image:url(' + this.icon.file + ')"></div>' +
         '<div class="itemContent">' +
             '<div class="itemHeader">' + this.name + '</div>' +
             '<div id="item' + this.id + 'cost" class="itemDesc">' + formatNum(this.getCurrentCost(), 0) + '</div>' +
         '</div>'
         this.isVisible = 1;
 
-        this.element.onclick = function() { Game.Buy(id1, id2, 'Upgrade') };
-        this.element.onmousemove = function() { Game.tooltip.drawTooltip(function() {return Game.StoreUpgrades[id1].drawTooltip() }, 'store') };
-        this.element.onmouseout =  function() { Game.tooltip.hideTooltip() };
+        this.uiElement.onclick = function() { Game.Buy(id1, id2, 'Upgrade') };
+        this.uiElement.onmousemove = function() { Game.tooltip.drawTooltip(function() {return Game.StoreUpgrades[id1].drawTooltip() }, 'store') };
+        this.uiElement.onmouseout =  function() { Game.tooltip.hideTooltip() };
     };
     this.getCurrentCost = function() {
         return this.getBuyCost(1);

@@ -133,7 +133,7 @@ Game.LoadItems = async function() {
                 });
                 var icon = new Icon(this.icon.file, this.icon.x, this.icon.y);
                 var tooltipIcon = new Icon(this.tooltipIcon.file, this.tooltipIcon.x, this.tooltipIcon.y);
-                new StoreSubItem(this.id1, parentId, this.name, this.desc1, this.desc2, icon, tooltipIcon, this.baseCost, this.baseCostMult, reqs, this.basePowerMult, this.baseSpeedMult, this.baseDiscountMult);
+                new StoreSubItem(this.id1, parentId, this.name, this.desc1, this.desc2, icon, tooltipIcon, this.baseCost, this.baseCostMult, reqs, this.basePowerMult, this.basePowerBonus, this.baseSpeedMult, this.baseDiscountMult);
             });
         });
     });
@@ -158,7 +158,7 @@ Game.LoadTrainLines = async function() {
                 });
                 var icon = new Icon(this.icon.file, this.icon.x, this.icon.y);
                 var tooltipIcon = new Icon(this.tooltipIcon.file, this.tooltipIcon.x, this.tooltipIcon.y);
-                new StoreSubTrainLine(this.id1, parentId, this.name, this.desc1, this.desc2, icon, tooltipIcon, this.baseCost, this.baseCostMult, reqs, this.basePowerMult, this.baseSpeedMult, this.baseDiscountMult);
+                new StoreSubTrainLine(this.id1, parentId, this.name, this.desc1, this.desc2, icon, tooltipIcon, this.baseCost, this.baseCostMult, reqs, this.basePowerMult, this.basePowerBonus, this.baseSpeedMult, this.baseDiscountMult);
             });
         });
     });
@@ -375,7 +375,7 @@ Game.tooltip.updateTooltip = function() {
     var x = 0;
     var y = 0;
     if (this.origin == 'store') {
-        x = Game.windowW - 404 - this.tt.offsetWidth;
+        x = Game.windowW - 428 - this.tt.offsetWidth;
         y = Game.mouseY - 16;
     } else if (this.origin == 'ascend') {
         x = Game.windowW - 404 - this.tt.offsetWidth;
@@ -480,14 +480,14 @@ Game.CheckForPurchasable = function() {
     });
     if (Game.bulkMode == 1) {
         Game.StoreItems.forEach(function(i) {
-            if (i.isVisible == 1 && i.element != null) {
+            if (i.isVisible == 1 && i.uiElement != null) {
                 if (i.canBuy(Game.bulkQty) && !i.isEnabled) {
                     i.enable();
                 } else if (!i.canBuy(Game.bulkQty)) {
                     i.disable();
                 }
                 i.subItems.forEach(function(j) {
-                    if (j.isVisible == 1 && j.element != null) {
+                    if (j.isVisible == 1 && j.uiElement != null) {
                         if (j.canBuy(Game.bulkQty) && !j.isEnabled) {
                             j.enable();
                         } else if (!j.canBuy(Game.bulkQty)) {
@@ -563,14 +563,16 @@ Game.DrawStore = function() {
         }
     });
     Game.StoreItems.forEach(function(i) {
-        if (i.unlock() && i.element == null) {
-            i.drawStoreItem();
+        if (i.unlock() && i.uiElement == null) {
+            i.uiElement = new StoreUIItem(i, 'item');
+            i.uiElement.draw();
         } else if (!i.isVisible) {
             i.clear()
         }
         i.subItems.forEach(function(j) {
-            if (j.unlock() && j.element == null) {
-                j.drawStoreItem();
+            if (j.unlock() && j.uiElement == null) {
+                j.uiElement = new StoreUISubItem(j, 'subitem', i.id1, 'item');
+                j.uiElement.draw();
             } else if (!j.isVisible) {
                 j.clear()
             }
@@ -630,9 +632,9 @@ Game.Loop = function() {
         el('tps').innerHTML = 'per second: ' + formatNum(Game.trainsPs, 1);
     if (Game.refresh == 1) {
         Game.StoreItems.forEach(function(i) {
-            i.refreshStoreItem();
+            i.uiElement.refresh();
             i.subItems.forEach(function(j) {
-                j.refreshStoreItem();
+                j.uiElement.refresh();
             });
         });
         Game.StoreTrainLines.forEach(function(i) {
@@ -744,13 +746,13 @@ Game.Init = function() {
         var pop = el('popup-store');
         if(pop.style.display == 'none') {
             pop.style.display = 'block';
-            el('store-bulk').style.display = 'none';
+            el('store-bulk').style.display = 'block';
             el('items').style.display = 'none';
             el('trainLines').style.display = 'none';
             el('upgrades').style.display = 'block';
         }
         else {
-            el('store-bulk').style.display = 'none';
+            el('store-bulk').style.display = 'block';
             el('items').style.display = 'none';
             el('trainLines').style.display = 'none'; 
             el('upgrades').style.display = 'block';

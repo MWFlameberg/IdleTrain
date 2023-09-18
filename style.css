@@ -64,6 +64,23 @@ div {
   transform-origin: 0 0;
 }
 /* ############################## */
+/* Custom Scrollbar */
+::-webkit-scrollbar
+{
+	-webkit-appearance:none;
+	width:17px;
+}
+::-webkit-scrollbar-track
+{
+	background-color:#575a68;
+}
+::-webkit-scrollbar-thumb
+{
+	background-color:#aaaaaa;
+	border:1px solid #575a68;
+	/* box-shadow:0px 0px 0px 1px #eee inset; */
+}
+/* ############################## */
 /* General purpose css */
 .border {
   box-sizing: border-box;
@@ -89,17 +106,26 @@ div {
 }
 .line-vertical {
   height: 100%;
-  border-left: 9px solid #000000;
+  width: 9px;
+  background-image: url(Images/border-vertical.png);
 }
 .line-horizontal {
   width: 100%;
-  border-top: 9px solid #000000;
+  height: 9px;
+  background-image: url(Images/border-horizontal.png);
 }
 .top {
   top: 0px;
 }
 .bot {
   bottom: 0px;
+}
+.container {
+  position: relative;
+  height: calc(100% - 41px);
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
 .btn-close {
   position: absolute;
@@ -125,8 +151,9 @@ div {
   position: absolute;
   top: 110px;
   bottom: 110px;
-  right: 32px;
+  right: 8px;
   z-index: 1;
+  background-color: #9499af;
 }
 /* ############################## */
 /* Store related css */
@@ -165,16 +192,102 @@ div {
   width: 48px;
   padding: 9px 0px;
 }
-.storeBulkMode {
-  float: left;
-  height: 16px;
-  width: 48px;
+/* ############################## */
+/* Store-Item related css */
+.store-item-container {
+  position: relative;
+  width: auto;
+  height: auto;
+  min-height: 66px;
 }
-.storeBulkAmount {
-  float: left;
-  text-align: center;
+.store-item {
+  height: 64px;
+  width: auto;
+  cursor: pointer;
+  position: relative;
+  border-style: solid;
+  border-width: 1px;
+  opacity: 0.5;
+}
+.store-item.enabled {
+  opacity: 1;
+}
+.store-item-icon {
+  width: 64px;
+  height: 64px;
+  margin-right: 8px;
+  display: inline-block;
+}
+.store-item-body {
+  top: 8px;
+  left: 64px;
+  right: 0px;
+  bottom: 8px;
+  position: absolute;
+}
+.store-item-header {
+  font-family: Arial;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 3px 3px;
+}
+.store-item-cost {
+  font-family: Arial;
+  font-size: 12px;
+  padding: 3px 3px;
+}
+.store-item-qty {
+  font-family: Arial;
+  font-size: 40px;
+  position: absolute;
+  right: 8px;
+  top: 4px;
+}
+/* ############################## */
+/* Store-SubItem related css */
+.store-subitem {
+  height: 32px;
+  width: auto;
+  margin-left: 64px;
+  cursor: pointer;
+  position: relative;
+  border-style: solid;
+  border-width: 1px;
+  opacity: 0.5;
+}
+.store-subitem.enabled {
+  opacity: 1;
+}
+.store-subitem-icon {
   width: 32px;
-  padding: 9px 0px;
+  height: 32px;
+  margin-right: 8px;
+  display: inline-block;
+}
+.store-subitem-body {
+  top: 8px;
+  left: 32px;
+  right: 0px;
+  bottom: 8px;
+  position: absolute;
+}
+.store-subitem-header {
+  font-family: Arial;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 3px 3px;
+}
+.store-subitem-cost {
+  font-family: Arial;
+  font-size: 12px;
+  padding: 3px 3px;
+}
+.store-subitem-qty {
+  font-family: Arial;
+  font-size: 20px;
+  position: absolute;
+  right: 8px;
+  top: 0px;
 }
 /* ############################## */
 /* Bar Related css */
