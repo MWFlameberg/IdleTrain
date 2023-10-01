@@ -30,7 +30,6 @@ function formatEveryThirdPower(format, num)
 	}
 	return (Math.round(num * 1000) / 1000) + formatValue;
 };
-
 var numFormatLong = [' thousand',' million',' billion',' trillion',' quadrillion',' quintillion',' sextillion',' septillion',' octillion',' nonillion'];
 var numPrefix = ['','un','duo','tre','quattuor','quin','sex','septen','octo','novem'];
 var numSuffix = ['decillion','vigintillion','trigintillion','quadragintillion','quinquagintillion','sexagintillion','septuagintillion','octogintillion','nonagintillion'];
@@ -43,7 +42,6 @@ var numSuffix = ['D','V','T','Qa','Qi','Sx','Sp','O','N'];
 for (var i in numPrefix)
 	for (var ii in numSuffix)
         numFormatShort.push(' ' + numPrefix[ii] + numSuffix[i]);
-
 function formatNum(num, floats) {
     var negative = (num < 0);
     var decimal = '';

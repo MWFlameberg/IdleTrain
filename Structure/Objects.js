@@ -21,7 +21,7 @@ BaseObject = function(id1, id2, name, desc1, desc2, icon, tooltipIcon) {
         this.isUnlocked = 0;
         this.isEnabled = 0;
         this.isVisible = 0;
-        this.isDymaic = 0;
+        this.isDynamic = 0;
         this.amt = 0;
     };
     this.clear = function() {
@@ -518,7 +518,10 @@ StoreUpgrade = function(id1, id2, name, desc1, desc2, icon, tooltipIcon, baseCos
                 Game.StoreTrainLines[i.id].update();
             }
         });
-        this.clear();
+        if (this.uiElement != null) {
+            this.uiElement.remove();
+            this.uiElement = null;
+        }
         parentUpdate.call(this);
     };
     this.buy = function(amt) {

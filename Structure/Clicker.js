@@ -25,8 +25,8 @@ Clicker = function() {
     this.click = function() {
         Game.Earn(this.clickPower);
         this.clickClicks++;
-        this.clickTrains++;
+        this.clickTrains += this.clickPower;
         Game.trainClicks++;
-        Game.trainsClicked++;
+        Game.trainsClicked += this.clickPower;
     }
 };
