@@ -19,7 +19,8 @@
          <div id="game-container">
             <div id="bar-top">
                <div class="bar-btn border" onclick="SaveGame(1)">SAVE</div>
-               <div class="bar-btn border" onclick="TestLoad()">LOAD</div>
+               <div class="bar-btn border" onclick="LoadGame()">LOAD</div>
+               <div class="bar-btn border" onclick="ClearSave()">CLEAR</div>
                <div id="btn-ascend" class="bar-btn border" onclick="Game.Ascend()" onmousemove="Game.tooltip.drawTooltip(function() {return Game.GetAscendTooltip() }, 'ascend');" onmouseout="Game.tooltip.hideTooltip()">
                   <div class="txt-center txt-header">Ascend</div>
                   <div class="lbar-container lbar-bottom">

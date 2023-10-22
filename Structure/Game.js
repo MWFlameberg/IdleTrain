@@ -664,6 +664,32 @@ Game.Loop = function() {
 /*==========================================================================
                     Game Startup and Initialisation
 ==========================================================================*/
+Game.Reset = function() {
+    // Train based variables.
+    Game.trainsEarned = 0;
+    Game.trains = 0;
+    Game.trainsPs = 0;
+    Game.trainClicks = 0;
+    Game.trainsClicked = 0;
+    Game.itemTps = 0;
+    // Date and Time based variables.
+    Game.startDate = Date.now();
+    Game.fullStartDate = Date.now();
+    Game.currentDate = Date.now();
+    Game.lastAction = Date.now();
+    Game.lastAscension = Date.now();
+    // Gamestate Flag based variables.
+    Game.refresh = 0;
+    Game.bulkMode = 1;
+    Game.bulkQty = 1;
+    Game.recalcTps = 0;
+    // Ascension based variables.
+    Game.timesAscended = 0;
+    Game.ascTrains = 0;
+    Game.ascTrainsReq = 100;
+    Game.ascMultiplier = 1;
+    Game.ascPercent = 0;
+};
 Game.Init = function() {
     // Train based variables.
     Game.trainsEarned = 0;

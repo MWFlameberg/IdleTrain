@@ -1,11 +1,13 @@
+// TEST EXAMPLE SAVE STRING
+//1696169138143|1696169138143|882|0|0|SI,0,-1,5,1,7.4322666666666635|SSI,0,0,4,1|SSI,1,0,2,1|STL,0,-1,0,1,NaN|STLSI,0,0,0,1|SU,0,-1,0,0|SU,1,-1,0,0|
 function SaveGame(format) {
     var strSave = '';
     strSave += parseInt(Game.startDate) + '|' + parseInt(Game.fullStartDate) + '|';
-    strSave += parseInt(Game.trains) + '|'; 
+    strSave += formatNum(Game.trains, 1) + '|'; 
     strSave += parseInt(Game.timesAscended) + '|' + parseInt(Game.ascTrains) + '|';
     Game.StoreItems.forEach(function(i) {
         strSave += 'SI,' + i.id1 + ',' + i.id2 + ','
-        strSave += i.amt + ',' + i.isUnlocked + ',' + i.trainsEarned + '|'
+        strSave += i.amt + ',' + i.isUnlocked + ',' + formatNum(i.trainsEarned,1) + '|'
         i.subItems.forEach(function(j) {
             strSave += 'SSI,' + j.id1 + ',' + j.id2 + ','
             strSave += j.amt + ',' + j.isUnlocked + '|'
@@ -14,7 +16,7 @@ function SaveGame(format) {
 
     Game.StoreTrainLines.forEach(function(i) {
         strSave += 'STL,' + i.id1 + ',' + i.id2 + ','
-        strSave += i.amt + ',' + i.isUnlocked + ',' + i.trainsEarned + '|'
+        strSave += i.amt + ',' + i.isUnlocked + ',' + formatNum(i.trainsEarned,1) + '|'
         i.subItems.forEach(function(j) {
             strSave += 'STLSI,' + j.id1 + ',' + j.id2 + ','
             strSave += j.amt + ',' + j.isUnlocked + '|'
@@ -26,15 +28,68 @@ function SaveGame(format) {
         strSave += i.amt + ',' + i.isUnlocked + '|'
     });
 
-    el('save-data').innerHTML = strSave;
+    var strSaveTag = 'save=';
+    var strNewCookie = '';
+    var strCookie = decodeURIComponent(document.cookie);
+    var lstCookie = strCookie.split(';');
+    for(let i = 0; i < lstCookie.length; i++) {
+        let c = lstCookie[i];
+        while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(strSaveTag) == 0) {
+            strNewCookie = 'save=' + strSave + ';'
+            str = c.substring(strSaveTag.length, c.length).split('|');
+        } else {
+            strNewCookie = strNewCookie + c + ';'
+        }
+    }
+    document.cookie = strNewCookie
 };
-function TestLoad() {
-    var testString = '1696169138143|1696169138143|876|0|0|SI,0,-1,5,1,5.498933333333337|SSI,0,0,4,1|SSI,1,0,2,1|STL,0,-1,1,1,1000|STLSI,0,0,0,1|SU,0,-1,1,1|SU,1,-1,0,1|'
-    LoadGame(testString);
-}
+function ClearSave() {
+    var strSaveTag = 'save=';
+    var strNewCookie = '';
+    var strCookie = decodeURIComponent(document.cookie);
+    var lstCookie = strCookie.split(';');
+    for(let i = 0; i < lstCookie.length; i++) {
+        let c = lstCookie[i];
+        while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(strSaveTag) == 0) {
+            strNewCookie = 'save=;'
+            str = c.substring(strSaveTag.length, c.length).split('|');
+        } else {
+            strNewCookie = strNewCookie + c + ';'
+        }
+    }
+    document.cookie = strNewCookie
+    LoadGame();
+};
+function LoadGame() {
+    var str;
+    var strSave = 'save=';
+    var strCookie = decodeURIComponent(document.cookie);
+    var lstCookie = strCookie.split(';');
+    for(let i = 0; i < lstCookie.length; i++) {
+        let c = lstCookie[i];
+        while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(strSave) == 0) {
+            str = c.substring(strSave.length, c.length).split('|');
+        }
+    }
+    
+    if (str.length == 1) {
+        Game.ResetItems();
+        Game.Reset();
+        
+        Game.refresh = 1;
+        Game.recalcTps = 1;
+        return;
+    }
 
-function LoadGame(strSave) {
-    var str = strSave.split('|');
     Game.startDate = parseInt(str[0]);
     Game.fullStartDate = parseInt(str[1]);
     Game.trains = parseInt(str[2]);
@@ -85,4 +140,4 @@ function LoadGame(strSave) {
 
     Game.refresh = 1;
     Game.recalcTps = 1;
-}
+};
